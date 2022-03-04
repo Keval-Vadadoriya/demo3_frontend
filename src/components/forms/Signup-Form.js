@@ -1,9 +1,13 @@
-import { useContext, useState } from "react";
-import Input from "../UI/Input";
-import classes from "./Form.module.css";
-import useHttp from "../../custom-hooks/useHttp";
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../../store/auth-context";
+import useHttp from "../../custom-hooks/useHttp";
+import { loginActions } from "../../store/login-slice";
+import { userActions } from "../../store/user-slice";
+
+import Input from "../UI/Input";
+
+import classes from "./Form.module.css";
 
 const SignupForm = (props) => {
   const [name, setName] = useState("");
@@ -14,8 +18,13 @@ const SignupForm = (props) => {
   const [passwordIsValid, setPasswordIsValid] = useState(false);
   const [age, setAge] = useState("");
   const [ageIsValid, setAgeIsValid] = useState(false);
+  const [profession, setProfession] = useState("");
+  const [professionIsValid, setProfessionIsValid] = useState(false);
+  const [location, setLocation] = useState("");
+  const [locationIsValid, setLocationIsValid] = useState(false);
   const [formIsValid, setFormIsValid] = useState(false);
-  const ctx = useContext(AuthContext);
+  const role = useSelector((state) => state.login.role);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
   const [isLoading, errror, sendRequest] = useHttp();
@@ -23,40 +32,94 @@ const SignupForm = (props) => {
   const showLogin = () => {
     navigate("/login", { replace: true });
   };
+
+  //Signup Request
   if (formIsValid) {
+    let body =
+      role === "user"
+        ? {
+            name,
+            email,
+            password,
+            age,
+          }
+        : {
+            name,
+            email,
+            password,
+            age,
+            profession,
+            address: location,
+          };
     sendRequest({
       url: "http://127.0.0.1:3001/signup",
       method: "POST",
-      body: {
-        name,
-        email,
-        password,
-        age,
-      },
+      body: body,
       headers: {
         "Content-Type": "application/json",
       },
     }).then((res) => {
-      ctx.setToken("Bearer " + res.token);
-      ctx.setIsLoggedIn(true);
+      dispatch(
+        loginActions.setLoginStatus({
+          isLoggedIn: true,
+          token: "Bearer " + res.token,
+        })
+      );
+      dispatch(
+        userActions.setLoggedInUser({
+          age: res.user.age,
+          email: res.user.email,
+          name: res.user.name,
+          _id: res.user._id,
+        })
+      );
       console.log(res);
+      navigate("/home");
     });
     setFormIsValid(false);
   }
-  const SubmitHandler = (event) => {
-    event.preventDefault();
-    if (
-      nameIsValid === true &&
-      emailIsValid === true &&
-      passwordIsValid === true &&
-      ageIsValid === true
-    ) {
-      setFormIsValid(true);
-    } else {
-      setFormIsValid(false);
+
+  //changing Role
+  const changeRole = () => {
+    if (role === "user") {
+      dispatch(loginActions.setRole({ role: "worker" }));
+    }
+    if (role === "worker") {
+      dispatch(loginActions.setRole({ role: "user" }));
     }
   };
 
+  //Submit Handler
+  const SubmitHandler = (event) => {
+    event.preventDefault();
+    if (role === "user") {
+      if (
+        nameIsValid === true &&
+        emailIsValid === true &&
+        passwordIsValid === true &&
+        ageIsValid === true
+      ) {
+        setFormIsValid(true);
+      } else {
+        setFormIsValid(false);
+      }
+    } else {
+      if (
+        nameIsValid === true &&
+        emailIsValid === true &&
+        passwordIsValid === true &&
+        ageIsValid === true &&
+        professionIsValid === true &&
+        locationIsValid === true
+      ) {
+        setFormIsValid(true);
+      } else {
+        setFormIsValid(false);
+      }
+    }
+  };
+
+  //Validations
   const changeNameHandler = (event) => {
     setName(event.target.value);
     if (event.target.value !== "") {
@@ -93,6 +156,25 @@ const SignupForm = (props) => {
     }
   };
 
+  const changeProfessionHandler = (event) => {
+    setProfession(event.target.value);
+    if (event.target.value !== "none") {
+      setProfessionIsValid(true);
+    } else {
+      setProfessionIsValid(false);
+    }
+  };
+
+  const changeLocationHandler = (event) => {
+    setLocation(event.target.value);
+    if (event.target.value !== "none") {
+      setLocationIsValid(true);
+    } else {
+      setLocationIsValid(false);
+    }
+  };
+
+  //return
   return (
     <div className={classes["form-container"]}>
       {isLoading && <p>Loading</p>}
@@ -102,7 +184,9 @@ const SignupForm = (props) => {
           <Input
             label="Name"
             input={{
-              id: "name",
+              placeholder: "name",
+              required: true,
+              id: "Name",
               onChange: changeNameHandler,
               type: "text",
             }}
@@ -110,30 +194,73 @@ const SignupForm = (props) => {
           <Input
             label="Email"
             input={{
-              id: "email",
+              placeholder: "Enter an Email",
+              id: "Email",
               onChange: changeEmailHandler,
-              type: "text",
+              type: "email",
             }}
           />
           <Input
             label="Password"
             input={{
-              id: "password",
+              placeholder: "Enter a Password",
+              id: "Password",
               onChange: changePasswordHandler,
-              type: "text",
+              type: "password",
             }}
           />
           <Input
             label="Age"
             input={{
-              id: "age",
+              placeholder: "Enter an Age",
+              id: "Age",
               onChange: changeAgeHandler,
               type: "text",
             }}
           />
-          <input type="submit"></input>
-          <button onClick={showLogin}>login</button>
-          {/* {!formIsValid && <p>Please Enter Valid Data</p>} */}
+          {role !== "user" && (
+            <div className={classes.select}>
+              <label htmlFor="profession">Profession</label>
+              <select
+                name="profession"
+                id="profession"
+                onChange={changeProfessionHandler}
+                defaultValue="none"
+              >
+                <option value="none" disabled hidden>
+                  select your profession
+                </option>
+                <option value="carpenter">Carpenter</option>
+                <option value="plumber">Plumber</option>
+                <option value="electrician">Electrician</option>
+              </select>
+            </div>
+          )}
+          {role !== "user" && (
+            <div className={classes.select}>
+              <label htmlFor="cars">Location</label>
+              <select
+                name="cars"
+                id="cars"
+                onChange={changeLocationHandler}
+                defaultValue="none"
+              >
+                <option value="none" disabled hidden>
+                  select your location
+                </option>
+                <option value="surat">Surat</option>
+                <option value="ahmedabad">Ahmedabad</option>
+                <option value="anand">Anand</option>
+                <option value="vadodara">vadodara</option>
+              </select>
+            </div>
+          )}
+          <div></div>
+          <input type="submit" value="Signup"></input>
+          <button onClick={showLogin}>login page</button>
+          <button onClick={changeRole}>
+            {role === "user" ? "worker" : "user"}
+          </button>
           {!isLoading && errror && <p>{errror.message}</p>}
         </form>
       )}

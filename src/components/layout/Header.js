@@ -1,19 +1,28 @@
-import { useContext } from "react";
 import classes from "./header.module.css";
-import AuthContext from "../../store/auth-context";
 import { useLocation, useNavigate } from "react-router-dom";
+import { loginActions } from "../../store/login-slice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const ctx = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+
   const loginHandler = () => {
     navigate("/login", { replace: true });
     console.log(location);
   };
   const logoutHandler = () => {
-    ctx.setIsLoggedIn(false);
-    ctx.setToken("");
+    // ctx.setIsLoggedIn(false);
+    // ctx.setToken("");
+    dispatch(
+      loginActions.setLoginStatus({
+        isLoggedIn: false,
+        token: "",
+      })
+    );
+    navigate("/signup");
   };
   return (
     <header className={classes.header}>
@@ -22,7 +31,7 @@ const Header = () => {
         <li>
           <button onClick={loginHandler}>Login</button>
         </li>
-        {ctx.isLoggedIn && (
+        {isLoggedIn && (
           <li>
             <button onClick={logoutHandler}>Logout</button>
           </li>

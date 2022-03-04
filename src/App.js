@@ -1,15 +1,22 @@
-import { Fragment, useContext } from "react";
-import SignupForm from "./components/forms/Signup-Form";
-import LoginForm from "./components/forms/Login-Form";
+import { Fragment } from "react";
+import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 
+import SignupForm from "./components/forms/Signup-Form";
+import LoginForm from "./components/forms/Login-Form";
 import Header from "./components/layout/Header";
-import AuthContext from "./store/auth-context";
+import Worker from "./components/worker/Worker";
+import Profile from "./components/profile/Profile";
+import Review from "./components/reviews/Review";
+import Chat from "./components/chats/Chat";
+import Home from "./components/Home/Home";
+import WorkerProfile from "./components/worker/WorkerProfile";
+
 console.log("appU");
 
 function App() {
-  const ctx = useContext(AuthContext);
-  console.log("App");
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+
   return (
     <Fragment>
       <Header />
@@ -17,8 +24,19 @@ function App() {
         <Routes>
           <Route path="" element={<h1>Welcome to Ecommerce</h1>} />
 
-          <Route path="/signup" element={!ctx.isLoggedIn && <SignupForm />} />
-          <Route path="/login" element={!ctx.isLoggedIn && <LoginForm />} />
+          <Route path="/signup" element={!isLoggedIn && <SignupForm />} />
+          <Route path="/login" element={!isLoggedIn && <LoginForm />} />
+          <Route path="/home" element={isLoggedIn && <Home />}>
+            <Route path="profile" element={<Profile />} />
+            <Route path="chats" element={<Chat />} />
+            <Route path="worker">
+              <Route index element={<Worker />} />
+              <Route path=":workerid">
+                <Route index element={<WorkerProfile />} />
+                <Route path="review/:id" element={<Review />} />
+              </Route>
+            </Route>
+          </Route>
         </Routes>
       </main>
     </Fragment>

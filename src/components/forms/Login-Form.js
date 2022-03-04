@@ -1,9 +1,13 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+
+import { loginActions } from "../../store/login-slice";
+import { userActions } from "../../store/user-slice";
+
 import Input from "../UI/Input";
 import classes from "./Form.module.css";
 import useHttp from "../../custom-hooks/useHttp";
-import { useNavigate } from "react-router-dom";
-import AuthContext from "../../store/auth-context";
 console.log("login2");
 
 const LoginForm = (props) => {
@@ -12,14 +16,19 @@ const LoginForm = (props) => {
   const [loginPassword, setLoginPassword] = useState("");
   const [loginPasswordIsValid, setLoginPasswordIsValid] = useState(false);
   const [loginFormIsValid, setLoginFormIsValid] = useState(false);
+
+  const role = useSelector((state) => state.login.role);
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const [isLoading, errror, sendRequest] = useHttp();
-  const ctx = useContext(AuthContext);
 
   console.log("Login");
+
+  //Login Request
   if (loginFormIsValid) {
     sendRequest({
-      url: "http://127.0.0.1:3001/login",
+      url: `http://127.0.0.1:3001/login?role=${role}`,
       method: "POST",
       body: {
         email: loginEmail,
@@ -30,9 +39,24 @@ const LoginForm = (props) => {
       },
     })
       .then((res) => {
-        ctx.setToken("Bearer " + res.token);
-        ctx.setIsLoggedIn(true);
-        console.log(res);
+        if (!errror) {
+          dispatch(
+            loginActions.setLoginStatus({
+              isLoggedIn: true,
+              token: "Bearer " + res.token,
+            })
+          );
+          dispatch(
+            userActions.setLoggedInUser({
+              age: res.user.age,
+              email: res.user.email,
+              name: res.user.name,
+              _id: res.user._id,
+            })
+          );
+          console.log(res);
+          navigate("/home");
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -44,6 +68,11 @@ const LoginForm = (props) => {
   const showSignup = () => {
     navigate("/signup", { replace: true });
   };
+
+  const changeRoleHandler = (event) => {
+    dispatch(loginActions.setRole({ role: event.target.value }));
+  };
+  //Submit Handler
   const onSubmitHandler = (event) => {
     event.preventDefault();
     if (loginEmailIsValid === true && loginPasswordIsValid === true) {
@@ -53,6 +82,7 @@ const LoginForm = (props) => {
     }
   };
 
+  //validations
   const changeEmailHandler = (event) => {
     setLoginEmail(event.target.value);
     if (event.target.value.includes("@")) {
@@ -78,24 +108,44 @@ const LoginForm = (props) => {
         <form onSubmit={onSubmitHandler} className={classes.form}>
           <h1>Login Form</h1>
 
+          <div className={classes.select}>
+            <label htmlFor="role">Role</label>
+            <select
+              name="role"
+              id="role"
+              onChange={changeRoleHandler}
+              defaultValue="none"
+            >
+              <option value="none" disabled hidden>
+                select your Role
+              </option>
+              <option value="user">user</option>
+              <option value="worker">worker</option>
+            </select>
+          </div>
+
           <Input
             label="Email"
             input={{
+              placeholder: "Enter an Email",
               id: "email",
               onChange: changeEmailHandler,
-              type: "text",
+              type: "email",
+              required: true,
             }}
           />
           <Input
             label="Password"
             input={{
+              placeholder: "Enter a Password",
               id: "password",
               onChange: changePasswordHandler,
-              type: "text",
+              type: "password",
+              required: true,
             }}
           />
-          <input type="submit"></input>
-          <button onClick={showSignup}>signup</button>
+          <input type="submit" value="Login"></input>
+          <button onClick={showSignup}>signup page</button>
           {!isLoading && errror && <p>{errror.message}</p>}
         </form>
       )}

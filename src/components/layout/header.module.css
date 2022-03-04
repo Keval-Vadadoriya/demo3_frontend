@@ -6,6 +6,9 @@
   min-height: 50px;
   font-size: calc(9px + 1vmin);
   color: white;
+  position: sticky;
+  top: 0px;
+  z-index: 1;
 }
 
 .header ul {

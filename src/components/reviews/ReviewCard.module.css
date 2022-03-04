@@ -1,0 +1,8 @@
+.card {
+  /* text-decoration: none; */
+  background-color: beige;
+  transition: ease-out;
+}
+.reviews {
+  transition: ease-in;
+}
