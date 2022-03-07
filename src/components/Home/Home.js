@@ -1,9 +1,25 @@
 import { Link, Outlet } from "react-router-dom";
 import classes from "./Home.module.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { loginActions } from "../../store/login-slice";
 
 const Home = () => {
+  const dispatch = useDispatch();
   const role = useSelector((state) => state.login.role);
+  useEffect(() => {
+    return () => {
+      console.log("logout");
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("token");
+      dispatch(
+        loginActions.setLoginStatus({
+          isLoggedIn: false,
+          token: "",
+        })
+      );
+    };
+  }, [dispatch]);
 
   return (
     <div className={classes.x}>
@@ -15,9 +31,6 @@ const Home = () => {
           <li>
             <Link to="chats">Chats</Link>
           </li>
-          {/* <li>
-            <Link to="review">Reviews</Link>
-          </li> */}
           {role === "user" && (
             <li>
               <Link to="worker">Workers</Link>

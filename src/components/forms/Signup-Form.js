@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import useHttp from "../../custom-hooks/useHttp";
 import { loginActions } from "../../store/login-slice";
 import { userActions } from "../../store/user-slice";
@@ -29,10 +29,6 @@ const SignupForm = (props) => {
   const navigate = useNavigate();
   const [isLoading, errror, sendRequest] = useHttp();
 
-  const showLogin = () => {
-    navigate("/login", { replace: true });
-  };
-
   //Signup Request
   if (formIsValid) {
     let body =
@@ -52,29 +48,36 @@ const SignupForm = (props) => {
             address: location,
           };
     sendRequest({
-      url: "http://127.0.0.1:3001/signup",
+      url: `http://127.0.0.1:3001/signup?role=${role}`,
       method: "POST",
       body: body,
       headers: {
         "Content-Type": "application/json",
       },
     }).then((res) => {
-      dispatch(
-        loginActions.setLoginStatus({
-          isLoggedIn: true,
-          token: "Bearer " + res.token,
-        })
-      );
-      dispatch(
-        userActions.setLoggedInUser({
-          age: res.user.age,
-          email: res.user.email,
-          name: res.user.name,
-          _id: res.user._id,
-        })
-      );
-      console.log(res);
-      navigate("/home");
+      if (!errror) {
+        console.log(errror);
+        dispatch(
+          loginActions.setLoginStatus({
+            isLoggedIn: true,
+            token: "Bearer " + res.token,
+          })
+        );
+        dispatch(
+          userActions.setLoggedInUser({
+            age: res.user.age,
+            email: res.user.email,
+            name: res.user.name,
+            _id: res.user._id,
+          })
+        );
+
+        localStorage.setItem("isLoggedIn", true);
+        localStorage.setItem("token", "Bearer " + res.token);
+
+        console.log(res);
+        navigate("/home");
+      }
     });
     setFormIsValid(false);
   }
@@ -238,10 +241,10 @@ const SignupForm = (props) => {
           )}
           {role !== "user" && (
             <div className={classes.select}>
-              <label htmlFor="cars">Location</label>
+              <label htmlFor="location">Location</label>
               <select
-                name="cars"
-                id="cars"
+                name="location"
+                id="location"
                 onChange={changeLocationHandler}
                 defaultValue="none"
               >
@@ -257,10 +260,13 @@ const SignupForm = (props) => {
           )}
           <div></div>
           <input type="submit" value="Signup"></input>
-          <button onClick={showLogin}>login page</button>
+
           <button onClick={changeRole}>
-            {role === "user" ? "worker" : "user"}
+            {role === "user" ? "Want to work?" : "Want to hire?"}
           </button>
+          <p>
+            Already Have Account? <Link to="/login">login</Link>
+          </p>
           {!isLoading && errror && <p>{errror.message}</p>}
         </form>
       )}

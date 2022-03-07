@@ -54,20 +54,18 @@ const Review = () => {
   let reviewList;
   if (data) {
     reviewList = reviews.map((review) => (
-      // <Link to={`${worker._id}`} className={classes.link} key={worker._id}>
       <ReviewCard
         description={review.description}
         name={review.owner.name}
         rating={review.review}
         key={review._id}
       />
-      // </Link>
     ));
   }
   return (
-    <div className={classes.reviews}>
+    <div>
       {isLoading && <h1>hey</h1>}
-      {data && reviewList}
+      <div>{data && reviewList}</div>
       <div className={classes.addReview}>
         <form onSubmit={addReviewHandler}>
           <h1>Add Review</h1>
@@ -88,6 +86,7 @@ const Review = () => {
             onClick={changeReviewHandler}
             initialRating={initialRating}
           />
+          <br />
           <input type="submit" value="Add Review"></input>
         </form>
       </div>

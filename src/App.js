@@ -1,8 +1,9 @@
-import { Fragment } from "react";
-import { useSelector } from "react-redux";
+import { Fragment, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 
 import SignupForm from "./components/forms/Signup-Form";
+import { loginActions } from "./store/login-slice";
 import LoginForm from "./components/forms/Login-Form";
 import Header from "./components/layout/Header";
 import Worker from "./components/worker/Worker";
@@ -15,14 +16,23 @@ import WorkerProfile from "./components/worker/WorkerProfile";
 console.log("appU");
 
 function App() {
+  const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  useEffect(() => {
+    dispatch(
+      loginActions.setLoginStatus({
+        isLoggedIn: localStorage.getItem("isLoggedIn"),
+        token: localStorage.getItem("token"),
+      })
+    );
+  }, [dispatch]);
 
   return (
     <Fragment>
       <Header />
       <main>
         <Routes>
-          <Route path="" element={<h1>Welcome to Ecommerce</h1>} />
+          <Route path="/" element={<h1>Welcome to DemoProject</h1>} />
 
           <Route path="/signup" element={!isLoggedIn && <SignupForm />} />
           <Route path="/login" element={!isLoggedIn && <LoginForm />} />
@@ -37,6 +47,7 @@ function App() {
               </Route>
             </Route>
           </Route>
+          <Route path="*" element={<h1>Not Found</h1>} />
         </Routes>
       </main>
     </Fragment>

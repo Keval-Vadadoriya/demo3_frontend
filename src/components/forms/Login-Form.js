@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import { loginActions } from "../../store/login-slice";
@@ -21,7 +21,7 @@ const LoginForm = (props) => {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-  const [isLoading, errror, sendRequest] = useHttp();
+  const [isLoading, error, sendRequest] = useHttp();
 
   console.log("Login");
 
@@ -39,7 +39,8 @@ const LoginForm = (props) => {
       },
     })
       .then((res) => {
-        if (!errror) {
+        if (!error) {
+          console.log(error);
           dispatch(
             loginActions.setLoginStatus({
               isLoggedIn: true,
@@ -54,6 +55,8 @@ const LoginForm = (props) => {
               _id: res.user._id,
             })
           );
+          localStorage.setItem("isLoggedIn", true);
+          localStorage.setItem("token", "Bearer " + res.token);
           console.log(res);
           navigate("/home");
         }
@@ -64,10 +67,6 @@ const LoginForm = (props) => {
 
     setLoginFormIsValid(false);
   }
-
-  const showSignup = () => {
-    navigate("/signup", { replace: true });
-  };
 
   const changeRoleHandler = (event) => {
     dispatch(loginActions.setRole({ role: event.target.value }));
@@ -104,7 +103,7 @@ const LoginForm = (props) => {
   return (
     <div className={classes["form-container"]}>
       {isLoading && <p>Loading</p>}
-      {!isLoading && (
+      {
         <form onSubmit={onSubmitHandler} className={classes.form}>
           <h1>Login Form</h1>
 
@@ -115,6 +114,7 @@ const LoginForm = (props) => {
               id="role"
               onChange={changeRoleHandler}
               defaultValue="none"
+              required={true}
             >
               <option value="none" disabled hidden>
                 select your Role
@@ -145,10 +145,11 @@ const LoginForm = (props) => {
             }}
           />
           <input type="submit" value="Login"></input>
-          <button onClick={showSignup}>signup page</button>
-          {!isLoading && errror && <p>{errror.message}</p>}
+          <span>Don't Have Account? </span>
+          <Link to="/signup">signup</Link>
+          {!isLoading && error && <p>{error.message}</p>}
         </form>
-      )}
+      }
     </div>
   );
 };

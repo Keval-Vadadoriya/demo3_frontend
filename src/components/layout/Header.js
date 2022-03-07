@@ -14,15 +14,18 @@ const Header = () => {
     console.log(location);
   };
   const logoutHandler = () => {
-    // ctx.setIsLoggedIn(false);
-    // ctx.setToken("");
-    dispatch(
-      loginActions.setLoginStatus({
-        isLoggedIn: false,
-        token: "",
-      })
-    );
-    navigate("/signup");
+    if (window.confirm("Are You Sure?")) {
+      console.log("logout");
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("token");
+      dispatch(
+        loginActions.setLoginStatus({
+          isLoggedIn: false,
+          token: "",
+        })
+      );
+      navigate("/");
+    }
   };
   return (
     <header className={classes.header}>
