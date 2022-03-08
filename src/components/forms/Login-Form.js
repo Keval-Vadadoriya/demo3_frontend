@@ -57,6 +57,12 @@ const LoginForm = (props) => {
           );
           localStorage.setItem("isLoggedIn", true);
           localStorage.setItem("token", "Bearer " + res.token);
+          localStorage.setItem("role", role);
+          localStorage.setItem("age", res.user.age);
+          localStorage.setItem("email", res.user.email);
+          localStorage.setItem("name", res.user.name);
+          localStorage.setItem("_id", res.user._id);
+
           console.log(res);
           navigate("/home");
         }

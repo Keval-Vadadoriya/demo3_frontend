@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Outlet, useParams } from "react-router-dom";
 import useHttp from "../../custom-hooks/useHttp";
 let worker;
 function WorkerProfile() {
@@ -10,7 +10,6 @@ function WorkerProfile() {
     worker = await sendRequest({
       url: `http://127.0.0.1:3001/getworker/${workerid.workerid}`,
     });
-    console.log(worker);
     setData(true);
   }, []);
 
@@ -19,9 +18,9 @@ function WorkerProfile() {
     <div>
       {!data && <h1>Loading</h1>}
       {!isLoading && data && <h1>{worker.name}</h1>}
-      <Link to={`review/${workerid.workerid}`} className="btn btn-primary">
-        Reviews
-      </Link>
+      <Link to={`review/${workerid.workerid}`}>Reviews</Link>
+      <br />
+      <Link to={`/home/chats/${workerid.workerid}`}>Chat</Link>
     </div>
   );
 }

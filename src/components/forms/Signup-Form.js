@@ -45,7 +45,7 @@ const SignupForm = (props) => {
             password,
             age,
             profession,
-            address: location,
+            location,
           };
     sendRequest({
       url: `http://127.0.0.1:3001/signup?role=${role}`,
@@ -55,6 +55,7 @@ const SignupForm = (props) => {
         "Content-Type": "application/json",
       },
     }).then((res) => {
+      console.log(res);
       if (!errror) {
         console.log(errror);
         dispatch(
@@ -69,11 +70,17 @@ const SignupForm = (props) => {
             email: res.user.email,
             name: res.user.name,
             _id: res.user._id,
+            // user: res.user,
           })
         );
 
         localStorage.setItem("isLoggedIn", true);
         localStorage.setItem("token", "Bearer " + res.token);
+        localStorage.setItem("role", role);
+        localStorage.setItem("age", res.user.age);
+        localStorage.setItem("email", res.user.email);
+        localStorage.setItem("name", res.user.name);
+        localStorage.setItem("_id", res.user._id);
 
         console.log(res);
         navigate("/home");

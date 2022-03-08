@@ -5,13 +5,21 @@ import { useEffect } from "react";
 import { loginActions } from "../../store/login-slice";
 
 const Home = () => {
+  console.log("Home");
   const dispatch = useDispatch();
   const role = useSelector((state) => state.login.role);
   useEffect(() => {
     return () => {
       console.log("logout");
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("token");
+      localStorage.clear();
+
+      // localStorage.removeItem("isLoggedIn");
+      // localStorage.removeItem("token");
+      // localStorage.removeItem("role");
+      // localStorage.removeItem("age");
+      // localStorage.removeItem("email");
+      // localStorage.removeItem("name");
+      // localStorage.removeItem("_id");
       dispatch(
         loginActions.setLoginStatus({
           isLoggedIn: false,

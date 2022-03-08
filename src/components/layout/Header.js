@@ -16,8 +16,14 @@ const Header = () => {
   const logoutHandler = () => {
     if (window.confirm("Are You Sure?")) {
       console.log("logout");
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("token");
+      localStorage.clear();
+      // localStorage.removeItem("isLoggedIn");
+      // localStorage.removeItem("token");
+      // localStorage.removeItem("role");
+      // localStorage.removeItem("age");
+      // localStorage.removeItem("email");
+      // localStorage.removeItem("name");
+      // localStorage.removeItem("_id");
       dispatch(
         loginActions.setLoginStatus({
           isLoggedIn: false,

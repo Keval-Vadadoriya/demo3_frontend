@@ -3,11 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 const userSlice = createSlice({
   name: "login",
   initialState: {
-    age: 0,
-    email: "",
-    name: "",
-    _id: "",
+    age: localStorage.getItem("age"),
+    email: localStorage.getItem("email"),
+    name: localStorage.getItem("name"),
+    _id: localStorage.getItem("_id"),
   },
+
   reducers: {
     setLoggedInUser(state, action) {
       state.age = action.payload.age;

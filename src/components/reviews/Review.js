@@ -17,6 +17,8 @@ const Review = () => {
   const [initialRating, setInitialRating] = useState(0);
 
   const workerid = useParams();
+  console.log(ownerId);
+  console.log("ownerId");
 
   const changeDescriptionHandler = (event) => {
     setDescription(event.target.value);
@@ -52,7 +54,7 @@ const Review = () => {
     setData(true);
   }, [data]);
   let reviewList;
-  if (data) {
+  if (data && reviews) {
     reviewList = reviews.map((review) => (
       <ReviewCard
         description={review.description}
