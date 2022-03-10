@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import { loginActions } from "../../store/login-slice";
+import { socketActions } from "../../store/socket-slice";
 import { userActions } from "../../store/user-slice";
 
 import Input from "../UI/Input";
@@ -10,7 +11,7 @@ import classes from "./Form.module.css";
 import useHttp from "../../custom-hooks/useHttp";
 console.log("login2");
 
-const LoginForm = (props) => {
+const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginEmailIsValid, setLoginEmailIsValid] = useState(false);
   const [loginPassword, setLoginPassword] = useState("");
@@ -41,9 +42,11 @@ const LoginForm = (props) => {
       .then((res) => {
         if (!error) {
           console.log(error);
+          dispatch(socketActions.setSocket());
+
           dispatch(
             loginActions.setLoginStatus({
-              isLoggedIn: true,
+              // isLoggedIn: true,
               token: "Bearer " + res.token,
             })
           );
@@ -55,7 +58,7 @@ const LoginForm = (props) => {
               _id: res.user._id,
             })
           );
-          localStorage.setItem("isLoggedIn", true);
+          // localStorage.setItem("isLoggedIn", true);
           localStorage.setItem("token", "Bearer " + res.token);
           localStorage.setItem("role", role);
           localStorage.setItem("age", res.user.age);

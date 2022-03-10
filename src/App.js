@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { useSelector } from "react-redux";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 
 import SignupForm from "./components/forms/Signup-Form";
 import LoginForm from "./components/forms/Login-Form";
@@ -16,7 +16,7 @@ import WorkerProfile from "./components/worker/WorkerProfile";
 console.log("appU");
 
 function App() {
-  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  const token = useSelector((state) => state.login.token);
 
   return (
     <Fragment>
@@ -25,22 +25,26 @@ function App() {
         <Routes>
           <Route path="/" element={<h1>Welcome to DemoProject</h1>} />
 
-          <Route path="/signup" element={!isLoggedIn && <SignupForm />} />
-          <Route path="/login" element={!isLoggedIn && <LoginForm />} />
-          <Route path="/home" element={isLoggedIn && <Home />}>
-            <Route path="profile" element={<Profile />} />
-            <Route path="chats" element={<Chat />}>
-              {/* <Route index element={<Chat />} /> */}
-              <Route path=":workerid" element={<Chats />} />
-            </Route>
-            <Route path="worker">
-              <Route index element={<Worker />} />
-              <Route path=":workerid">
-                <Route index element={<WorkerProfile />} />
-                <Route path="review/:id" element={<Review />} />
+          <Route path="/signup" element={!token && <SignupForm />} />
+          <Route path="/login" element={!token && <LoginForm />} />
+          {token && (
+            <Route path="/home" element={token && <Home />}>
+              <Route path="profile" element={<Profile />} />
+              <Route path="chats" element={<Chat />}>
+                <Route path=":workerid" element={<Chats />} />
+              </Route>
+              <Route path="worker">
+                <Route index element={<Worker />} />
+                <Route path=":workerid">
+                  <Route index element={<WorkerProfile />} />
+                  <Route path="review/:id" element={<Review />} />
+                </Route>
               </Route>
             </Route>
-          </Route>
+          )}
+          {!token && (
+            <Route path="/home/*" element={<Navigate to="/login" />} />
+          )}
           <Route path="*" element={<h1>Not Found</h1>} />
         </Routes>
       </main>

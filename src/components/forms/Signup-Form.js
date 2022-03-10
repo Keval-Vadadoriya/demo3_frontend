@@ -60,7 +60,6 @@ const SignupForm = (props) => {
         console.log(errror);
         dispatch(
           loginActions.setLoginStatus({
-            isLoggedIn: true,
             token: "Bearer " + res.token,
           })
         );
@@ -70,11 +69,9 @@ const SignupForm = (props) => {
             email: res.user.email,
             name: res.user.name,
             _id: res.user._id,
-            // user: res.user,
           })
         );
 
-        localStorage.setItem("isLoggedIn", true);
         localStorage.setItem("token", "Bearer " + res.token);
         localStorage.setItem("role", role);
         localStorage.setItem("age", res.user.age);
@@ -267,8 +264,7 @@ const SignupForm = (props) => {
           )}
           <div></div>
           <input type="submit" value="Signup"></input>
-
-          <button onClick={changeRole}>
+          <button type="button" onClick={changeRole}>
             {role === "user" ? "Want to work?" : "Want to hire?"}
           </button>
           <p>

@@ -5,29 +5,27 @@ import { useEffect } from "react";
 import { loginActions } from "../../store/login-slice";
 
 const Home = () => {
-  console.log("Home");
   const dispatch = useDispatch();
-  const role = useSelector((state) => state.login.role);
+  const socket = useSelector((state) => state.socket.socket);
   useEffect(() => {
+    socket.emit("setId", userId);
     return () => {
       console.log("logout");
       localStorage.clear();
-
-      // localStorage.removeItem("isLoggedIn");
-      // localStorage.removeItem("token");
-      // localStorage.removeItem("role");
-      // localStorage.removeItem("age");
-      // localStorage.removeItem("email");
-      // localStorage.removeItem("name");
-      // localStorage.removeItem("_id");
+      socket.disconnect(userId);
+      socket.on("messagesss", (message) => {
+        console.log(message);
+      });
       dispatch(
         loginActions.setLoginStatus({
-          isLoggedIn: false,
           token: "",
         })
       );
     };
   }, [dispatch]);
+  console.log("Home");
+  const role = useSelector((state) => state.login.role);
+  const userId = useSelector((state) => state.user._id);
 
   return (
     <div className={classes.x}>

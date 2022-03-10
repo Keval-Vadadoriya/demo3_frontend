@@ -7,7 +7,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  const token = useSelector((state) => state.login.token);
 
   const loginHandler = () => {
     navigate("/login", { replace: true });
@@ -17,16 +17,8 @@ const Header = () => {
     if (window.confirm("Are You Sure?")) {
       console.log("logout");
       localStorage.clear();
-      // localStorage.removeItem("isLoggedIn");
-      // localStorage.removeItem("token");
-      // localStorage.removeItem("role");
-      // localStorage.removeItem("age");
-      // localStorage.removeItem("email");
-      // localStorage.removeItem("name");
-      // localStorage.removeItem("_id");
       dispatch(
         loginActions.setLoginStatus({
-          isLoggedIn: false,
           token: "",
         })
       );
@@ -40,7 +32,7 @@ const Header = () => {
         <li>
           <button onClick={loginHandler}>Login</button>
         </li>
-        {isLoggedIn && (
+        {token && (
           <li>
             <button onClick={logoutHandler}>Logout</button>
           </li>
