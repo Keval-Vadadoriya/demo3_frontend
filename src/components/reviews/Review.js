@@ -17,9 +17,6 @@ const Review = () => {
   const [initialRating, setInitialRating] = useState(0);
 
   const workerid = useParams();
-  console.log(ownerId);
-  console.log("ownerId");
-
   const changeDescriptionHandler = (event) => {
     setDescription(event.target.value);
   };

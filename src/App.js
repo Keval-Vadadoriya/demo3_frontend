@@ -17,29 +17,38 @@ console.log("appU");
 
 function App() {
   const token = useSelector((state) => state.login.token);
+  const role = useSelector((state) => state.login.role);
 
   return (
     <Fragment>
       <Header />
       <main>
         <Routes>
-          <Route path="/" element={<h1>Welcome to DemoProject</h1>} />
+          {!token && (
+            <Route path="/" element={<h1>Welcome to DemoProject</h1>} />
+          )}
+          {token && <Route path="/" element={<Navigate to="home" />} />}
 
           <Route path="/signup" element={!token && <SignupForm />} />
           <Route path="/login" element={!token && <LoginForm />} />
           {token && (
-            <Route path="/home" element={token && <Home />}>
+            <Route path="/home" element={<Home />}>
               <Route path="profile" element={<Profile />} />
               <Route path="chats" element={<Chat />}>
                 <Route path=":workerid" element={<Chats />} />
               </Route>
-              <Route path="worker">
-                <Route index element={<Worker />} />
-                <Route path=":workerid">
-                  <Route index element={<WorkerProfile />} />
-                  <Route path="review/:id" element={<Review />} />
+              {role === "user" && (
+                <Route path="worker">
+                  <Route index element={<Worker />} />
+                  <Route path=":workerid">
+                    <Route index element={<WorkerProfile />} />
+                    <Route path="review/:id" element={<Review />} />
+                  </Route>
                 </Route>
-              </Route>
+              )}
+              {role === "worker" && (
+                <Route path="worker/*" element={<h1>Unauthorized</h1>} />
+              )}
             </Route>
           )}
           {!token && (

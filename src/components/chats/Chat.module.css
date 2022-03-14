@@ -1,7 +1,7 @@
 .x {
   display: flex;
-  width: 80vw;
-  height: 80vh;
+  width: 100%;
+  height: 100%;
   background-color: rgb(226, 233, 238);
   /* overflow: hidden; */
 }
@@ -10,12 +10,16 @@
   /* background-color: rgb(21, 255, 0); */
   /* float: left; */
   width: 80%;
+  height: 100%;
   margin: 10px;
   padding: 10px;
+  /* overflow: scroll; */
 }
 .side2 {
   background-color: rgb(223, 222, 211);
   width: 20%;
   height: 100%;
+  /* overflow: scroll; */
+
   /* float: left; */
 }

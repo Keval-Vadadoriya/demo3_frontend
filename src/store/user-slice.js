@@ -7,6 +7,7 @@ const userSlice = createSlice({
     email: localStorage.getItem("email"),
     name: localStorage.getItem("name"),
     _id: localStorage.getItem("_id"),
+    avatar: localStorage.getItem("avatar"),
   },
 
   reducers: {
@@ -15,6 +16,7 @@ const userSlice = createSlice({
       state.email = action.payload.email;
       state.name = action.payload.name;
       state._id = action.payload._id;
+      state.avatar = action.payload.avatar;
     },
   },
 });

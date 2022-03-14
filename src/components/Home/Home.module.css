@@ -1,7 +1,10 @@
 .x {
   display: flex;
+  position: fixed;
+  /* top: 20vh; */
   width: 100vw;
-  height: 100vh;
+  height: 90vh;
+  /* overflow: scroll; */
 
   /* background-color: red; */
 }
@@ -30,16 +33,10 @@
 .side2 {
   /* background-color: rgb(21, 255, 0); */
   /* float: left; */
-  width: 60%;
+  width: 85%;
+  height: 100%;
   margin: 10px;
   padding: 10px;
   height: fit-content;
-}
-.side3 {
-  /* background-color: rgb(255, 238, 0); */
-  /* float: left; */
-  width: 25%;
-}
-.col {
-  background-color: black;
+  overflow: scroll;
 }

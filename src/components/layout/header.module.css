@@ -3,12 +3,13 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  min-height: 50px;
+  /* min-height: 50px; */
   font-size: calc(9px + 1vmin);
   color: white;
   position: sticky;
   top: 0px;
   z-index: 1;
+  height: 10vh;
 }
 
 .header ul {

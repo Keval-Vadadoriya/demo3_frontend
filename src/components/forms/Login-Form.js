@@ -40,6 +40,7 @@ const LoginForm = () => {
       },
     })
       .then((res) => {
+        console.log(res);
         if (!error) {
           console.log(error);
           dispatch(socketActions.setSocket());
@@ -56,6 +57,7 @@ const LoginForm = () => {
               email: res.user.email,
               name: res.user.name,
               _id: res.user._id,
+              avatar: res.user.avatar,
             })
           );
           // localStorage.setItem("isLoggedIn", true);
@@ -65,6 +67,7 @@ const LoginForm = () => {
           localStorage.setItem("email", res.user.email);
           localStorage.setItem("name", res.user.name);
           localStorage.setItem("_id", res.user._id);
+          localStorage.setItem("avatar", res.user.avatar);
 
           console.log(res);
           navigate("/home");
