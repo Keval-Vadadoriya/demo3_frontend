@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import useHttp from "../../custom-hooks/useHttp";
 import { loginActions } from "../../store/login-slice";
-import { userActions } from "../../store/user-slice";
+import { signupUser } from "../../store/actions/signup-actions";
 
 import Input from "../UI/Input";
 
@@ -11,26 +10,36 @@ import classes from "./Form.module.css";
 
 const SignupForm = (props) => {
   const [name, setName] = useState("");
-  const [nameIsValid, setNameIsValid] = useState(false);
   const [email, setEmail] = useState("");
-  const [emailIsValid, setEmailIsValid] = useState(false);
   const [password, setPassword] = useState("");
-  const [passwordIsValid, setPasswordIsValid] = useState(false);
   const [age, setAge] = useState("");
-  const [ageIsValid, setAgeIsValid] = useState(false);
   const [profession, setProfession] = useState("");
   const [professionIsValid, setProfessionIsValid] = useState(false);
   const [location, setLocation] = useState("");
   const [locationIsValid, setLocationIsValid] = useState(false);
-  const [formIsValid, setFormIsValid] = useState(false);
   const role = useSelector((state) => state.login.role);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-  const [isLoading, errror, sendRequest] = useHttp();
+  const { status, errorMessage } = useSelector((state) => state.signupuser);
+  if (status === "succeeded") {
+    navigate("/login");
+  }
 
-  //Signup Request
-  if (formIsValid) {
+  //changing Role
+  const changeRole = () => {
+    if (role === "user") {
+      dispatch(loginActions.setRole({ role: "worker" }));
+    }
+    if (role === "worker") {
+      dispatch(loginActions.setRole({ role: "user" }));
+    }
+  };
+
+  //Submit Handler
+  const SubmitHandler = (event) => {
+    event.preventDefault();
+
     let body =
       role === "user"
         ? {
@@ -47,122 +56,30 @@ const SignupForm = (props) => {
             profession,
             location,
           };
-    sendRequest({
-      url: `http://127.0.0.1:3001/signup?role=${role}`,
-      method: "POST",
-      body: body,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((res) => {
-      console.log(res);
-      if (!errror) {
-        console.log(errror);
-        dispatch(
-          loginActions.setLoginStatus({
-            token: "Bearer " + res.token,
-          })
-        );
-        dispatch(
-          userActions.setLoggedInUser({
-            age: res.user.age,
-            email: res.user.email,
-            name: res.user.name,
-            _id: res.user._id,
-            avatar: res.user.avatar,
-          })
-        );
-
-        localStorage.setItem("token", "Bearer " + res.token);
-        localStorage.setItem("role", role);
-        localStorage.setItem("age", res.user.age);
-        localStorage.setItem("email", res.user.email);
-        localStorage.setItem("name", res.user.name);
-        localStorage.setItem("_id", res.user._id);
-        localStorage.setItem("avatar", res.user.avatar);
-
-        console.log(res);
-        navigate("/home");
-      }
-    });
-    setFormIsValid(false);
-  }
-
-  //changing Role
-  const changeRole = () => {
-    if (role === "user") {
-      dispatch(loginActions.setRole({ role: "worker" }));
-    }
     if (role === "worker") {
-      dispatch(loginActions.setRole({ role: "user" }));
-    }
-  };
-
-  //Submit Handler
-  const SubmitHandler = (event) => {
-    event.preventDefault();
-    if (role === "user") {
-      if (
-        nameIsValid === true &&
-        emailIsValid === true &&
-        passwordIsValid === true &&
-        ageIsValid === true
-      ) {
-        setFormIsValid(true);
-      } else {
-        setFormIsValid(false);
+      if (locationIsValid && professionIsValid) {
+        dispatch(signupUser(body));
       }
     } else {
-      if (
-        nameIsValid === true &&
-        emailIsValid === true &&
-        passwordIsValid === true &&
-        ageIsValid === true &&
-        professionIsValid === true &&
-        locationIsValid === true
-      ) {
-        setFormIsValid(true);
-      } else {
-        setFormIsValid(false);
-      }
+      dispatch(signupUser(body));
     }
   };
 
   //Validations
   const changeNameHandler = (event) => {
     setName(event.target.value);
-    if (event.target.value !== "") {
-      setNameIsValid(true);
-    } else {
-      setNameIsValid(false);
-    }
   };
 
   const changeEmailHandler = (event) => {
     setEmail(event.target.value);
-    if (event.target.value.includes("@")) {
-      setEmailIsValid(true);
-    } else {
-      setEmailIsValid(false);
-    }
   };
 
   const changePasswordHandler = (event) => {
     setPassword(event.target.value);
-    if (event.target.value.length > 6) {
-      setPasswordIsValid(true);
-    } else {
-      setPasswordIsValid(false);
-    }
   };
 
   const changeAgeHandler = (event) => {
     setAge(event.target.value);
-    if (event.target.value > 10) {
-      setAgeIsValid(true);
-    } else {
-      setAgeIsValid(false);
-    }
   };
 
   const changeProfessionHandler = (event) => {
@@ -186,8 +103,8 @@ const SignupForm = (props) => {
   //return
   return (
     <div className={classes["form-container"]}>
-      {isLoading && <p>Loading</p>}
-      {!isLoading && (
+      {status === "loading" && <p>Loading</p>}
+      {status !== "loading" && (
         <form onSubmit={SubmitHandler} className={classes.form}>
           <h1>Signup Form</h1>
           <Input
@@ -216,6 +133,7 @@ const SignupForm = (props) => {
               id: "Password",
               onChange: changePasswordHandler,
               type: "password",
+              minLength: 7,
             }}
           />
           <Input
@@ -225,6 +143,7 @@ const SignupForm = (props) => {
               id: "Age",
               onChange: changeAgeHandler,
               type: "text",
+              min: 18,
             }}
           />
           {role !== "user" && (
@@ -235,6 +154,7 @@ const SignupForm = (props) => {
                 id="profession"
                 onChange={changeProfessionHandler}
                 defaultValue="none"
+                required
               >
                 <option value="none" disabled hidden>
                   select your profession
@@ -253,6 +173,7 @@ const SignupForm = (props) => {
                 id="location"
                 onChange={changeLocationHandler}
                 defaultValue="none"
+                required={true}
               >
                 <option value="none" disabled hidden>
                   select your location
@@ -272,7 +193,7 @@ const SignupForm = (props) => {
           <p>
             Already Have Account? <Link to="/login">login</Link>
           </p>
-          {!isLoading && errror && <p>{errror.message}</p>}
+          {status !== "loading" && errorMessage && <p>{errorMessage}</p>}
         </form>
       )}
     </div>

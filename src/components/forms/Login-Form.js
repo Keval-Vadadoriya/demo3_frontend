@@ -1,120 +1,74 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import { loginActions } from "../../store/login-slice";
-import { socketActions } from "../../store/socket-slice";
 import { userActions } from "../../store/user-slice";
+import { loggedInUser } from "../../store/actions/login-actions";
 
 import Input from "../UI/Input";
 import classes from "./Form.module.css";
-import useHttp from "../../custom-hooks/useHttp";
 console.log("login2");
 
 const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState("");
-  const [loginEmailIsValid, setLoginEmailIsValid] = useState(false);
   const [loginPassword, setLoginPassword] = useState("");
-  const [loginPasswordIsValid, setLoginPasswordIsValid] = useState(false);
-  const [loginFormIsValid, setLoginFormIsValid] = useState(false);
 
   const role = useSelector((state) => state.login.role);
+  const { status, user, errorMessage } = useSelector(
+    (state) => state.loginuser
+  );
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-  const [isLoading, error, sendRequest] = useHttp();
 
   console.log("Login");
-
+  console.log(user, status, errorMessage);
   //Login Request
-  if (loginFormIsValid) {
-    sendRequest({
-      url: `http://127.0.0.1:3001/login?role=${role}`,
-      method: "POST",
-      body: {
-        email: loginEmail,
-        password: loginPassword,
-      },
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        console.log(res);
-        if (!error) {
-          console.log(error);
-          dispatch(socketActions.setSocket());
+  if (user) {
+    localStorage.setItem("userInfo", JSON.stringify(user.user));
+    localStorage.setItem("token", user.token);
+    localStorage.setItem("role", role);
 
-          dispatch(
-            loginActions.setLoginStatus({
-              // isLoggedIn: true,
-              token: "Bearer " + res.token,
-            })
-          );
-          dispatch(
-            userActions.setLoggedInUser({
-              age: res.user.age,
-              email: res.user.email,
-              name: res.user.name,
-              _id: res.user._id,
-              avatar: res.user.avatar,
-            })
-          );
-          // localStorage.setItem("isLoggedIn", true);
-          localStorage.setItem("token", "Bearer " + res.token);
-          localStorage.setItem("role", role);
-          localStorage.setItem("age", res.user.age);
-          localStorage.setItem("email", res.user.email);
-          localStorage.setItem("name", res.user.name);
-          localStorage.setItem("_id", res.user._id);
-          localStorage.setItem("avatar", res.user.avatar);
-
-          console.log(res);
-          navigate("/home");
-        }
+    dispatch(
+      loginActions.setLoginStatus({
+        token: "Bearer " + user.token,
       })
-      .catch((error) => {
-        console.log(error);
-      });
+    );
+    dispatch(
+      userActions.setLoggedInUser({
+        age: user.user.age,
+        email: user.user.email,
+        name: user.user.name,
+        _id: user.user._id,
+        avatar: user.user.avatar,
+      })
+    );
 
-    setLoginFormIsValid(false);
+    navigate("/home");
   }
 
-  const changeRoleHandler = (event) => {
-    dispatch(loginActions.setRole({ role: event.target.value }));
-  };
   //Submit Handler
   const onSubmitHandler = (event) => {
     event.preventDefault();
-    if (loginEmailIsValid === true && loginPasswordIsValid === true) {
-      setLoginFormIsValid(true);
-    } else {
-      setLoginFormIsValid(false);
-    }
+    dispatch(loggedInUser({ role, loginEmail, loginPassword }));
   };
 
-  //validations
+  // validations
+  const changeRoleHandler = (event) => {
+    dispatch(loginActions.setRole({ role: event.target.value }));
+  };
   const changeEmailHandler = (event) => {
     setLoginEmail(event.target.value);
-    if (event.target.value.includes("@")) {
-      setLoginEmailIsValid(true);
-    } else {
-      setLoginEmailIsValid(false);
-    }
   };
 
   const changePasswordHandler = (event) => {
     setLoginPassword(event.target.value);
-    if (event.target.value.length > 6) {
-      setLoginPasswordIsValid(true);
-    } else {
-      setLoginPasswordIsValid(false);
-    }
   };
 
   return (
     <div className={classes["form-container"]}>
-      {isLoading && <p>Loading</p>}
+      {status === "loading" && <p>Loading</p>}
       {
         <form onSubmit={onSubmitHandler} className={classes.form}>
           <h1>Login Form</h1>
@@ -154,12 +108,13 @@ const LoginForm = () => {
               onChange: changePasswordHandler,
               type: "password",
               required: true,
+              minLength: 7,
             }}
           />
           <input type="submit" value="Login"></input>
           <span>Don't Have Account? </span>
           <Link to="/signup">signup</Link>
-          {!isLoading && error && <p>{error.message}</p>}
+          {status !== "loading" && errorMessage && <p>{errorMessage}</p>}
         </form>
       }
     </div>

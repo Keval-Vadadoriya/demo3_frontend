@@ -1,33 +1,21 @@
 import { Fragment, useEffect, useState } from "react";
 import { Outlet, Link } from "react-router-dom";
 import classes from "./Chat.module.css";
-import { useSelector } from "react-redux";
-import useHttp from "../../custom-hooks/useHttp";
+import { useSelector, useDispatch } from "react-redux";
 import ChatListCard from "./ChatListCard";
-let chatList;
+import { getChatList } from "../../store/actions/chat-actions";
 const Chat = () => {
-  const [data, setData] = useState(false);
-  const socket = useSelector((state) => state.socket.socket);
-  const [isLoading, error, sendRequest] = useHttp();
   const userId = useSelector((state) => state.user._id);
   const role = useSelector((state) => state.login.role);
+  const { status, chatList, errorMessage } = useSelector((state) => state.chat);
+  const dispatch = useDispatch();
   useEffect(async () => {
-    chatList = await sendRequest({
-      url: `http://127.0.0.1:3001/getchatlist/${userId}?role=${role}`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    setData(true);
-    socket.on("FromAPI", (data) => {
-      console.log(data);
-    });
-    console.log(chatList);
+    dispatch(getChatList({ userId, role }));
   }, []);
 
   console.log("chat");
   let chatListUi;
-  if (data && chatList) {
+  if (chatList) {
     chatListUi = chatList[role === "user" ? "workers" : "users"].map(
       (worker) => (
         <Link to={`/home/chats/${worker._id}`} key={worker._id}>
@@ -46,7 +34,7 @@ const Chat = () => {
         </div>
         <div className={classes.side2}>
           <h1>Chat list</h1>
-          {data && chatListUi}
+          {chatList && chatListUi}
         </div>
       </div>
     </Fragment>

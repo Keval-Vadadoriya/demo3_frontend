@@ -2,6 +2,7 @@ import classes from "./header.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { loginActions } from "../../store/login-slice";
 import { useDispatch, useSelector } from "react-redux";
+import { loginuserActions } from "../../store/actions/login-actions";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const Header = () => {
           token: "",
         })
       );
+      dispatch(loginuserActions.setUser());
       navigate("/");
     }
   };

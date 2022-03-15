@@ -1,16 +1,21 @@
 import React, { Fragment, useEffect, useState } from "react";
 import WorkerCard from "./WorkerCard";
-import useHttp from "../../custom-hooks/useHttp";
 import { Link } from "react-router-dom";
 import classes from "./Worker.module.css";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getAllWorkers,
+  filterWorkers,
+} from "../../store/actions/workers-action";
 
-let workers;
 const Worker = () => {
-  const [data, setData] = useState(false);
-  const [isLoading, errror, sendRequest] = useHttp();
   const [location, setLocation] = useState("");
   const [profession, setProfession] = useState("");
   const [review, setReview] = useState("");
+  const dispatch = useDispatch();
+  const { status, workers, errorMessage } = useSelector(
+    (state) => state.workerslist
+  );
   console.log("sdkf", profession);
 
   const changeLocationHandler = (event) => {
@@ -27,27 +32,16 @@ const Worker = () => {
     setReview("");
     setProfession("");
   };
-  const filterWorkers = async (event) => {
+  const filterWorkersBy = async (event) => {
     event.preventDefault();
-    setData(false);
-    workers = await sendRequest({
-      url: `http://127.0.0.1:3001/filterworkers?${
-        location ? `location=${location}` : ""
-      }&&${profession ? `profession=${profession}` : ""}&&${
-        review ? `review=${review}` : ""
-      }`,
-    });
-    setData(true);
+    dispatch(filterWorkers({ location, profession, review }));
   };
 
   useEffect(async () => {
-    workers = await sendRequest({
-      url: `http://127.0.0.1:3001/getallworkers`,
-    });
-    setData(true);
+    dispatch(getAllWorkers());
   }, []);
   let workerList;
-  if (data && workers) {
+  if (workers) {
     workerList = workers.map((worker) => (
       <Link to={`${worker._id}`} className={classes.link} key={worker._id}>
         <WorkerCard name={worker.name} profession={worker.profession} />
@@ -58,7 +52,7 @@ const Worker = () => {
   return (
     <Fragment>
       <div>
-        <form onSubmit={filterWorkers}>
+        <form onSubmit={filterWorkersBy}>
           <h1>Filter By</h1>
 
           <select
@@ -106,8 +100,9 @@ const Worker = () => {
         </form>
       </div>
       <div>
-        {isLoading && <h1>hey</h1>}
-        {data && workerList}
+        {status === "loading" && <h1>Loading</h1>}
+        {workerList}
+        {errorMessage && <p>{errorMessage}</p>}
       </div>
     </Fragment>
   );
