@@ -12,6 +12,8 @@ const SignupForm = (props) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [contact, setContact] = useState("");
+  const [avatar, setAvatar] = useState("");
   const [age, setAge] = useState("");
   const [profession, setProfession] = useState("");
   const [professionIsValid, setProfessionIsValid] = useState(false);
@@ -25,7 +27,7 @@ const SignupForm = (props) => {
   if (status === "succeeded") {
     navigate("/login");
   }
-
+  console.log(avatar);
   //changing Role
   const changeRole = () => {
     if (role === "user") {
@@ -39,29 +41,34 @@ const SignupForm = (props) => {
   //Submit Handler
   const SubmitHandler = (event) => {
     event.preventDefault();
+    const formData = new FormData();
+    if (role === "user") {
+      formData.append("avatar", avatar);
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("contact", contact);
+      formData.append("age", age);
+      // formData.append("profession", profession);
+      // formData.append("location", location);
+    }
+    if (role === "worker") {
+      formData.append("avatar", avatar);
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("contact", contact);
+      formData.append("age", age);
+      formData.append("profession", profession);
+      formData.append("location", location);
+    }
 
-    let body =
-      role === "user"
-        ? {
-            name,
-            email,
-            password,
-            age,
-          }
-        : {
-            name,
-            email,
-            password,
-            age,
-            profession,
-            location,
-          };
     if (role === "worker") {
       if (locationIsValid && professionIsValid) {
-        dispatch(signupUser(body));
+        dispatch(signupUser({ body: formData, role }));
       }
     } else {
-      dispatch(signupUser(body));
+      dispatch(signupUser({ body: formData, role }));
     }
   };
 
@@ -81,7 +88,12 @@ const SignupForm = (props) => {
   const changeAgeHandler = (event) => {
     setAge(event.target.value);
   };
-
+  const changeContactHandler = (event) => {
+    setContact(event.target.value);
+  };
+  const changeAvatarHandler = (event) => {
+    setAvatar(event.target.files[0]);
+  };
   const changeProfessionHandler = (event) => {
     setProfession(event.target.value);
     if (event.target.value !== "none") {
@@ -105,14 +117,21 @@ const SignupForm = (props) => {
     <div className={classes["form-container"]}>
       {status === "loading" && <p>Loading</p>}
       {status !== "loading" && (
-        <form onSubmit={SubmitHandler} className={classes.form}>
+        <form
+          action="/signup"
+          method="post"
+          encType="multipart/form-data"
+          onSubmit={SubmitHandler}
+          className={classes.form}
+        >
           <h1>Signup Form</h1>
           <Input
             label="Name"
             input={{
               placeholder: "name",
               required: true,
-              id: "Name",
+              id: "name",
+              name: "name",
               onChange: changeNameHandler,
               type: "text",
             }}
@@ -121,7 +140,8 @@ const SignupForm = (props) => {
             label="Email"
             input={{
               placeholder: "Enter an Email",
-              id: "Email",
+              id: "email",
+              name: "email",
               onChange: changeEmailHandler,
               type: "email",
             }}
@@ -130,17 +150,30 @@ const SignupForm = (props) => {
             label="Password"
             input={{
               placeholder: "Enter a Password",
-              id: "Password",
+              id: "password",
+              name: "password",
               onChange: changePasswordHandler,
               type: "password",
               minLength: 7,
             }}
           />
           <Input
+            label="Contact"
+            input={{
+              placeholder: "Enter a Password",
+              id: "contact",
+              name: "contact",
+              onChange: changeContactHandler,
+              type: "tel",
+              pattern: "[6-9]{1}[0-9]{9}",
+            }}
+          />
+          <Input
             label="Age"
             input={{
               placeholder: "Enter an Age",
-              id: "Age",
+              id: "age",
+              name: "age",
               onChange: changeAgeHandler,
               type: "text",
               min: 18,
@@ -185,6 +218,16 @@ const SignupForm = (props) => {
               </select>
             </div>
           )}
+          <Input
+            label="avatar"
+            input={{
+              type: "file",
+              id: "avatar",
+              name: "avatar",
+              accept: "image/png, image/jpeg",
+              onChange: changeAvatarHandler,
+            }}
+          />
           <div></div>
           <input type="submit" value="Signup"></input>
           <button type="button" onClick={changeRole}>

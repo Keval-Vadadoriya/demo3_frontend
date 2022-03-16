@@ -99,7 +99,7 @@ const Worker = () => {
           <button onClick={clearFilter}>clear</button>
         </form>
       </div>
-      <div>
+      <div className={classes.workerlist}>
         {status === "loading" && <h1>Loading</h1>}
         {workerList}
         {errorMessage && <p>{errorMessage}</p>}

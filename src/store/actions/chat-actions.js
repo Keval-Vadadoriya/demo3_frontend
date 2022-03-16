@@ -15,7 +15,7 @@ export const getChatList = createAsyncThunk(
 );
 
 export const addToChatList = createAsyncThunk(
-  "workers/addToChatList",
+  "chat/addToChatList",
   async ({ userId, role, receiverId }, { getState }) => {
     const response = await fetch(
       `http://127.0.0.1:3001/getchats/${userId}?role=${role}&&id=${receiverId}`
@@ -29,7 +29,7 @@ export const addToChatList = createAsyncThunk(
   }
 );
 export const getChats = createAsyncThunk(
-  "workers/getChats",
+  "chat/getChats",
   async ({ userId, role, receiverId }, { getState }) => {
     const response = await fetch(
       `http://127.0.0.1:3001/getchats/${userId}?role=${role}&&id=${receiverId}`
@@ -52,8 +52,15 @@ export const chatSlice = createSlice({
     chats: null,
   },
   reducers: {
-    addChat(state, action) {
-      state.chats = state.chats.push(action.payload.message);
+    setChat(state, action) {
+      state.chats.push(action.payload.message);
+    },
+    setStatus(state, action) {
+      const index = state.chats.findIndex(
+        (chat) => chat._id === action.payload._id
+      );
+      console.log(index);
+      state.chats[index].status = action.payload.status;
     },
   },
   extraReducers: {

@@ -4,7 +4,8 @@ import Input from "../UI/Input";
 import { useSelector, useDispatch } from "react-redux";
 import classes from "./Chats.module.css";
 import { getChats, addToChatList } from "../../store/actions/chat-actions";
-import chatActions from "../../store/actions/chat-actions";
+import { chatActions } from "../../store/actions/chat-actions";
+import { isPending } from "@reduxjs/toolkit";
 
 function Chats() {
   const receiverId = useParams();
@@ -26,11 +27,11 @@ function Chats() {
   }, [chats]);
   useEffect(async () => {
     socket.on("messag", (message) => {
-      console.log(message);
-      socket.emit("delivered");
-      console.log("hey");
-      dispatch(chatActions.addChat({ message }));
-      // setMessage2((x) => [...x, message]);
+      socket.emit("delivered", message._id, userId, receiverId.workerid, role);
+      dispatch(chatActions.setChat({ message }));
+    });
+    socket.on("messageDelivered", (_id) => {
+      dispatch(chatActions.setStatus({ status: "delivered", _id }));
     });
 
     //add to chat list
@@ -44,9 +45,6 @@ function Chats() {
   useEffect(async () => {
     dispatch(getChats({ userId, role, receiverId: receiverId.workerid }));
 
-    // if (chats) {
-    //   setMessage2((x) => [...chats]);
-    // }
     console.log(chats);
   }, [receiverId.workerid]);
   console.log("Chatssssssss");
@@ -54,15 +52,17 @@ function Chats() {
   const changeMessageHandler = (event) => {
     setMessage(event.target.value);
   };
-
+  // let createMessage;
   const sendMessageHandler = async (event) => {
     event.preventDefault();
-    const createMessage = {
+    let createMessage = {
       message,
       time: new Date().getTime(),
       owner: userId,
       role: role === "user" ? "User" : "Worker",
+      status: "pending",
     };
+
     socket.emit(
       "message",
       createMessage,
@@ -70,11 +70,15 @@ function Chats() {
       receiverId.workerid,
       role,
       (response) => {
+        dispatch(chatActions.setChat({ message: response.message }));
+
+        // dispatch(
+        //   chatActions.setStatus({ status: response.status, _id: response._id })
+        // );
         console.log(response.status);
       }
     );
-    dispatch(chatActions.addChat({ message: createMessage }));
-    // setMessage2((x) => [...x, createMessage]);
+    //dispatch(chatActions.setChat({ message: createMessage }));
 
     console.log(chats);
   };
@@ -94,6 +98,9 @@ function Chats() {
             <span
               className={classes.time}
             >{`${date.getHours()}:${date.getMinutes()}`}</span>
+            {message.owner === userId && (
+              <span className={classes.time}>{message.status}</span>
+            )}
           </p>
         </div>
       );

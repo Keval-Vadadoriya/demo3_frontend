@@ -9,17 +9,15 @@
 .side1 {
   /* background-color: rgb(21, 255, 0); */
   /* float: left; */
-  width: 80%;
-  height: 100%;
+  width: 80vw;
+  height: 90vh;
   margin: 10px;
   padding: 10px;
   /* overflow: scroll; */
 }
 .side2 {
   background-color: rgb(223, 222, 211);
-  width: 20%;
-  height: 100%;
-  /* overflow: scroll; */
-
-  /* float: left; */
+  width: 20vw;
+  height: 90vh;
+  overflow: scroll;
 }

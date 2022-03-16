@@ -56,7 +56,7 @@ const Review = () => {
     ));
   }
   return (
-    <div>
+    <div className={classes.reviewlist}>
       {errorMessage && <p>{errorMessage}</p>}
       {status === "loading" && <h1>hey</h1>}
       <div>{reviews && reviewList}</div>
