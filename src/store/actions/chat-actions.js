@@ -18,7 +18,10 @@ export const addToChatList = createAsyncThunk(
   "chat/addToChatList",
   async ({ userId, role, receiverId }, { getState }) => {
     const response = await fetch(
-      `http://127.0.0.1:3001/getchats/${userId}?role=${role}&&id=${receiverId}`
+      `http://127.0.0.1:3001/addtochatlist/${userId}?role=${role}&&id=${receiverId}`,
+      {
+        method: "POST",
+      }
     );
 
     const data = await response.json();
@@ -39,7 +42,8 @@ export const getChats = createAsyncThunk(
     if (response.ok === false) {
       throw new Error(data.Error);
     }
-    return data;
+    const op = role === "user" ? "worker" : "user";
+    return { data, op };
   }
 );
 
@@ -50,6 +54,7 @@ export const chatSlice = createSlice({
     errorMessage: "",
     chatList: null,
     chats: null,
+    chatsOwner: "",
   },
   reducers: {
     setChat(state, action) {
@@ -59,7 +64,7 @@ export const chatSlice = createSlice({
       const index = state.chats.findIndex(
         (chat) => chat._id === action.payload._id
       );
-      console.log(index);
+      // console.log(index);
       state.chats[index].status = action.payload.status;
     },
   },
@@ -88,7 +93,8 @@ export const chatSlice = createSlice({
     },
     [getChats.fulfilled]: (state, action) => {
       state.status = "succeeded";
-      state.chats = action.payload;
+      state.chats = action.payload.data.chats;
+      state.chatsOwner = action.payload.data[action.payload.op];
     },
     [getChats.pending]: (state, action) => {
       state.status = "loading";

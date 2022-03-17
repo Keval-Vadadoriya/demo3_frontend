@@ -1,5 +1,5 @@
-import { Fragment, useEffect, useState } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Fragment, useEffect } from "react";
+import { Outlet, Link, useParams } from "react-router-dom";
 import classes from "./Chat.module.css";
 import { useSelector, useDispatch } from "react-redux";
 import ChatListCard from "./ChatListCard";
@@ -8,12 +8,13 @@ const Chat = () => {
   const userId = useSelector((state) => state.user._id);
   const role = useSelector((state) => state.login.role);
   const { status, chatList, errorMessage } = useSelector((state) => state.chat);
+  const workerId = useParams();
+  console.log(workerId);
   const dispatch = useDispatch();
   useEffect(async () => {
     dispatch(getChatList({ userId, role }));
-  }, []);
+  }, [workerId.workerid]);
 
-  console.log("chat");
   let chatListUi;
   if (chatList) {
     chatListUi = chatList[role === "user" ? "workers" : "users"].map(

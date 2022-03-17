@@ -8,7 +8,6 @@ import { loggedInUser } from "../../store/actions/login-actions";
 
 import Input from "../UI/Input";
 import classes from "./Form.module.css";
-console.log("login2");
 
 const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState("");
@@ -22,8 +21,6 @@ const LoginForm = () => {
 
   const navigate = useNavigate();
 
-  console.log("Login");
-  console.log(user, status, errorMessage);
   //Login Request
   if (user) {
     localStorage.setItem("userInfo", JSON.stringify(user.user));

@@ -22,7 +22,6 @@ const Review = () => {
     setDescription(event.target.value);
   };
   const changeReviewHandler = (value) => {
-    console.log(value);
     setInitialRating(value);
     setReview(value);
   };

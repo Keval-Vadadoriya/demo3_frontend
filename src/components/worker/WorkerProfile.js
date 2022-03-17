@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getWorker } from "../../store/actions/workers-action";
 import { useDispatch, useSelector } from "react-redux";
 function WorkerProfile() {
-  const [data, setData] = useState(false);
   const dispatch = useDispatch();
   const { status, worker, errorMessage } = useSelector(
     (state) => state.workerslist

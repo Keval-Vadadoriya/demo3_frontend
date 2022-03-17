@@ -12,11 +12,11 @@ const Worker = () => {
   const [location, setLocation] = useState("");
   const [profession, setProfession] = useState("");
   const [review, setReview] = useState("");
+  const [availability, setAvailability] = useState(null);
   const dispatch = useDispatch();
   const { status, workers, errorMessage } = useSelector(
     (state) => state.workerslist
   );
-  console.log("sdkf", profession);
 
   const changeLocationHandler = (event) => {
     setLocation(event.target.value);
@@ -27,14 +27,18 @@ const Worker = () => {
   const changeProfessionHandler = (event) => {
     setProfession(event.target.value);
   };
+  const changeAvailabilityHandler = (event) => {
+    setAvailability(event.target.value);
+  };
   const clearFilter = () => {
     setLocation("");
     setReview("");
     setProfession("");
+    setAvailability(null);
   };
   const filterWorkersBy = async (event) => {
     event.preventDefault();
-    dispatch(filterWorkers({ location, profession, review }));
+    dispatch(filterWorkers({ location, profession, review, availability }));
   };
 
   useEffect(async () => {
@@ -79,6 +83,18 @@ const Worker = () => {
             <option value="anand">Anand</option>
             <option value="vadodara">Vadodara</option>
             <option value="ahmedabad">Ahmedabad</option>
+          </select>
+          <select
+            name="availability"
+            id="availability"
+            onChange={changeAvailabilityHandler}
+            value={availability}
+          >
+            <option value="" disabled hidden>
+              select status
+            </option>
+            <option value={true}>Available</option>
+            <option value={false}>Not Available</option>
           </select>
           <select
             name="review"

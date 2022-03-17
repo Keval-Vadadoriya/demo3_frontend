@@ -27,7 +27,6 @@ const SignupForm = (props) => {
   if (status === "succeeded") {
     navigate("/login");
   }
-  console.log(avatar);
   //changing Role
   const changeRole = () => {
     if (role === "user") {
@@ -49,8 +48,6 @@ const SignupForm = (props) => {
       formData.append("password", password);
       formData.append("contact", contact);
       formData.append("age", age);
-      // formData.append("profession", profession);
-      // formData.append("location", location);
     }
     if (role === "worker") {
       formData.append("avatar", avatar);

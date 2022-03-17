@@ -26,13 +26,13 @@ export const getWorker = createAsyncThunk(
 
 export const filterWorkers = createAsyncThunk(
   "workers/filterWorkers",
-  async ({ location, profession, review }, { getState }) => {
+  async ({ location, profession, review, availability }, { getState }) => {
     const response = await fetch(
       `http://127.0.0.1:3001/filterworkers?${
         location ? `location=${location}` : ""
       }&&${profession ? `profession=${profession}` : ""}&&${
         review ? `review=${review}` : ""
-      }`
+      }&&${availability ? `availability=${availability}` : ""}`
     );
 
     const data = await response.json();
@@ -56,7 +56,7 @@ export const workersSlice = createSlice({
     //getAllWorkers
     [getAllWorkers.fulfilled]: (state, action) => {
       state.status = "succeeded";
-      console.log(action.payload);
+      // console.log(action.payload);
 
       state.workers = action.payload;
     },
@@ -70,7 +70,7 @@ export const workersSlice = createSlice({
     //filter Workers
     [filterWorkers.fulfilled]: (state, action) => {
       state.status = "succeeded";
-      console.log(action.payload);
+      // console.log(action.payload);
       state.workers = action.payload;
     },
     [filterWorkers.pending]: (state, action) => {
@@ -79,13 +79,13 @@ export const workersSlice = createSlice({
     [filterWorkers.rejected]: (state, action) => {
       state.status = "failed";
       state.errorMessage = action.error.message;
-      console.log(action.error.message);
+      // console.log(action.error.message);
       state.workers = null;
     },
     //get Worker
     [getWorker.fulfilled]: (state, action) => {
       state.status = "succeeded";
-      console.log(action.payload);
+      // console.log(action.payload);
       state.worker = action.payload;
     },
     [getWorker.pending]: (state) => {

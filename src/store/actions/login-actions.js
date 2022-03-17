@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 export const loggedInUser = createAsyncThunk(
   "loginuser/loggedInUser",
   async (obj, { getState }) => {
-    console.log(obj.role, obj.loginEmail, obj.loginPassword);
+    // console.log(obj.role, obj.loginEmail, obj.loginPassword);
     const response = await fetch(
       `http://127.0.0.1:3001/login?role=${obj.role}`,
       {

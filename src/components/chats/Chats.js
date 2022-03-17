@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import classes from "./Chats.module.css";
 import { getChats, addToChatList } from "../../store/actions/chat-actions";
 import { chatActions } from "../../store/actions/chat-actions";
-import { isPending } from "@reduxjs/toolkit";
 
 function Chats() {
   const receiverId = useParams();
@@ -16,7 +15,9 @@ function Chats() {
   const dispatch = useDispatch();
   const socket = useSelector((state) => state.socket.socket);
   const [message, setMessage] = useState("");
-  const { status, chats, errorMessage } = useSelector((state) => state.chat);
+  const { status, chats, chatsOwner, errorMessage } = useSelector(
+    (state) => state.chat
+  );
 
   //scroll to bottom
   const scrollToBottom = () => {
@@ -35,24 +36,27 @@ function Chats() {
     });
 
     //add to chat list
-    console.log(receiverId.workerid);
+    // console.log(receiverId.workerid);
+    // if (role === "user") {
+    //   dispatch(
+    //     addToChatList({ userId, role, receiverId: receiverId.workerid })
+    //   );
+    // }
+  }, []);
+  useEffect(async () => {
+    dispatch(getChats({ userId, role, receiverId: receiverId.workerid }));
+
     if (role === "user") {
       dispatch(
         addToChatList({ userId, role, receiverId: receiverId.workerid })
       );
     }
-  }, []);
-  useEffect(async () => {
-    dispatch(getChats({ userId, role, receiverId: receiverId.workerid }));
-
-    console.log(chats);
   }, [receiverId.workerid]);
   console.log("Chatssssssss");
 
   const changeMessageHandler = (event) => {
     setMessage(event.target.value);
   };
-  // let createMessage;
   const sendMessageHandler = async (event) => {
     event.preventDefault();
     let createMessage = {
@@ -71,21 +75,13 @@ function Chats() {
       role,
       (response) => {
         dispatch(chatActions.setChat({ message: response.message }));
-
-        // dispatch(
-        //   chatActions.setStatus({ status: response.status, _id: response._id })
-        // );
-        console.log(response.status);
       }
     );
     //dispatch(chatActions.setChat({ message: createMessage }));
-
-    console.log(chats);
   };
   if (chats) {
     messageList = chats.map((message) => {
       const date = new Date(message.time);
-      console.log(date);
       return (
         <div
           key={message._id}
@@ -109,7 +105,7 @@ function Chats() {
   return (
     <div className={classes.chat}>
       <div>
-        <h1>{receiverId.workerid}</h1>
+        <h1>{chatsOwner.name}</h1>
         {messageList && <h1>{messageList}</h1>}
         <div ref={messagesEndRef} />
       </div>
