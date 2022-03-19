@@ -7,8 +7,10 @@ import { loginActions } from "../../store/login-slice";
 const Home = () => {
   const dispatch = useDispatch();
   const socket = useSelector((state) => state.socket.socket);
+  const userId = useSelector((state) => state.user._id);
+  const role = useSelector((state) => state.login.role);
+  socket.emit("setId", userId);
   useEffect(() => {
-    socket.emit("setId", userId);
     return () => {
       localStorage.clear();
       socket.disconnect(userId);
@@ -18,9 +20,7 @@ const Home = () => {
         })
       );
     };
-  }, [dispatch]);
-  const role = useSelector((state) => state.login.role);
-  const userId = useSelector((state) => state.user._id);
+  }, []);
 
   return (
     <div className={classes.x}>

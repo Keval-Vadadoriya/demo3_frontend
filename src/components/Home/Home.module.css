@@ -22,13 +22,7 @@
   /* width: 15%; */
   /* float: left; */
 }
-.link {
-  font-size: 3vh;
-  text-decoration: none;
-  color: white;
-  background-color: rgb(192, 212, 228);
-  /* font-size: calc(9px + 1vmin); */
-}
+
 /* .side1 ul {
   position: -webkit-sticky;
   display: block;

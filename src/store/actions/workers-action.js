@@ -30,9 +30,9 @@ export const filterWorkers = createAsyncThunk(
     const response = await fetch(
       `http://127.0.0.1:3001/filterworkers?${
         location ? `location=${location}` : ""
-      }&&${profession ? `profession=${profession}` : ""}&&${
-        review ? `review=${review}` : ""
-      }&&${availability ? `availability=${availability}` : ""}`
+      }${profession ? `&&profession=${profession}` : ""}${
+        review ? `&&review=${review}` : ""
+      }${availability ? `&&availability=${availability}` : ""}`
     );
 
     const data = await response.json();

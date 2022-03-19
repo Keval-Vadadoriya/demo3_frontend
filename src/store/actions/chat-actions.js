@@ -52,20 +52,29 @@ export const chatSlice = createSlice({
   initialState: {
     status: "idle",
     errorMessage: "",
-    chatList: null,
-    chats: null,
+    chatList: [],
+    chats: [],
     chatsOwner: "",
   },
   reducers: {
     setChat(state, action) {
       state.chats.push(action.payload.message);
     },
+    setChats(state, action) {
+      state.chats = action.payload.chats.chats;
+      state.chatsOwner =
+        action.payload.chats[
+          action.payload.role === "user" ? "worker" : "user"
+        ];
+    },
     setStatus(state, action) {
       const index = state.chats.findIndex(
         (chat) => chat._id === action.payload._id
       );
-      // console.log(index);
       state.chats[index].status = action.payload.status;
+    },
+    setChatList(state, action) {
+      state.chatList = action.payload.list;
     },
   },
   extraReducers: {

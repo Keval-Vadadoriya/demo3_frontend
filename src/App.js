@@ -12,6 +12,8 @@ import Chats from "./components/chats/Chats";
 import Home from "./components/Home/Home";
 import WorkerProfile from "./components/worker/WorkerProfile";
 import Welcome from "./components/welcome/Welcome";
+import Unauthorized from "./components/welcome/Unauthorized";
+import NotFound from "./components/welcome/NotFound";
 
 function App() {
   const token = useSelector((state) => state.login.token);
@@ -43,14 +45,14 @@ function App() {
                 </Route>
               )}
               {role === "worker" && (
-                <Route path="worker/*" element={<h1>Unauthorized</h1>} />
+                <Route path="worker/*" element={<Unauthorized />} />
               )}
             </Route>
           )}
           {!token && (
             <Route path="/home/*" element={<Navigate to="/login" />} />
           )}
-          <Route path="*" element={<h1>Not Found</h1>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
     </>

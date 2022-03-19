@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import { loginActions } from "../../store/login-slice";
+import { socketActions } from "../../store/socket-slice";
 import { userActions } from "../../store/user-slice";
 import { loggedInUser } from "../../store/actions/login-actions";
 
@@ -41,6 +42,7 @@ const LoginForm = () => {
         avatar: user.user.avatar,
       })
     );
+    dispatch(socketActions.setSocket());
 
     navigate("/home");
   }

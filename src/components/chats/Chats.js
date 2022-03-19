@@ -3,7 +3,11 @@ import { useParams } from "react-router-dom";
 import Input from "../UI/Input";
 import { useSelector, useDispatch } from "react-redux";
 import classes from "./Chats.module.css";
-import { getChats, addToChatList } from "../../store/actions/chat-actions";
+import {
+  getChats,
+  addToChatList,
+  getChatList,
+} from "../../store/actions/chat-actions";
 import { chatActions } from "../../store/actions/chat-actions";
 
 function Chats() {
@@ -44,12 +48,17 @@ function Chats() {
     // }
   }, []);
   useEffect(async () => {
-    dispatch(getChats({ userId, role, receiverId: receiverId.workerid }));
+    // dispatch(getChats({ userId, role, receiverId: receiverId.workerid }));
 
+    socket.emit("getchats", userId, role, receiverId.workerid, (response) => {
+      dispatch(chatActions.setChats({ chats: response.chats, role }));
+    });
     if (role === "user") {
-      dispatch(
-        addToChatList({ userId, role, receiverId: receiverId.workerid })
-      );
+      console.log("first");
+      // dispatch(
+      //   addToChatList({ userId, role, receiverId: receiverId.workerid })
+      // );
+      socket.emit("addToChatList", userId, role, receiverId.workerid);
     }
   }, [receiverId.workerid]);
   console.log("Chatssssssss");
@@ -75,6 +84,7 @@ function Chats() {
       role,
       (response) => {
         dispatch(chatActions.setChat({ message: response.message }));
+        dispatch(chatActions.setChatList({ list: response.chatlist }));
       }
     );
     //dispatch(chatActions.setChat({ message: createMessage }));
@@ -105,7 +115,7 @@ function Chats() {
   return (
     <div className={classes.chat}>
       <div>
-        <h1>{chatsOwner.name}</h1>
+        <h1>{chatsOwner && chatsOwner.name}</h1>
         {messageList && <h1>{messageList}</h1>}
         <div ref={messagesEndRef} />
       </div>

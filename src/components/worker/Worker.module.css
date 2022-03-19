@@ -8,3 +8,8 @@
   width: 90vw;
   overflow: scroll;
 }
+
+.x {
+  display: flex;
+  align-items: baseline;
+}

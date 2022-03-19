@@ -24,7 +24,7 @@
   margin: 0 1rem;
 }
 
-/* .header button {
+.header button {
   font: inherit;
   background-color: transparent;
   border: 1px solid white;
@@ -33,10 +33,16 @@
   padding: 0.5rem 1.5rem;
   border-radius: 6px;
   cursor: pointer;
-} */
-
+  margin-right: 10px;
+}
+.link {
+  font-size: 3vh;
+  text-decoration: none;
+  color: white;
+}
 .header button:hover {
   background-color: #c291e2;
+  text-transform: capitalize;
   color: #38015c;
 }
 .nav-link {

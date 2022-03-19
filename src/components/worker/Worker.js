@@ -55,70 +55,72 @@ const Worker = () => {
 
   return (
     <Fragment>
-      <div>
-        <form onSubmit={filterWorkersBy}>
-          <h1>Filter By</h1>
+      <div className={classes.x}>
+        <div>
+          <form onSubmit={filterWorkersBy}>
+            <h1>Filter By</h1>
 
-          <select
-            name="profession"
-            id="profession"
-            onChange={changeProfessionHandler}
-            value={profession}
-          >
-            <option value="">select profession</option>
-            <option value="carpenter">Carpenter</option>
-            <option value="plumber">Plumber</option>
-            <option value="electrician">Electrician</option>
-          </select>
-          <select
-            name="location"
-            id="location"
-            onChange={changeLocationHandler}
-            value={location}
-          >
-            <option value="" disabled hidden>
-              select location
-            </option>
-            <option value="surat">Surat</option>
-            <option value="anand">Anand</option>
-            <option value="vadodara">Vadodara</option>
-            <option value="ahmedabad">Ahmedabad</option>
-          </select>
-          <select
-            name="availability"
-            id="availability"
-            onChange={changeAvailabilityHandler}
-            value={availability}
-          >
-            <option value="" disabled hidden>
-              select status
-            </option>
-            <option value={true}>Available</option>
-            <option value={false}>Not Available</option>
-          </select>
-          <select
-            name="review"
-            id="review"
-            onChange={changeReviewHandler}
-            value={review}
-          >
-            <option value="" disabled hidden>
-              select review
-            </option>
-            <option value="0">{`>0`}</option>
-            <option value="1">{`>1`}</option>
-            <option value="2">{`>2`}</option>
-            <option value="3">{`>3`}</option>
-            <option value="4">{`>4`}</option>
-          </select>
-          <input type="submit" value="Apply"></input>
-          <button onClick={clearFilter}>clear</button>
-        </form>
-      </div>
-      <div className={classes.workerlist}>
-        {status === "loading" && <h1>Loading</h1>}
-        {workerList}
-        {errorMessage && <p>{errorMessage}</p>}
+            <select
+              name="profession"
+              id="profession"
+              onChange={changeProfessionHandler}
+              value={profession}
+            >
+              <option value="">select profession</option>
+              <option value="carpenter">Carpenter</option>
+              <option value="plumber">Plumber</option>
+              <option value="electrician">Electrician</option>
+            </select>
+            <select
+              name="location"
+              id="location"
+              onChange={changeLocationHandler}
+              value={location}
+            >
+              <option value="" disabled hidden>
+                select location
+              </option>
+              <option value="surat">Surat</option>
+              <option value="anand">Anand</option>
+              <option value="vadodara">Vadodara</option>
+              <option value="ahmedabad">Ahmedabad</option>
+            </select>
+            <select
+              name="availability"
+              id="availability"
+              onChange={changeAvailabilityHandler}
+              value={availability}
+            >
+              <option value="" disabled hidden>
+                select status
+              </option>
+              <option value={true}>Available</option>
+              <option value={false}>Not Available</option>
+            </select>
+            <select
+              name="review"
+              id="review"
+              onChange={changeReviewHandler}
+              value={review}
+            >
+              <option value="" disabled hidden>
+                select review
+              </option>
+              <option value="0">{`>0`}</option>
+              <option value="1">{`>1`}</option>
+              <option value="2">{`>2`}</option>
+              <option value="3">{`>3`}</option>
+              <option value="4">{`>4`}</option>
+            </select>
+            <input type="submit" value="Apply"></input>
+            <button onClick={clearFilter}>clear</button>
+          </form>
+        </div>
+        <div className={classes.workerlist}>
+          {status === "loading" && <h1>Loading</h1>}
+          {workerList}
+          {errorMessage && <p>{errorMessage}</p>}
+        </div>
       </div>
     </Fragment>
   );

@@ -17,6 +17,8 @@ const Review = () => {
     (state) => state.reviews
   );
 
+  console.log(status, reviews);
+
   const workerid = useParams();
   const changeDescriptionHandler = (event) => {
     setDescription(event.target.value);
@@ -45,14 +47,17 @@ const Review = () => {
   }, []);
   let reviewList;
   if (reviews) {
-    reviewList = reviews.map((review) => (
-      <ReviewCard
-        description={review.description}
-        name={review.owner.name}
-        rating={review.review}
-        key={review._id}
-      />
-    ));
+    reviewList = reviews.map((review) => {
+      console.log(review);
+      return (
+        <ReviewCard
+          description={review.description}
+          name={review.owner.name}
+          rating={review.review}
+          key={review._id}
+        />
+      );
+    });
   }
   return (
     <div className={classes.reviewlist}>

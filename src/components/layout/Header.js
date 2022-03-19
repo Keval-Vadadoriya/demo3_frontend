@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { loginActions } from "../../store/login-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { loginuserActions } from "../../store/actions/login-actions";
-import Button from "@mui/material/Button";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -29,36 +28,33 @@ const Header = () => {
   return (
     <header className={classes.header}>
       <h1>Demo</h1>
-      <ul>
-        <li>
-          <Link to="/home/profile" className={classes.link}>
-            Profile
-          </Link>
-        </li>
-        <li>
-          <Link to="/home/chats" className={classes.link}>
-            Chats
-          </Link>
-        </li>
-        <li>
-          {role === "user" && (
-            <Link to="/home/worker" className={classes.link}>
-              Workers
-            </Link>
-          )}
-        </li>
-
-        <li>
-          <Button variant="outlined" onClick={loginHandler}>
-            Login
-          </Button>
-        </li>
-        {token && (
+      {token && (
+        <ul>
           <li>
-            <Button onClick={logoutHandler}>Logout</Button>
+            <Link to="/home/profile" className={classes.link}>
+              Profile
+            </Link>
           </li>
-        )}
-      </ul>
+          <li>
+            <Link to="/home/chats" className={classes.link}>
+              Chats
+            </Link>
+          </li>
+          <li>
+            {role === "user" && (
+              <Link to="/home/worker" className={classes.link}>
+                Workers
+              </Link>
+            )}
+          </li>
+        </ul>
+      )}
+      {!token && (
+        <button variant="outlined" onClick={loginHandler}>
+          Login
+        </button>
+      )}
+      {token && <button onClick={logoutHandler}>Logout</button>}
     </header>
   );
 };
