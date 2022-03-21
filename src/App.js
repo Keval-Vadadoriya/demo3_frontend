@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { useSelector } from "react-redux";
 import { Route, Routes, Navigate } from "react-router-dom";
 
@@ -12,25 +11,24 @@ import Chat from "./components/chats/Chat";
 import Chats from "./components/chats/Chats";
 import Home from "./components/Home/Home";
 import WorkerProfile from "./components/worker/WorkerProfile";
-
-console.log("appU");
+import Welcome from "./components/welcome/Welcome";
+import Unauthorized from "./components/welcome/Unauthorized";
+import NotFound from "./components/welcome/NotFound";
 
 function App() {
   const token = useSelector((state) => state.login.token);
   const role = useSelector((state) => state.login.role);
 
   return (
-    <Fragment>
+    <>
       <Header />
       <main>
         <Routes>
-          {!token && (
-            <Route path="/" element={<h1>Welcome to DemoProject</h1>} />
-          )}
+          {!token && <Route path="/" element={<Welcome />} />}
           {token && <Route path="/" element={<Navigate to="home" />} />}
 
-          <Route path="/signup" element={!token && <SignupForm />} />
-          <Route path="/login" element={!token && <LoginForm />} />
+          <Route path="/signup" element={<SignupForm />} />
+          <Route path="/login" element={<LoginForm />} />
           {token && (
             <Route path="/home" element={<Home />}>
               <Route path="profile" element={<Profile />} />
@@ -47,17 +45,17 @@ function App() {
                 </Route>
               )}
               {role === "worker" && (
-                <Route path="worker/*" element={<h1>Unauthorized</h1>} />
+                <Route path="worker/*" element={<Unauthorized />} />
               )}
             </Route>
           )}
           {!token && (
             <Route path="/home/*" element={<Navigate to="/login" />} />
           )}
-          <Route path="*" element={<h1>Not Found</h1>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-    </Fragment>
+    </>
   );
 }
 

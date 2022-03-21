@@ -1,52 +1,41 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect } from "react";
 import { Outlet, Link } from "react-router-dom";
 import classes from "./Chat.module.css";
-import { useSelector } from "react-redux";
-import useHttp from "../../custom-hooks/useHttp";
+import { useSelector, useDispatch } from "react-redux";
 import ChatListCard from "./ChatListCard";
-let chatList;
+import { chatActions } from "../../store/actions/chat-actions";
 const Chat = () => {
-  const [data, setData] = useState(false);
-  const socket = useSelector((state) => state.socket.socket);
-  const [isLoading, error, sendRequest] = useHttp();
-  const userId = useSelector((state) => state.user._id);
+  const userId = useSelector((state) => state.user.user._id);
   const role = useSelector((state) => state.login.role);
-  useEffect(async () => {
-    chatList = await sendRequest({
-      url: `http://127.0.0.1:3001/getchatlist/${userId}?role=${role}`,
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const { status, chatList, errorMessage } = useSelector((state) => state.chat);
+  const socket = useSelector((state) => state.socket.socket);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    socket.on("chatlist", (list) => {
+      dispatch(chatActions.setChatList({ list }));
     });
-    setData(true);
-    socket.on("FromAPI", (data) => {
-      console.log(data);
-    });
-    console.log(chatList);
+    socket.emit("getchatlist", userId, role);
   }, []);
 
-  console.log("chat");
   let chatListUi;
-  if (data && chatList) {
-    chatListUi = chatList[role === "user" ? "workers" : "users"].map(
-      (worker) => (
-        <Link to={`/home/chats/${worker._id}`} key={worker._id}>
-          <ChatListCard name={worker.name} />
-        </Link>
-      )
-    );
-    chatListUi.reverse();
+  if (chatList) {
+    chatListUi = chatList.map((worker) => (
+      <Link to={`/home/chats/${worker._id}`} key={worker._id}>
+        <ChatListCard name={worker.name} />
+      </Link>
+    ));
   }
 
   return (
     <Fragment>
       <div className={classes.x}>
-        <div className={classes.side1}>
-          <Outlet />
-        </div>
         <div className={classes.side2}>
           <h1>Chat list</h1>
-          {data && chatListUi}
+          {chatList && chatListUi}
+        </div>
+        <div className={classes.side1}>
+          <Outlet />
         </div>
       </div>
     </Fragment>

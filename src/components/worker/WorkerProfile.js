@@ -1,23 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Link, Outlet, useParams } from "react-router-dom";
-import useHttp from "../../custom-hooks/useHttp";
-let worker;
+import React, { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import { getWorker } from "../../store/actions/workers-action";
+import { useDispatch, useSelector } from "react-redux";
 function WorkerProfile() {
-  const [isLoading, error, sendRequest] = useHttp();
-  const [data, setData] = useState(false);
+  const dispatch = useDispatch();
+  const { status, worker, errorMessage } = useSelector(
+    (state) => state.workerslist
+  );
   const workerid = useParams();
   useEffect(async () => {
-    worker = await sendRequest({
-      url: `http://127.0.0.1:3001/getworker/${workerid.workerid}`,
-    });
-    setData(true);
+    dispatch(getWorker(workerid.workerid));
   }, []);
 
-  //   console.log(x);
   return (
     <div>
-      {!data && <h1>Loading</h1>}
-      {!isLoading && data && <h1>{worker.name}</h1>}
+      {status === "loading" && <h1>Loading</h1>}
+      {errorMessage && <p>{errorMessage}</p>}
+      {status !== "loading" && worker && <h1>{worker.name}</h1>}
       <Link to={`review/${workerid.workerid}`}>Reviews</Link>
       <br />
       <Link to={`/home/chats/${workerid.workerid}`}>Chat</Link>

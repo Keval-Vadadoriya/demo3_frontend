@@ -1,21 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import Input from "../UI/Input";
-import { useSelector } from "react-redux";
-import useHttp from "../../custom-hooks/useHttp";
+import { useSelector, useDispatch } from "react-redux";
 import classes from "./Chats.module.css";
+
+import { chatActions } from "../../store/actions/chat-actions";
 
 function Chats() {
   const receiverId = useParams();
-  let chats, messageList;
+  let messageList;
   const messagesEndRef = useRef();
-  const [isLoading, error, sendRequest] = useHttp();
-  const userId = useSelector((state) => state.user._id);
+  const userId = useSelector((state) => state.user.user._id);
   const role = useSelector((state) => state.login.role);
-
+  const dispatch = useDispatch();
   const socket = useSelector((state) => state.socket.socket);
   const [message, setMessage] = useState("");
-  const [message2, setMessage2] = useState([]);
+  const { status, chats, chatsOwner, errorMessage } = useSelector(
+    (state) => state.chat
+  );
 
   //scroll to bottom
   const scrollToBottom = () => {
@@ -23,84 +25,76 @@ function Chats() {
   };
   useEffect(() => {
     scrollToBottom();
-  }, [message2]);
+  }, [chats]);
   useEffect(async () => {
     socket.on("messag", (message) => {
-      console.log(message);
-      socket.emit("delivered");
-      console.log("hey");
-      setMessage2((x) => [...x, message]);
+      socket.emit("delivered", message._id, userId, receiverId.workerid, role);
+      dispatch(chatActions.setChat({ message }));
     });
-
-    //add to chat list
-    console.log(receiverId.workerid);
-    if (role === "user") {
-      sendRequest({
-        url: `http://127.0.0.1:3001/addtochatlist/${userId}?role=${role}&&id=${receiverId.workerid}`,
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    }
+    socket.on("messageDelivered", (_id) => {
+      dispatch(chatActions.setStatus({ status: "delivered", _id }));
+    });
   }, []);
   useEffect(async () => {
-    chats = await sendRequest({
-      url: `http://127.0.0.1:3001/getchats/${userId}?role=${role}&&id=${receiverId.workerid}`,
-      headers: {
-        "Content-Type": "application/json",
-      },
+    socket.emit("getchats", userId, role, receiverId.workerid, (response) => {
+      dispatch(chatActions.setChats({ chats: response.chats, role }));
     });
-    if (chats) {
-      setMessage2((x) => [...chats]);
+    if (role === "user") {
+      console.log("first");
+      socket.emit("addToChatList", userId, role, receiverId.workerid);
     }
-    console.log(chats);
   }, [receiverId.workerid]);
   console.log("Chatssssssss");
 
   const changeMessageHandler = (event) => {
     setMessage(event.target.value);
   };
-
   const sendMessageHandler = async (event) => {
     event.preventDefault();
-    const createMessage = {
+    let createMessage = {
       message,
       time: new Date().getTime(),
       owner: userId,
       role: role === "user" ? "User" : "Worker",
+      status: "pending",
     };
+
     socket.emit(
       "message",
-      createMessage,
-      userId,
-      receiverId.workerid,
-      role,
+      {
+        message: createMessage,
+        sender: userId,
+        receiver: receiverId.workerid,
+        role,
+      },
       (response) => {
-        console.log(response.status);
+        dispatch(chatActions.setChat({ message: response.message }));
+        dispatch(chatActions.setChatList({ list: response.chatlist }));
       }
     );
-
-    setMessage2((x) => [...x, createMessage]);
-
-    console.log(chats);
   };
-  if (message2) {
-    messageList = message2.map((message) => {
+  if (chats) {
+    messageList = chats.map((message) => {
       const date = new Date(message.time);
-      console.log(date);
       return (
         <div
           key={message._id}
-          className={
+          className={`${
             message.owner === userId ? classes.sender : classes.receiver
-          }
+          } ${
+            message.owner !== userId && message.status === "sent"
+              ? classes.sent
+              : ""
+          }`}
         >
           <p className={classes.p}>
             {message.message}
             <span
               className={classes.time}
             >{`${date.getHours()}:${date.getMinutes()}`}</span>
+            {message.owner === userId && (
+              <span className={classes.time}>{message.status}</span>
+            )}
           </p>
         </div>
       );
@@ -109,7 +103,7 @@ function Chats() {
   return (
     <div className={classes.chat}>
       <div>
-        <h1>{receiverId.workerid}</h1>
+        <h1>{chatsOwner && chatsOwner.name}</h1>
         {messageList && <h1>{messageList}</h1>}
         <div ref={messagesEndRef} />
       </div>

@@ -1,43 +1,60 @@
 import classes from "./header.module.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { loginActions } from "../../store/login-slice";
 import { useDispatch, useSelector } from "react-redux";
+import { loginuserActions } from "../../store/actions/login-actions";
 
 const Header = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const dispatch = useDispatch();
   const token = useSelector((state) => state.login.token);
+  const role = useSelector((state) => state.login.role);
 
   const loginHandler = () => {
     navigate("/login", { replace: true });
-    console.log(location);
   };
   const logoutHandler = () => {
     if (window.confirm("Are You Sure?")) {
-      console.log("logout");
       localStorage.clear();
       dispatch(
         loginActions.setLoginStatus({
           token: "",
         })
       );
+      dispatch(loginuserActions.setUser());
       navigate("/");
     }
   };
   return (
     <header className={classes.header}>
       <h1>Demo</h1>
-      <ul>
-        <li>
-          <button onClick={loginHandler}>Login</button>
-        </li>
-        {token && (
+      {token && (
+        <ul>
           <li>
-            <button onClick={logoutHandler}>Logout</button>
+            <Link to="/home/profile" className={classes.link}>
+              Profile
+            </Link>
           </li>
-        )}
-      </ul>
+          <li>
+            <Link to="/home/chats" className={classes.link}>
+              Chats
+            </Link>
+          </li>
+          <li>
+            {role === "user" && (
+              <Link to="/home/worker" className={classes.link}>
+                Workers
+              </Link>
+            )}
+          </li>
+        </ul>
+      )}
+      {!token && (
+        <button variant="outlined" onClick={loginHandler}>
+          Login
+        </button>
+      )}
+      {token && <button onClick={logoutHandler}>Logout</button>}
     </header>
   );
 };
