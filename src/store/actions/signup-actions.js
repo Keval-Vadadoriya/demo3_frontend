@@ -5,15 +5,15 @@ export const signupUser = createAsyncThunk(
     // console.log(obj.role, obj.loginEmail, obj.loginPassword);
     const response = await fetch(`http://127.0.0.1:3001/signup?role=${role}`, {
       method: "POST",
-      body: body,
-      // body: JSON.stringify(obj),
+      // body: body,
+      body: JSON.stringify(body),
 
-      // headers: {
-      //   Accept: "application/json",
-      //   "Access-Control-Allow-Origin": "*",
-      //   "Content-Type": "multipart/form-data",
-      //   // "Content-Type": "application/json",
-      // },
+      headers: {
+        // Accept: "application/json",
+        // "Access-Control-Allow-Origin": "*",
+        // "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
+      },
     });
 
     const data = await response.json();
@@ -39,7 +39,6 @@ export const signupSlice = createSlice({
   extraReducers: {
     [signupUser.fulfilled]: (state, action) => {
       state.status = "succeeded";
-      // state.user = action.payload;
     },
     [signupUser.pending]: (state, action) => {
       state.status = "loading";

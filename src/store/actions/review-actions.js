@@ -40,7 +40,7 @@ export const reviewsSlice = createSlice({
   initialState: {
     status: "idle",
     errorMessage: "",
-    reviews: null,
+    reviews: [],
   },
   reducers: {},
   extraReducers: {
@@ -58,7 +58,7 @@ export const reviewsSlice = createSlice({
       state.errorMessage = action.error.message;
     },
     [addReview.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.status = "review added";
       state.errorMessage = "";
     },
     [addReview.pending]: (state, action) => {

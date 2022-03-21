@@ -20,3 +20,7 @@
   height: 80vh;
   overflow: scroll;
 }
+
+.sent {
+  background-color: brown;
+}

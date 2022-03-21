@@ -3,18 +3,14 @@ import { useParams } from "react-router-dom";
 import Input from "../UI/Input";
 import { useSelector, useDispatch } from "react-redux";
 import classes from "./Chats.module.css";
-import {
-  getChats,
-  addToChatList,
-  getChatList,
-} from "../../store/actions/chat-actions";
+
 import { chatActions } from "../../store/actions/chat-actions";
 
 function Chats() {
   const receiverId = useParams();
   let messageList;
   const messagesEndRef = useRef();
-  const userId = useSelector((state) => state.user._id);
+  const userId = useSelector((state) => state.user.user._id);
   const role = useSelector((state) => state.login.role);
   const dispatch = useDispatch();
   const socket = useSelector((state) => state.socket.socket);
@@ -38,26 +34,13 @@ function Chats() {
     socket.on("messageDelivered", (_id) => {
       dispatch(chatActions.setStatus({ status: "delivered", _id }));
     });
-
-    //add to chat list
-    // console.log(receiverId.workerid);
-    // if (role === "user") {
-    //   dispatch(
-    //     addToChatList({ userId, role, receiverId: receiverId.workerid })
-    //   );
-    // }
   }, []);
   useEffect(async () => {
-    // dispatch(getChats({ userId, role, receiverId: receiverId.workerid }));
-
     socket.emit("getchats", userId, role, receiverId.workerid, (response) => {
       dispatch(chatActions.setChats({ chats: response.chats, role }));
     });
     if (role === "user") {
       console.log("first");
-      // dispatch(
-      //   addToChatList({ userId, role, receiverId: receiverId.workerid })
-      // );
       socket.emit("addToChatList", userId, role, receiverId.workerid);
     }
   }, [receiverId.workerid]);
@@ -78,16 +61,17 @@ function Chats() {
 
     socket.emit(
       "message",
-      createMessage,
-      userId,
-      receiverId.workerid,
-      role,
+      {
+        message: createMessage,
+        sender: userId,
+        receiver: receiverId.workerid,
+        role,
+      },
       (response) => {
         dispatch(chatActions.setChat({ message: response.message }));
         dispatch(chatActions.setChatList({ list: response.chatlist }));
       }
     );
-    //dispatch(chatActions.setChat({ message: createMessage }));
   };
   if (chats) {
     messageList = chats.map((message) => {
@@ -95,9 +79,13 @@ function Chats() {
       return (
         <div
           key={message._id}
-          className={
+          className={`${
             message.owner === userId ? classes.sender : classes.receiver
-          }
+          } ${
+            message.owner !== userId && message.status === "sent"
+              ? classes.sent
+              : ""
+          }`}
         >
           <p className={classes.p}>
             {message.message}

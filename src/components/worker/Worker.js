@@ -9,15 +9,32 @@ import {
 } from "../../store/actions/workers-action";
 
 const Worker = () => {
-  const [location, setLocation] = useState("");
-  const [profession, setProfession] = useState("");
-  const [review, setReview] = useState("");
-  const [availability, setAvailability] = useState(null);
+  const [location, setLocation] = useState("none");
+  const [profession, setProfession] = useState("none");
+  const [review, setReview] = useState("none");
+  const [availability, setAvailability] = useState("none");
+  const [filtered, setFiltered] = useState(false);
   const dispatch = useDispatch();
-  const { status, workers, errorMessage } = useSelector(
+  const { status, workers, count, errorMessage } = useSelector(
     (state) => state.workerslist
   );
-
+  let skip;
+  const newPage = (event) => {
+    console.log(event.target.innerHTML);
+    if (filtered) {
+      dispatch(
+        filterWorkers({
+          location,
+          profession,
+          review,
+          availability,
+          skip: event.target.innerHTML * 3,
+        })
+      );
+    } else {
+      dispatch(getAllWorkers((skip = event.target.innerHTML * 3)));
+    }
+  };
   const changeLocationHandler = (event) => {
     setLocation(event.target.value);
   };
@@ -31,13 +48,16 @@ const Worker = () => {
     setAvailability(event.target.value);
   };
   const clearFilter = () => {
-    setLocation("");
-    setReview("");
-    setProfession("");
-    setAvailability(null);
+    setLocation("none");
+    setReview("none");
+    setProfession("none");
+    setAvailability("none");
+
+    setFiltered(false);
   };
   const filterWorkersBy = async (event) => {
     event.preventDefault();
+    setFiltered(true);
     dispatch(filterWorkers({ location, profession, review, availability }));
   };
 
@@ -51,6 +71,16 @@ const Worker = () => {
         <WorkerCard name={worker.name} profession={worker.profession} />
       </Link>
     ));
+  }
+  let pageList = [];
+  if (count) {
+    for (let i = 0; i < Math.ceil(count / 3); i++) {
+      pageList.push(
+        <button onClick={newPage} key={i}>
+          {i}
+        </button>
+      );
+    }
   }
 
   return (
@@ -66,7 +96,7 @@ const Worker = () => {
               onChange={changeProfessionHandler}
               value={profession}
             >
-              <option value="">select profession</option>
+              <option value="none">select profession</option>
               <option value="carpenter">Carpenter</option>
               <option value="plumber">Plumber</option>
               <option value="electrician">Electrician</option>
@@ -77,7 +107,7 @@ const Worker = () => {
               onChange={changeLocationHandler}
               value={location}
             >
-              <option value="" disabled hidden>
+              <option value="none" disabled hidden>
                 select location
               </option>
               <option value="surat">Surat</option>
@@ -91,7 +121,7 @@ const Worker = () => {
               onChange={changeAvailabilityHandler}
               value={availability}
             >
-              <option value="" disabled hidden>
+              <option value="none" disabled hidden>
                 select status
               </option>
               <option value={true}>Available</option>
@@ -103,7 +133,7 @@ const Worker = () => {
               onChange={changeReviewHandler}
               value={review}
             >
-              <option value="" disabled hidden>
+              <option value="none" disabled hidden>
                 select review
               </option>
               <option value="0">{`>0`}</option>
@@ -120,6 +150,11 @@ const Worker = () => {
           {status === "loading" && <h1>Loading</h1>}
           {workerList}
           {errorMessage && <p>{errorMessage}</p>}
+          <div className={classes.pagination}>
+            <Link to="#">&laquo;</Link>
+            {count && pageList}
+            <Link to="#">&raquo;</Link>
+          </div>
         </div>
       </div>
     </Fragment>

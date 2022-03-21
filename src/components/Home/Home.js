@@ -7,8 +7,7 @@ import { loginActions } from "../../store/login-slice";
 const Home = () => {
   const dispatch = useDispatch();
   const socket = useSelector((state) => state.socket.socket);
-  const userId = useSelector((state) => state.user._id);
-  const role = useSelector((state) => state.login.role);
+  const userId = useSelector((state) => state.user.user._id);
   socket.emit("setId", userId);
   useEffect(() => {
     return () => {

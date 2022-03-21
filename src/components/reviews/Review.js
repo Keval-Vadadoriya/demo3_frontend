@@ -8,7 +8,7 @@ import Rating from "react-rating";
 import { addReview, getReviews } from "../../store/actions/review-actions";
 
 const Review = () => {
-  const ownerId = useSelector((state) => state.user._id);
+  const ownerId = useSelector((state) => state.user.user._id);
   const dispatch = useDispatch();
   const [description, setDescription] = useState("");
   const [review, setReview] = useState(0);
@@ -17,7 +17,7 @@ const Review = () => {
     (state) => state.reviews
   );
 
-  console.log(status, reviews);
+  // console.log(status, reviews);
 
   const workerid = useParams();
   const changeDescriptionHandler = (event) => {
@@ -38,9 +38,11 @@ const Review = () => {
           workerId: workerid.id,
         })
       );
-      dispatch(getReviews(workerid.id));
     }
   };
+  if (status === "review added") {
+    dispatch(getReviews(workerid.id));
+  }
 
   useEffect(async () => {
     dispatch(getReviews(workerid.id));
@@ -48,7 +50,6 @@ const Review = () => {
   let reviewList;
   if (reviews) {
     reviewList = reviews.map((review) => {
-      console.log(review);
       return (
         <ReviewCard
           description={review.description}

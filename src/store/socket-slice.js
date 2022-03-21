@@ -10,9 +10,6 @@ const socketSlice = createSlice({
     setSocket(state) {
       state.socket = socketIOClient("http://127.0.0.1:3001");
     },
-    removeSocket(state) {
-      state.socket = "";
-    },
   },
 });
 

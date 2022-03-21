@@ -12,9 +12,6 @@ const SignupForm = (props) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [contact, setContact] = useState("");
-  const [avatar, setAvatar] = useState("");
-  const [age, setAge] = useState("");
   const [profession, setProfession] = useState("");
   const [professionIsValid, setProfessionIsValid] = useState(false);
   const [location, setLocation] = useState("");
@@ -40,33 +37,15 @@ const SignupForm = (props) => {
   //Submit Handler
   const SubmitHandler = (event) => {
     event.preventDefault();
-    const formData = new FormData();
-    if (role === "user") {
-      formData.append("avatar", avatar);
-      formData.append("name", name);
-      formData.append("email", email);
-      formData.append("password", password);
-      formData.append("contact", contact);
-      formData.append("age", age);
-    }
-    if (role === "worker") {
-      formData.append("avatar", avatar);
-      formData.append("name", name);
-      formData.append("email", email);
-      formData.append("password", password);
-      formData.append("contact", contact);
-      formData.append("age", age);
-      formData.append("profession", profession);
-      formData.append("location", location);
-    }
-
-    if (role === "worker") {
-      if (locationIsValid && professionIsValid) {
-        dispatch(signupUser({ body: formData, role }));
-      }
-    } else {
-      dispatch(signupUser({ body: formData, role }));
-    }
+    let body =
+      role === "user"
+        ? {
+            name,
+            email,
+            password,
+          }
+        : { name, email, password, profession, location };
+    dispatch(signupUser({ body, role }));
   };
 
   //Validations
@@ -82,15 +61,6 @@ const SignupForm = (props) => {
     setPassword(event.target.value);
   };
 
-  const changeAgeHandler = (event) => {
-    setAge(event.target.value);
-  };
-  const changeContactHandler = (event) => {
-    setContact(event.target.value);
-  };
-  const changeAvatarHandler = (event) => {
-    setAvatar(event.target.files[0]);
-  };
   const changeProfessionHandler = (event) => {
     setProfession(event.target.value);
     if (event.target.value !== "none") {
@@ -151,31 +121,11 @@ const SignupForm = (props) => {
               name: "password",
               onChange: changePasswordHandler,
               type: "password",
+              autoComplete: "on",
               minLength: 7,
             }}
           />
-          <Input
-            label="Contact"
-            input={{
-              placeholder: "Enter a Password",
-              id: "contact",
-              name: "contact",
-              onChange: changeContactHandler,
-              type: "tel",
-              pattern: "[6-9]{1}[0-9]{9}",
-            }}
-          />
-          <Input
-            label="Age"
-            input={{
-              placeholder: "Enter an Age",
-              id: "age",
-              name: "age",
-              onChange: changeAgeHandler,
-              type: "text",
-              min: 18,
-            }}
-          />
+
           {role !== "user" && (
             <div className={classes.select}>
               <label htmlFor="profession">Profession</label>
@@ -215,16 +165,7 @@ const SignupForm = (props) => {
               </select>
             </div>
           )}
-          <Input
-            label="avatar"
-            input={{
-              type: "file",
-              id: "avatar",
-              name: "avatar",
-              accept: "image/png, image/jpeg",
-              onChange: changeAvatarHandler,
-            }}
-          />
+
           <div></div>
           <input type="submit" value="Signup"></input>
           <button type="button" onClick={changeRole}>

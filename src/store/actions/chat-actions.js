@@ -58,7 +58,11 @@ export const chatSlice = createSlice({
   },
   reducers: {
     setChat(state, action) {
-      state.chats.push(action.payload.message);
+      if (state.chats) {
+        state.chats.push(action.payload.message);
+      } else {
+        state.chats = [action.payload.message];
+      }
     },
     setChats(state, action) {
       state.chats = action.payload.chats.chats;

@@ -21,29 +21,24 @@ const LoginForm = () => {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-
+  console.log(status);
   //Login Request
   if (user) {
+    dispatch(
+      loginActions.setLoginStatus({
+        token: "Bearer " + user.user.token,
+      })
+    );
     localStorage.setItem("userInfo", JSON.stringify(user.user));
     localStorage.setItem("token", user.token);
     localStorage.setItem("role", role);
 
     dispatch(
-      loginActions.setLoginStatus({
-        token: "Bearer " + user.token,
-      })
-    );
-    dispatch(
       userActions.setLoggedInUser({
-        age: user.user.age,
-        email: user.user.email,
-        name: user.user.name,
-        _id: user.user._id,
-        avatar: user.user.avatar,
+        user: user.user,
       })
     );
     dispatch(socketActions.setSocket());
-
     navigate("/home");
   }
 
@@ -108,6 +103,7 @@ const LoginForm = () => {
               type: "password",
               required: true,
               minLength: 7,
+              autoComplete: "on",
             }}
           />
           <input type="submit" value="Login"></input>

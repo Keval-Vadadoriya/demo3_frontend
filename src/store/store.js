@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import loginSlice from "./login-slice";
 import userSlice from "./user-slice";
 import socketSlice from "./socket-slice";
@@ -8,6 +8,9 @@ import workerslist from "./actions/workers-action";
 import reviews from "./actions/review-actions";
 import chat from "./actions/chat-actions";
 
+const customizedMiddleware = getDefaultMiddleware({
+  serializableCheck: false,
+});
 const store = configureStore({
   reducer: {
     login: loginSlice.reducer,
@@ -19,6 +22,7 @@ const store = configureStore({
     reviews,
     chat,
   },
+  middleware: customizedMiddleware,
 });
 
 export default store;
