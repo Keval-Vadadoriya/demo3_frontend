@@ -16,6 +16,7 @@ const Review = () => {
   const { status, reviews, errorMessage } = useSelector(
     (state) => state.reviews
   );
+  const token = useSelector((state) => state.login.token);
 
   // console.log(status, reviews);
 
@@ -32,6 +33,7 @@ const Review = () => {
     if (description.length > 0) {
       dispatch(
         addReview({
+          token,
           description,
           review,
           owner: ownerId,
@@ -41,11 +43,11 @@ const Review = () => {
     }
   };
   if (status === "review added") {
-    dispatch(getReviews(workerid.id));
+    dispatch(getReviews({ token, workerId: workerid.id }));
   }
 
   useEffect(async () => {
-    dispatch(getReviews(workerid.id));
+    dispatch(getReviews({ token, workerId: workerid.id }));
   }, []);
   let reviewList;
   if (reviews) {

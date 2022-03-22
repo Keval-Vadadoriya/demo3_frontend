@@ -1,9 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 export const getAllWorkers = createAsyncThunk(
   "workers/getAllWorkers",
-  async (skip = 0, { getState }) => {
+  async ({ token, skip }, { getState }) => {
     const response = await fetch(
-      `http://127.0.0.1:3001/getallworkers?limit=3&&skip=${skip}`
+      `http://127.0.0.1:3001/getallworkers?limit=3&&skip=${skip}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
     );
 
     const data = await response.json();
@@ -15,8 +20,15 @@ export const getAllWorkers = createAsyncThunk(
 );
 export const getWorker = createAsyncThunk(
   "workers/getWorker",
-  async (workerId, { getState }) => {
-    const response = await fetch(`http://127.0.0.1:3001/getworker/${workerId}`);
+  async ({ token, workerId }, { getState }) => {
+    const response = await fetch(
+      `http://127.0.0.1:3001/getworker/${workerId}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
 
     const data = await response.json();
     if (response.ok === false) {
@@ -29,17 +41,23 @@ export const getWorker = createAsyncThunk(
 export const filterWorkers = createAsyncThunk(
   "workers/filterWorkers",
   async (
-    { location, profession, review, availability, skip },
+    { token, location, profession, review, availability, skip },
     { getState }
   ) => {
     const response = await fetch(
       `http://127.0.0.1:3001/filterworkers?${
-        location ? `location=${location}` : ""
-      }${profession ? `&&profession=${profession}` : ""}${
-        review ? `&&review=${review}` : ""
-      }${availability ? `&&availability=${availability}` : ""}&&limit=3${
-        skip ? `&&skip=${skip}` : ""
-      }`
+        location !== "none" ? `location=${location}` : ""
+      }${profession !== "none" ? `&&profession=${profession}` : ""}${
+        review !== "none" ? `&&review=${review}` : ""
+      }${
+        availability !== "none" ? `&&availability=${availability}` : ""
+      }&&limit=3${skip ? `&&skip=${skip}` : ""}`,
+
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
     );
 
     const data = await response.json();

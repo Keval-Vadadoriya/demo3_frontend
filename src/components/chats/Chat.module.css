@@ -21,3 +21,14 @@
   height: 90vh;
   overflow: scroll;
 }
+.link {
+  text-decoration: none;
+  color: black;
+}
+.hover {
+  border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+}
+.hover:hover {
+  background-color: rgb(87, 87, 87);
+  color: white;
+}

@@ -51,6 +51,7 @@ function Chats() {
   };
   const sendMessageHandler = async (event) => {
     event.preventDefault();
+    setMessage("");
     let createMessage = {
       message,
       time: new Date().getTime(),
@@ -115,6 +116,7 @@ function Chats() {
             id: "Name",
             onChange: changeMessageHandler,
             type: "text",
+            value: `${message}`,
           }}
         />
         <input type="submit" value="send"></input>

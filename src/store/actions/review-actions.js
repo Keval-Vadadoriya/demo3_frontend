@@ -1,8 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 export const getReviews = createAsyncThunk(
   "reviews/getReviews",
-  async (workerId, { getState }) => {
-    const response = await fetch(`http://127.0.0.1:3001/getreview/${workerId}`);
+  async ({ token, workerId }, { getState }) => {
+    const response = await fetch(
+      `http://127.0.0.1:3001/getreview/${workerId}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
 
     const data = await response.json();
     if (response.ok === false) {
@@ -14,7 +21,7 @@ export const getReviews = createAsyncThunk(
 
 export const addReview = createAsyncThunk(
   "reviews/addReview",
-  async ({ description, review, owner, workerId }, { getState }) => {
+  async ({ token, description, review, owner, workerId }, { getState }) => {
     const response = await fetch(`http://127.0.0.1:3001/review/${workerId}`, {
       method: "POST",
       body: JSON.stringify({
@@ -23,6 +30,8 @@ export const addReview = createAsyncThunk(
         owner,
       }),
       headers: {
+        Authorization: token,
+
         "Content-Type": "application/json",
       },
     });

@@ -3,6 +3,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { loginActions } from "../../store/login-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { loginuserActions } from "../../store/actions/login-actions";
+import LogoutOutlinedIcon from "@mui/icons-material/Logout";
+import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
+import { Button } from "@mui/material";
+// import worker from "./worker.jpeg";
+// import worker from "./worker.jpg";
+import worker from "./log.png";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -27,6 +33,7 @@ const Header = () => {
   };
   return (
     <header className={classes.header}>
+      <img src={worker} width="8%" height="100%" alt="jdfssd" />
       <h1>Demo</h1>
       {token && (
         <ul>
@@ -50,11 +57,17 @@ const Header = () => {
         </ul>
       )}
       {!token && (
-        <button variant="outlined" onClick={loginHandler}>
+        <button onClick={loginHandler}>
           Login
+          <LoginOutlinedIcon />
         </button>
       )}
-      {token && <button onClick={logoutHandler}>Logout</button>}
+      {token && (
+        <button onClick={logoutHandler}>
+          Logout
+          <LogoutOutlinedIcon />
+        </button>
+      )}
     </header>
   );
 };

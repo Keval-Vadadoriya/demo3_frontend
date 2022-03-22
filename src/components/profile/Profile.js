@@ -1,25 +1,27 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import classes from "../forms/Form.module.css";
+import classes from "./Profile.module.css";
 import Input from "../UI/Input";
 import { editUser } from "../../store/user-slice";
 const Profile = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [contact, setContact] = useState("");
   const [newAvatar, setNewAvatar] = useState("");
+  const [description, setDescription] = useState("");
   const [age, setAge] = useState("");
   const [profession, setProfession] = useState("");
   const [professionIsValid, setProfessionIsValid] = useState(false);
   const [location, setLocation] = useState("");
   const [locationIsValid, setLocationIsValid] = useState(false);
-  const [edit, setEdit] = useState(false);
+  const [edit, setEdit] = useState(true);
   const user = useSelector((state) => state.user.user);
   const { status, errorMessage } = useSelector((state) => state.user);
   const role = useSelector((state) => state.login.role);
   const userId = useSelector((state) => state.user.user._id);
   const avatar = user.avatar;
+  const token = useSelector((state) => state.login.token);
+
   const dispatch = useDispatch();
   const editProfile = () => {
     setEdit(!edit);
@@ -29,84 +31,44 @@ const Profile = () => {
   const SubmitHandler = (event) => {
     event.preventDefault();
     const formData = new FormData();
-    if (role === "user") {
-      if (newAvatar) {
-        formData.append("avatar", newAvatar);
-      }
-      if (name) {
-        formData.append("name", name);
-      }
-      if (email) {
-        formData.append("email", email);
-      }
-      if (password) {
-        formData.append("password", password);
-      }
-      if (contact) {
-        formData.append("contact", contact);
-      }
-      if (age) {
-        formData.append("age", age);
-      }
+    if (newAvatar) {
+      formData.append("avatar", newAvatar);
+    }
+    if (name) {
+      formData.append("name", name);
+    }
+    if (email) {
+      formData.append("email", email);
+    }
+    if (contact) {
+      formData.append("contact", contact);
+    }
+    if (age) {
+      formData.append("age", age);
     }
     if (role === "worker") {
-      if (newAvatar) {
-        formData.append("avatar", newAvatar);
-      }
-      if (name) {
-        formData.append("name", name);
-      }
-      if (email) {
-        formData.append("email", email);
-      }
-      if (password) {
-        formData.append("password", password);
-      }
-      if (contact) {
-        formData.append("contact", contact);
-      }
-      if (age) {
-        formData.append("age", age);
-      }
       if (profession) {
         formData.append("profession", profession);
       }
       if (location) {
         formData.append("location", location);
       }
+      if (description) {
+        formData.append("description", description);
+      }
     }
 
     if (role === "worker") {
-      if (locationIsValid && professionIsValid) {
-        dispatch(editUser({ body: formData, role, userId }));
-      }
-    } else {
-      dispatch(editUser({ body: formData, role, userId }));
+      // if (locationIsValid && professionIsValid) {
+      dispatch(editUser({ token, body: formData, role, userId }));
+      // }
+      // } else {
+      // dispatch(editUser({ token, body: formData, role, userId }));
     }
   };
 
   //Validations
-  const changeNameHandler = (event) => {
-    setName(event.target.value);
-  };
 
-  const changeEmailHandler = (event) => {
-    setEmail(event.target.value);
-  };
-
-  const changePasswordHandler = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const changeAgeHandler = (event) => {
-    setAge(event.target.value);
-  };
-  const changeContactHandler = (event) => {
-    setContact(event.target.value);
-  };
-  const changeAvatarHandler = (event) => {
-    setNewAvatar(event.target.files[0]);
-  };
   const changeProfessionHandler = (event) => {
     setProfession(event.target.value);
     if (event.target.value !== "none") {
@@ -127,16 +89,16 @@ const Profile = () => {
 
   return (
     <>
-      <div>
-        <h1>Name:{user.name}</h1>
-        <h1>Email:{user.email}</h1>
-        <h1>Age:{user.age}</h1>
-        <img src={`http://127.0.0.1:3001/${avatar}`} />
-      </div>
-      <div>
-        <button onClick={editProfile}>Edit Profile</button>
+      <div className={classes.profile}>
+        <div className={classes.first}>
+          {/* <h1>Name:{user.name}</h1>
+          <h1>Email:{user.email}</h1>
+          <h1>Age:{user.age}</h1> */}
+          <img src={`http://127.0.0.1:3001/${avatar}`} />
+          {/* <button onClick={editProfile}>Edit Profile</button> */}
+        </div>
         {edit && (
-          <div className={classes["form-container"]}>
+          <div className={`${classes["form-container"]} ${classes.second}`}>
             {status === "loading" && <p>Loading</p>}
             {status !== "loading" && (
               <form
@@ -146,67 +108,65 @@ const Profile = () => {
                 onSubmit={SubmitHandler}
                 className={classes.form}
               >
-                <h1>Signup Form</h1>
+                <h1>User Profile</h1>
                 <Input
                   label="Name"
                   input={{
-                    placeholder: "name",
+                    placeholder: `${user.name ? user.name : ""}`,
                     id: "name",
                     name: "name",
-                    onChange: changeNameHandler,
+                    onChange: (event) => setName(event.target.value),
                     type: "text",
+                    // Text: `${user.name ? user.name : ""}`,
                   }}
                 />
-                <Input
-                  label="About You"
-                  input={{
-                    placeholder: "Enter Your Description",
-                    id: "description",
-                    name: "description",
-                    onChange: changeEmailHandler,
-                    type: "text",
-                  }}
-                />
+                {role === "worker" && (
+                  <Input
+                    label="About You"
+                    input={{
+                      placeholder: `${
+                        user.description ? user.description : ""
+                      }`,
+                      id: "description",
+                      name: "description",
+                      onChange: (event) => setDescription(event.target.value),
+                      type: "text",
+                      // text: `${user.description ? user.description : ""}`,
+                    }}
+                  />
+                )}
                 <Input
                   label="Email"
                   input={{
-                    placeholder: "Enter an Email",
+                    placeholder: `${user.email ? user.email : ""}`,
                     id: "email",
                     name: "email",
-                    onChange: changeEmailHandler,
+                    onChange: (event) => setEmail(event.target.value),
                     type: "email",
-                  }}
-                />
-                <Input
-                  label="Password"
-                  input={{
-                    placeholder: "Enter a Password",
-                    id: "password",
-                    name: "password",
-                    onChange: changePasswordHandler,
-                    type: "password",
-                    autoComplete: "on",
-                    minLength: 7,
+                    // text: `${user.email ? user.email : ""}`,
                   }}
                 />
                 <Input
                   label="Contact"
                   input={{
-                    placeholder: "Enter a Password",
+                    placeholder: `${user.contact ? user.contact : ""}`,
                     id: "contact",
                     name: "contact",
-                    onChange: changeContactHandler,
+                    // onChange: changeContactHandler,
+                    onChange: (event) => setContact(event.target.value),
                     type: "tel",
                     pattern: "[6-9]{1}[0-9]{9}",
+                    // text: `${user.contact ? user.contact : ""}`,
                   }}
                 />
                 <Input
                   label="Age"
                   input={{
-                    placeholder: "Enter an Age",
+                    // text: `${user.age}`,
+                    placeholder: `${user.age ? user.age : ""}`,
                     id: "age",
                     name: "age",
-                    onChange: changeAgeHandler,
+                    onChange: (event) => setAge(event.target.value),
                     type: "text",
                     min: 18,
                   }}
@@ -218,7 +178,7 @@ const Profile = () => {
                       name="profession"
                       id="profession"
                       onChange={changeProfessionHandler}
-                      defaultValue="none"
+                      defaultValue={`${user.profession}`}
                     >
                       <option value="none" disabled hidden>
                         select your profession
@@ -236,7 +196,7 @@ const Profile = () => {
                       name="location"
                       id="location"
                       onChange={changeLocationHandler}
-                      defaultValue="none"
+                      defaultValue={`${user.location}`}
                     >
                       <option value="none" disabled hidden>
                         select your location
@@ -249,13 +209,13 @@ const Profile = () => {
                   </div>
                 )}
                 <Input
-                  label="avatar"
+                  label={<img src={`http://127.0.0.1:3001/${avatar}`} />}
                   input={{
                     type: "file",
                     id: "avatar",
                     name: "avatar",
                     accept: "image/png, image/jpeg",
-                    onChange: changeAvatarHandler,
+                    onChange: (event) => setNewAvatar(event.target.files[0]),
                   }}
                 />
                 <input type="submit" value="Save Changes"></input>

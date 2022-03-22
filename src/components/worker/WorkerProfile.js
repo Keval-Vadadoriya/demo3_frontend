@@ -7,9 +7,11 @@ function WorkerProfile() {
   const { status, worker, errorMessage } = useSelector(
     (state) => state.workerslist
   );
+  const token = useSelector((state) => state.login.token);
+
   const workerid = useParams();
   useEffect(async () => {
-    dispatch(getWorker(workerid.workerid));
+    dispatch(getWorker({ token, workerId: workerid.workerid }));
   }, []);
 
   return (

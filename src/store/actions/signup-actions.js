@@ -13,6 +13,8 @@ export const signupUser = createAsyncThunk(
         // "Access-Control-Allow-Origin": "*",
         // "Content-Type": "multipart/form-data",
         "Content-Type": "application/json",
+
+        // Authorization: token,
       },
     });
 

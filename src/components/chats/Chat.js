@@ -4,6 +4,13 @@ import classes from "./Chat.module.css";
 import { useSelector, useDispatch } from "react-redux";
 import ChatListCard from "./ChatListCard";
 import { chatActions } from "../../store/actions/chat-actions";
+import {
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+} from "@mui/material";
 const Chat = () => {
   const userId = useSelector((state) => state.user.user._id);
   const role = useSelector((state) => state.login.role);
@@ -21,8 +28,17 @@ const Chat = () => {
   let chatListUi;
   if (chatList) {
     chatListUi = chatList.map((worker) => (
-      <Link to={`/home/chats/${worker._id}`} key={worker._id}>
-        <ChatListCard name={worker.name} />
+      <Link
+        to={`/home/chats/${worker._id}`}
+        key={worker._id}
+        className={classes.link}
+      >
+        <ListItem className={classes.hover}>
+          <ListItemAvatar>
+            <Avatar src={worker.avatar} />
+          </ListItemAvatar>
+          <ListItemText id={worker._id} primary={`${worker.name}`} />
+        </ListItem>
       </Link>
     ));
   }
@@ -32,7 +48,17 @@ const Chat = () => {
       <div className={classes.x}>
         <div className={classes.side2}>
           <h1>Chat list</h1>
-          {chatList && chatListUi}
+          <List
+            dense
+            sx={{
+              width: "100%",
+              maxWidth: 360,
+              bgcolor: "background.paper",
+              padding: 0,
+            }}
+          >
+            {chatList && chatListUi}
+          </List>
         </div>
         <div className={classes.side1}>
           <Outlet />

@@ -14,16 +14,18 @@ const Worker = () => {
   const [review, setReview] = useState("none");
   const [availability, setAvailability] = useState("none");
   const [filtered, setFiltered] = useState(false);
+  const token = useSelector((state) => state.login.token);
+
   const dispatch = useDispatch();
   const { status, workers, count, errorMessage } = useSelector(
     (state) => state.workerslist
   );
-  let skip;
   const newPage = (event) => {
     console.log(event.target.innerHTML);
     if (filtered) {
       dispatch(
         filterWorkers({
+          token,
           location,
           profession,
           review,
@@ -32,7 +34,7 @@ const Worker = () => {
         })
       );
     } else {
-      dispatch(getAllWorkers((skip = event.target.innerHTML * 3)));
+      dispatch(getAllWorkers({ token, skip: event.target.innerHTML * 3 }));
     }
   };
   const changeLocationHandler = (event) => {
@@ -58,11 +60,13 @@ const Worker = () => {
   const filterWorkersBy = async (event) => {
     event.preventDefault();
     setFiltered(true);
-    dispatch(filterWorkers({ location, profession, review, availability }));
+    dispatch(
+      filterWorkers({ token, location, profession, review, availability })
+    );
   };
 
   useEffect(async () => {
-    dispatch(getAllWorkers());
+    dispatch(getAllWorkers({ token, skip: 0 }));
   }, []);
   let workerList;
   if (workers) {
