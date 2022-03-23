@@ -7,7 +7,7 @@ export const editUser = createAsyncThunk(
   "user/editUser",
   async ({ token, body, role, userId }, { getState }) => {
     const response = await fetch(
-      `http://127.0.0.1:3001/editprofile/${userId}?role=${role}`,
+      `http://192.168.200.175:3001/editprofile/${userId}?role=${role}`,
       {
         method: "POST",
         body: body,

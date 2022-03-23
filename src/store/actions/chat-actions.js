@@ -3,7 +3,7 @@ export const getChatList = createAsyncThunk(
   "chat/getChatList",
   async ({ userId, role }, { getState }) => {
     const response = await fetch(
-      `http://127.0.0.1:3001/getchatlist/${userId}?role=${role}`
+      `http://192.168.200.175:3001/getchatlist/${userId}?role=${role}`
     );
 
     const data = await response.json();
@@ -18,7 +18,7 @@ export const addToChatList = createAsyncThunk(
   "chat/addToChatList",
   async ({ userId, role, receiverId }, { getState }) => {
     const response = await fetch(
-      `http://127.0.0.1:3001/addtochatlist/${userId}?role=${role}&&id=${receiverId}`,
+      `http://192.168.200.175:3001/addtochatlist/${userId}?role=${role}&&id=${receiverId}`,
       {
         method: "POST",
       }
@@ -35,7 +35,7 @@ export const getChats = createAsyncThunk(
   "chat/getChats",
   async ({ userId, role, receiverId }, { getState }) => {
     const response = await fetch(
-      `http://127.0.0.1:3001/getchats/${userId}?role=${role}&&id=${receiverId}`
+      `http://192.168.200.175:3001/getchats/${userId}?role=${role}&&id=${receiverId}`
     );
 
     const data = await response.json();

@@ -5,6 +5,10 @@ import SignupForm from "./components/forms/Signup-Form";
 import LoginForm from "./components/forms/Login-Form";
 import Header from "./components/layout/Header";
 import Worker from "./components/worker/Worker";
+import Projects from "./components/projects/Projects";
+import MyProjects from "./components/my projects /MyProjects";
+import MyProjectProfile from "./components/my projects /MyProjectProfile";
+import ProjectProfile from "./components/projects/ProjectProfile";
 import Profile from "./components/profile/Profile";
 import Review from "./components/reviews/Review";
 import Chat from "./components/chats/Chat";
@@ -41,6 +45,22 @@ function App() {
                   <Route path=":workerid">
                     <Route index element={<WorkerProfile />} />
                     <Route path="review/:id" element={<Review />} />
+                  </Route>
+                </Route>
+              )}
+              {role === "user" && (
+                <Route path="myprojects">
+                  <Route index element={<MyProjects />} />
+                  <Route path=":workerid">
+                    <Route index element={<MyProjectProfile />} />
+                  </Route>
+                </Route>
+              )}
+              {role === "worker" && (
+                <Route path="projects">
+                  <Route index element={<Projects />} />
+                  <Route path=":projectid">
+                    <Route index element={<ProjectProfile />} />
                   </Route>
                 </Route>
               )}

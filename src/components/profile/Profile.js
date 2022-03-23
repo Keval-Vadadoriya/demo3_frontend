@@ -13,6 +13,7 @@ const Profile = () => {
   const [profession, setProfession] = useState("");
   const [professionIsValid, setProfessionIsValid] = useState(false);
   const [location, setLocation] = useState("");
+  const [availability, setAvailability] = useState("none");
   const [locationIsValid, setLocationIsValid] = useState(false);
   const [edit, setEdit] = useState(true);
   const user = useSelector((state) => state.user.user);
@@ -56,6 +57,9 @@ const Profile = () => {
       if (description) {
         formData.append("description", description);
       }
+      if (availability) {
+        formData.append("availability", availability);
+      }
     }
 
     if (role === "worker") {
@@ -76,6 +80,9 @@ const Profile = () => {
     } else {
       setProfessionIsValid(false);
     }
+  };
+  const changeAvailabilityHandler = (event) => {
+    setAvailability(event.target.value);
   };
 
   const changeLocationHandler = (event) => {
@@ -208,6 +215,23 @@ const Profile = () => {
                     </select>
                   </div>
                 )}
+                {role !== "user" && (
+                  <div className={classes.select}>
+                    <label htmlFor="availability">Availability</label>
+                    <select
+                      name="availability"
+                      id="availability"
+                      onChange={changeAvailabilityHandler}
+                      defaultValue={`${user.availability}`}
+                    >
+                      <option value="none" disabled hidden>
+                        select status
+                      </option>
+                      <option value={true}>Available</option>
+                      <option value={false}>Not Available</option>
+                    </select>
+                  </div>
+                )}
                 <Input
                   label={<img src={`http://127.0.0.1:3001/${avatar}`} />}
                   input={{
@@ -219,6 +243,7 @@ const Profile = () => {
                   }}
                 />
                 <input type="submit" value="Save Changes"></input>
+
                 {status !== "loading" && errorMessage && <p>{errorMessage}</p>}
               </form>
             )}

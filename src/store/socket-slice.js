@@ -4,11 +4,11 @@ import socketIOClient from "socket.io-client";
 const socketSlice = createSlice({
   name: "socket",
   initialState: {
-    socket: socketIOClient("http://127.0.0.1:3001"),
+    socket: socketIOClient("http://192.168.200.175:3001"),
   },
   reducers: {
     setSocket(state) {
-      state.socket = socketIOClient("http://127.0.0.1:3001");
+      state.socket = socketIOClient("http://192.168.200.175:3001");
     },
   },
 });

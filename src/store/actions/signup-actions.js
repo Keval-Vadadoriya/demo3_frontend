@@ -3,20 +3,23 @@ export const signupUser = createAsyncThunk(
   "signupuser/signupUser",
   async ({ body, role }, { getState }) => {
     // console.log(obj.role, obj.loginEmail, obj.loginPassword);
-    const response = await fetch(`http://127.0.0.1:3001/signup?role=${role}`, {
-      method: "POST",
-      // body: body,
-      body: JSON.stringify(body),
+    const response = await fetch(
+      `http://192.168.200.175:3001/signup?role=${role}`,
+      {
+        method: "POST",
+        // body: body,
+        body: JSON.stringify(body),
 
-      headers: {
-        // Accept: "application/json",
-        // "Access-Control-Allow-Origin": "*",
-        // "Content-Type": "multipart/form-data",
-        "Content-Type": "application/json",
+        headers: {
+          // Accept: "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          // "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
 
-        // Authorization: token,
-      },
-    });
+          // Authorization: token,
+        },
+      }
+    );
 
     const data = await response.json();
     if (response.ok === false) {

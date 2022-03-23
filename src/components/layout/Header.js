@@ -53,6 +53,18 @@ const Header = () => {
                 Workers
               </Link>
             )}
+            {role === "worker" && (
+              <Link to="/home/projects" className={classes.link}>
+                Projects
+              </Link>
+            )}
+          </li>
+          <li>
+            {role === "user" && (
+              <Link to="/home/myprojects" className={classes.link}>
+                MyProjects
+              </Link>
+            )}
           </li>
         </ul>
       )}
