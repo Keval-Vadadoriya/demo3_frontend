@@ -1,0 +1,26 @@
+.link {
+  text-decoration: none;
+  color: black;
+}
+.workerlist {
+  display: flexbox;
+  height: 90vh;
+  width: 90vw;
+  overflow: scroll;
+}
+
+.x {
+  display: flex;
+  align-items: baseline;
+}
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination a button {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
