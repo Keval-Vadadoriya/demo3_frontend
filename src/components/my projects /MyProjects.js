@@ -45,7 +45,7 @@ const MyProjects = () => {
         money: amount,
       })
     );
-    dispatch(getMyProjects({ token }));
+    dispatch(getMyProjects({ token, skip: 0 }));
 
     // } else {
     //   dispatch(getAllWorkers({ token, skip: event.target.innerHTML * 3 }));
@@ -69,23 +69,8 @@ const MyProjects = () => {
   const removeProjectHandler = (projectId) => {
     console.log(token);
     dispatch(removeProject({ token, projectId }));
-    dispatch(getMyProjects({ token }));
+    dispatch(getMyProjects({ token, skip: 0 }));
   };
-  // const clearFilter = () => {
-  //   setLocation("none");
-  //   setReview("none");
-  //   setProfession("none");
-  //   setAvailability("none");
-
-  //   setFiltered(false);
-  // };
-  // const filterWorkersBy = async (event) => {
-  //   event.preventDefault();
-  //   setFiltered(true);
-  //   dispatch(
-  //     filterWorkers({ token, location, profession, review, availability })
-  //   );
-  // };
 
   useEffect(async () => {
     dispatch(getMyProjects({ token, skip: 0 }));
@@ -123,13 +108,7 @@ const MyProjects = () => {
         <div className={classes["form-container"]}>
           {status === "loading" && <p>Loading</p>}
           {status !== "loading" && (
-            <form
-              // action="/signup"
-              // method="post"
-              // encType="multipart/form-data"
-              onSubmit={SubmitHandler}
-              className={classes.form}
-            >
+            <form onSubmit={SubmitHandler} className={classes.form}>
               <h1>Project</h1>
               <Input
                 label="Project Name"
@@ -161,7 +140,6 @@ const MyProjects = () => {
                   onChange: changeAmountHandler,
                   type: "number",
                   autoComplete: "on",
-                  // minLength: 7,
                 }}
               />
               <div className={classes.select}>

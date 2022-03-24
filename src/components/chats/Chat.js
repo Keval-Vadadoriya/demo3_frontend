@@ -13,14 +13,23 @@ import {
 } from "@mui/material";
 const Chat = () => {
   const userId = useSelector((state) => state.user.user._id);
+  const user = useSelector((state) => state.user.user);
   const role = useSelector((state) => state.login.role);
   const { status, chatList, errorMessage } = useSelector((state) => state.chat);
   const socket = useSelector((state) => state.socket.socket);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    socket.on("chatlist", (list) => {
+    socket.on("chatlist", (list, chats) => {
       dispatch(chatActions.setChatList({ list }));
+      if (chats) {
+        dispatch(
+          chatActions.setChats({
+            chats,
+            receiverId: chats[role === "user" ? "worker" : "user"]._id,
+          })
+        );
+      }
     });
     socket.emit("getchatlist", userId, role);
   }, []);
@@ -47,7 +56,7 @@ const Chat = () => {
     <Fragment>
       <div className={classes.x}>
         <div className={classes.side2}>
-          <h1>Chat list</h1>
+          <h1>{user.name}</h1>
           <List
             dense
             sx={{

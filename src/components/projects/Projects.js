@@ -3,10 +3,7 @@ import ProjectCard from "./ProjectCard";
 import { Link } from "react-router-dom";
 import classes from "./Projects.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAllWorkers,
-  filterWorkers,
-} from "../../store/actions/workers-action";
+
 import {
   filterProjects,
   getAllProjects,
@@ -29,7 +26,7 @@ const Projects = () => {
     console.log(event.target.innerHTML);
     if (filtered) {
       dispatch(
-        filterWorkers({
+        filterProjects({
           token,
           location,
           profession,
@@ -80,6 +77,7 @@ const Projects = () => {
         profession={project.profession}
         location={project.location}
         key={project._id}
+        owner={project.owner}
       />
       // </Link>
     ));
@@ -137,7 +135,6 @@ const Projects = () => {
                 onChange: changeAmountHandler,
                 type: "number",
                 autoComplete: "on",
-                // minLength: 7,
               }}
             />
             <input type="submit" value="Apply"></input>

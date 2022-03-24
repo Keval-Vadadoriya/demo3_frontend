@@ -63,11 +63,7 @@ const Profile = () => {
     }
 
     if (role === "worker") {
-      // if (locationIsValid && professionIsValid) {
       dispatch(editUser({ token, body: formData, role, userId }));
-      // }
-      // } else {
-      // dispatch(editUser({ token, body: formData, role, userId }));
     }
   };
 
