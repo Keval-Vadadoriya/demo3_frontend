@@ -25,19 +25,33 @@ function Chats() {
   };
   useEffect(() => {
     scrollToBottom();
-  }, [chats]);
+  }, [chats[receiverId.workerid]]);
   useEffect(async () => {
     socket.on("messag", (message) => {
       socket.emit("delivered", message._id, userId, receiverId.workerid, role);
-      dispatch(chatActions.setChat({ message }));
+      dispatch(
+        chatActions.setChat({ message, receiverId: receiverId.workerid })
+      );
     });
     socket.on("messageDelivered", (_id) => {
-      dispatch(chatActions.setStatus({ status: "delivered", _id }));
+      dispatch(
+        chatActions.setStatus({
+          status: "delivered",
+          _id,
+          receiverId: receiverId.workerid,
+        })
+      );
     });
   }, []);
   useEffect(async () => {
     socket.emit("getchats", userId, role, receiverId.workerid, (response) => {
-      dispatch(chatActions.setChats({ chats: response.chats, role }));
+      dispatch(
+        chatActions.setChats({
+          chats: response.chats,
+          role,
+          receiverId: receiverId.workerid,
+        })
+      );
     });
     if (role === "user") {
       console.log("first");
@@ -51,6 +65,7 @@ function Chats() {
   };
   const sendMessageHandler = async (event) => {
     event.preventDefault();
+    setMessage("");
     let createMessage = {
       message,
       time: new Date().getTime(),
@@ -68,13 +83,18 @@ function Chats() {
         role,
       },
       (response) => {
-        dispatch(chatActions.setChat({ message: response.message }));
+        dispatch(
+          chatActions.setChat({
+            message: response.message,
+            receiverId: receiverId.workerid,
+          })
+        );
         dispatch(chatActions.setChatList({ list: response.chatlist }));
       }
     );
   };
-  if (chats) {
-    messageList = chats.map((message) => {
+  if (chats[receiverId.workerid]) {
+    messageList = chats[receiverId.workerid].map((message) => {
       const date = new Date(message.time);
       return (
         <div
@@ -115,6 +135,7 @@ function Chats() {
             id: "Name",
             onChange: changeMessageHandler,
             type: "text",
+            value: `${message}`,
           }}
         />
         <input type="submit" value="send"></input>

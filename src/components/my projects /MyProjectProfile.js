@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getWorker } from "../../store/actions/workers-action";
 import { useDispatch, useSelector } from "react-redux";
-function WorkerProfile() {
+function MyProjectProfile() {
   const dispatch = useDispatch();
   const { status, worker, errorMessage } = useSelector(
     (state) => state.workerslist
@@ -26,4 +26,4 @@ function WorkerProfile() {
   );
 }
 
-export default WorkerProfile;
+export default MyProjectProfile;

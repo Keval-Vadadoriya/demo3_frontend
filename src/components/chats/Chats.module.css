@@ -1,3 +1,7 @@
+.p {
+  word-break: break-all;
+}
+
 .sender {
   background-color: antiquewhite;
   text-align: right;

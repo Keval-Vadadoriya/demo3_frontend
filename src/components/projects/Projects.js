@@ -1,91 +1,94 @@
 import React, { Fragment, useEffect, useState } from "react";
-import WorkerCard from "./WorkerCard";
-import { Link, NavLink } from "react-router-dom";
-import classes from "./Worker.module.css";
+import ProjectCard from "./ProjectCard";
+import { Link } from "react-router-dom";
+import classes from "./Projects.module.css";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
-  getAllWorkers,
-  filterWorkers,
-} from "../../store/actions/workers-action";
+  filterProjects,
+  getAllProjects,
+} from "../../store/actions/project-actions";
+import Input from "../UI/Input";
 
-const Worker = () => {
+const Projects = () => {
   const [location, setLocation] = useState("none");
   const [profession, setProfession] = useState("none");
-  const [review, setReview] = useState("none");
-  const [availability, setAvailability] = useState("none");
+  const [amount, setAmount] = useState(null);
   const [filtered, setFiltered] = useState(false);
   const token = useSelector((state) => state.login.token);
 
   const dispatch = useDispatch();
-  const { status, workers, count, errorMessage } = useSelector(
+  const { status, workers, errorMessage } = useSelector(
     (state) => state.workerslist
   );
+  const { projects, count } = useSelector((state) => state.project);
   const newPage = (event) => {
-    console.log(event.target.value);
+    console.log(event.target.innerHTML);
     if (filtered) {
       dispatch(
-        filterWorkers({
+        filterProjects({
           token,
           location,
           profession,
-          review,
-          availability,
+          amount,
           skip: event.target.value * 3,
         })
       );
     } else {
-      dispatch(getAllWorkers({ token, skip: event.target.value * 3 }));
+      dispatch(getAllProjects({ token, skip: event.target.value * 3 }));
     }
   };
   const changeLocationHandler = (event) => {
     setLocation(event.target.value);
   };
-  const changeReviewHandler = (event) => {
-    setReview(event.target.value);
+  const changeAmountHandler = (event) => {
+    setAmount(event.target.value);
   };
   const changeProfessionHandler = (event) => {
     setProfession(event.target.value);
   };
-  const changeAvailabilityHandler = (event) => {
-    setAvailability(event.target.value);
-  };
+
   const clearFilter = () => {
     setLocation("none");
-    setReview("none");
+    setAmount(null);
     setProfession("none");
-    setAvailability("none");
+    // setAvailability("none");
 
     setFiltered(false);
   };
   const filterWorkersBy = async (event) => {
     event.preventDefault();
     setFiltered(true);
+    setAmount(null);
     dispatch(
-      filterWorkers({ token, location, profession, review, availability })
+      filterProjects({ token, location, profession, money: amount, skip: 0 })
     );
   };
 
   useEffect(async () => {
-    dispatch(getAllWorkers({ token, skip: 0 }));
+    dispatch(getAllProjects({ token, skip: 0 }));
   }, []);
-  let workerList;
-  if (workers) {
-    workerList = workers.map((worker) => (
-      <Link to={`${worker._id}`} className={classes.link} key={worker._id}>
-        <WorkerCard name={worker.name} profession={worker.profession} />
-      </Link>
+  let projectList;
+  if (projects) {
+    projectList = projects.map((project) => (
+      // <Link to={`${worker._id}`} className={classes.link} key={worker._id}>
+      <ProjectCard
+        name={project.project_name}
+        profession={project.profession}
+        location={project.location}
+        key={project._id}
+        owner={project.owner}
+      />
+      // </Link>
     ));
   }
   let pageList = [];
   if (count) {
     for (let i = 0; i < Math.ceil(count / 3); i++) {
       pageList.push(
-        <NavLink to="#" activeClassName={classes.active}>
-          <button onClick={newPage} key={i} value={i}>
-            {i}
-          </button>
-        </NavLink>
+        <button onClick={newPage} key={i} value={i}>
+          {i}
+        </button>
       );
     }
   }
@@ -122,40 +125,25 @@ const Worker = () => {
               <option value="vadodara">Vadodara</option>
               <option value="ahmedabad">Ahmedabad</option>
             </select>
-            <select
-              name="availability"
-              id="availability"
-              onChange={changeAvailabilityHandler}
-              value={availability}
-            >
-              <option value="none" disabled hidden>
-                select status
-              </option>
-              <option value={true}>Available</option>
-              <option value={false}>Not Available</option>
-            </select>
-            <select
-              name="review"
-              id="review"
-              onChange={changeReviewHandler}
-              value={review}
-            >
-              <option value="none" disabled hidden>
-                select review
-              </option>
-              <option value="0">{`>0`}</option>
-              <option value="1">{`>1`}</option>
-              <option value="2">{`>2`}</option>
-              <option value="3">{`>3`}</option>
-              <option value="4">{`>4`}</option>
-            </select>
+
+            <Input
+              label="Amount"
+              input={{
+                placeholder: "Enter an amount",
+                id: "amount",
+                name: "amount",
+                onChange: changeAmountHandler,
+                type: "number",
+                autoComplete: "on",
+              }}
+            />
             <input type="submit" value="Apply"></input>
             <button onClick={clearFilter}>clear</button>
           </form>
         </div>
         <div className={classes.workerlist}>
           {status === "loading" && <h1>Loading</h1>}
-          {workerList}
+          {projectList}
           {errorMessage && <p>{errorMessage}</p>}
           <div className={classes.pagination}>
             <Link to="#">&laquo;</Link>
@@ -168,4 +156,4 @@ const Worker = () => {
   );
 };
 
-export default Worker;
+export default Projects;

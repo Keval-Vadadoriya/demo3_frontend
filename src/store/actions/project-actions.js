@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-export const getAllWorkers = createAsyncThunk(
-  "workers/getAllWorkers",
+export const getAllProjects = createAsyncThunk(
+  "project/getAllProjects",
   async ({ token, skip }, { getState }) => {
     const response = await fetch(
-      `http://192.168.200.175:3001/getallworkers?limit=3&&skip=${skip}`,
+      `http://192.168.200.175:3001/getallprojects?limit=5&&skip=${skip}`,
       {
         headers: {
           Authorization: token,
@@ -18,11 +18,11 @@ export const getAllWorkers = createAsyncThunk(
     return data;
   }
 );
-export const getWorker = createAsyncThunk(
-  "workers/getWorker",
-  async ({ token, workerId }, { getState }) => {
+export const getMyProjects = createAsyncThunk(
+  "project/getMyProjects",
+  async ({ token, skip }, { getState }) => {
     const response = await fetch(
-      `http://192.168.200.175:3001/getworker/${workerId}`,
+      `http://192.168.200.175:3001/getmyprojects?limit=5&&skip=${skip}`,
       {
         headers: {
           Authorization: token,
@@ -38,20 +38,15 @@ export const getWorker = createAsyncThunk(
   }
 );
 
-export const filterWorkers = createAsyncThunk(
-  "workers/filterWorkers",
-  async (
-    { token, location, profession, review, availability, skip },
-    { getState }
-  ) => {
+export const filterProjects = createAsyncThunk(
+  "project/filterProjects",
+  async ({ token, location, profession, money, skip }, { getState }) => {
     const response = await fetch(
-      `http://192.168.200.175:3001/filterworkers?${
+      `http://192.168.200.175:3001/filterprojects?${
         location !== "none" ? `location=${location}` : ""
       }${profession !== "none" ? `&&profession=${profession}` : ""}${
-        review !== "none" ? `&&review=${review}` : ""
-      }${
-        availability !== "none" ? `&&availability=${availability}` : ""
-      }&&limit=3${skip ? `&&skip=${skip}` : ""}`,
+        money ? `&&money=${money}` : ""
+      }&&limit=5&&skip=${skip}`,
 
       {
         headers: {
@@ -68,63 +63,62 @@ export const filterWorkers = createAsyncThunk(
   }
 );
 
-export const workersSlice = createSlice({
-  name: "workers",
+export const projectSlice = createSlice({
+  name: "project",
   initialState: {
     status: "idle",
     errorMessage: "",
-    workers: null,
-    worker: null,
+    projects: [],
     count: null,
   },
   reducers: {},
   extraReducers: {
     //getAllWorkers
-    [getAllWorkers.fulfilled]: (state, action) => {
+    [getAllProjects.fulfilled]: (state, action) => {
       state.status = "succeeded";
       // console.log(action.payload);
 
-      state.workers = action.payload.workers;
+      state.projects = action.payload.projects;
       state.count = action.payload.count;
     },
-    [getAllWorkers.pending]: (state, action) => {
+    [getAllProjects.pending]: (state, action) => {
       state.status = "loading";
     },
-    [getAllWorkers.rejected]: (state, action) => {
+    [getAllProjects.rejected]: (state, action) => {
       state.status = "failed";
       state.errorMessage = action.error.message;
     },
     //filter Workers
-    [filterWorkers.fulfilled]: (state, action) => {
+    [filterProjects.fulfilled]: (state, action) => {
       state.status = "succeeded";
       // console.log(action.payload);
-      state.workers = action.payload.workers;
+      state.projects = action.payload.projects;
       state.count = action.payload.count;
     },
-    [filterWorkers.pending]: (state, action) => {
+    [filterProjects.pending]: (state, action) => {
       state.status = "loading";
     },
-    [filterWorkers.rejected]: (state, action) => {
+    [filterProjects.rejected]: (state, action) => {
       state.status = "failed";
       state.errorMessage = action.error.message;
       // console.log(action.error.message);
       state.workers = null;
     },
     //get Worker
-    [getWorker.fulfilled]: (state, action) => {
+    [getMyProjects.fulfilled]: (state, action) => {
       state.status = "succeeded";
-      // console.log(action.payload);
-      state.worker = action.payload;
+      state.projects = action.payload.myProjects;
+      state.count = action.payload.count;
     },
-    [getWorker.pending]: (state) => {
+    [getMyProjects.pending]: (state) => {
       state.status = "loading";
     },
-    [getWorker.rejected]: (state, action) => {
+    [getMyProjects.rejected]: (state, action) => {
       state.status = "failed";
       state.errorMessage = action.error.message;
     },
   },
 });
 
-export const workersActions = workersSlice.actions;
-export default workersSlice.reducer;
+export const projectActions = projectSlice.actions;
+export default projectSlice.reducer;

@@ -12,6 +12,8 @@ const SignupForm = (props) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordIsValid, setPasswordIsValid] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [profession, setProfession] = useState("");
   const [professionIsValid, setProfessionIsValid] = useState(false);
   const [location, setLocation] = useState("");
@@ -45,7 +47,9 @@ const SignupForm = (props) => {
             password,
           }
         : { name, email, password, profession, location };
-    dispatch(signupUser({ body, role }));
+    if (passwordIsValid) {
+      dispatch(signupUser({ body, role }));
+    }
   };
 
   //Validations
@@ -59,6 +63,14 @@ const SignupForm = (props) => {
 
   const changePasswordHandler = (event) => {
     setPassword(event.target.value);
+  };
+  const changeConfirmPasswordHandler = (event) => {
+    setConfirmPassword(event.target.value);
+    if (password === event.target.value) {
+      setPasswordIsValid(true);
+    } else {
+      setPasswordIsValid(false);
+    }
   };
 
   const changeProfessionHandler = (event) => {
@@ -120,6 +132,18 @@ const SignupForm = (props) => {
               id: "password",
               name: "password",
               onChange: changePasswordHandler,
+              type: "password",
+              autoComplete: "on",
+              minLength: 7,
+            }}
+          />
+          <Input
+            label="Confirm Password"
+            input={{
+              placeholder: "Enter a Password Again",
+              id: "confirm password",
+              name: "confirm password",
+              onChange: changeConfirmPasswordHandler,
               type: "password",
               autoComplete: "on",
               minLength: 7,
