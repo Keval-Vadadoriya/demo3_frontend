@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import ProjectCard from "./ProjectCard";
 import { Link } from "react-router-dom";
 import classes from "./Projects.module.css";
+import { Stack, Pagination } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -15,6 +16,7 @@ const Projects = () => {
   const [profession, setProfession] = useState("none");
   const [amount, setAmount] = useState(null);
   const [filtered, setFiltered] = useState(false);
+  const [page, setPage] = useState(1);
   const token = useSelector((state) => state.login.token);
 
   const dispatch = useDispatch();
@@ -22,8 +24,9 @@ const Projects = () => {
     (state) => state.workerslist
   );
   const { projects, count } = useSelector((state) => state.project);
-  const newPage = (event) => {
-    console.log(event.target.innerHTML);
+  const handleChange = (event, value) => {
+    setPage(value);
+    console.log("handle", (value - 1) * 3);
     if (filtered) {
       dispatch(
         filterProjects({
@@ -31,11 +34,11 @@ const Projects = () => {
           location,
           profession,
           amount,
-          skip: event.target.value * 3,
+          skip: (value - 1) * 3,
         })
       );
     } else {
-      dispatch(getAllProjects({ token, skip: event.target.value * 3 }));
+      dispatch(getAllProjects({ token, skip: (value - 1) * 3 }));
     }
   };
   const changeLocationHandler = (event) => {
@@ -52,7 +55,6 @@ const Projects = () => {
     setLocation("none");
     setAmount(null);
     setProfession("none");
-    // setAvailability("none");
 
     setFiltered(false);
   };
@@ -82,16 +84,16 @@ const Projects = () => {
       // </Link>
     ));
   }
-  let pageList = [];
-  if (count) {
-    for (let i = 0; i < Math.ceil(count / 3); i++) {
-      pageList.push(
-        <button onClick={newPage} key={i} value={i}>
-          {i}
-        </button>
-      );
-    }
-  }
+  // let pageList = [];
+  // if (count) {
+  //   for (let i = 0; i < Math.ceil(count / 3); i++) {
+  //     pageList.push(
+  //       <button onClick={newPage} key={i} value={i}>
+  //         {i}
+  //       </button>
+  //     );
+  //   }
+  // }
 
   return (
     <Fragment>
@@ -145,10 +147,15 @@ const Projects = () => {
           {status === "loading" && <h1>Loading</h1>}
           {projectList}
           {errorMessage && <p>{errorMessage}</p>}
-          <div className={classes.pagination}>
-            <Link to="#">&laquo;</Link>
-            {count && pageList}
-            <Link to="#">&raquo;</Link>
+
+          <div>
+            <Stack spacing={2}>
+              <Pagination
+                count={Math.ceil(count / 3)}
+                page={page}
+                onChange={handleChange}
+              />
+            </Stack>
           </div>
         </div>
       </div>

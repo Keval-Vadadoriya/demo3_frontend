@@ -26,7 +26,7 @@ const LoginForm = () => {
   if (user) {
     dispatch(
       loginActions.setLoginStatus({
-        token: "Bearer " + user.user.token,
+        token: "Bearer " + user.token,
       })
     );
     localStorage.setItem("userInfo", JSON.stringify(user.user));

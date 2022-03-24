@@ -26,5 +26,9 @@
 }
 
 .active {
-  background-color: aqua;
+  border: 1px solid red;
+}
+
+.active:active {
+  border: 1px solid rgb(14, 9, 9);
 }

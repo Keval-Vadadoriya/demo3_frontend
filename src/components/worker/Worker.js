@@ -3,6 +3,7 @@ import WorkerCard from "./WorkerCard";
 import { Link, NavLink } from "react-router-dom";
 import classes from "./Worker.module.css";
 import { useDispatch, useSelector } from "react-redux";
+import { Stack, Pagination } from "@mui/material";
 
 import {
   getAllWorkers,
@@ -16,13 +17,15 @@ const Worker = () => {
   const [availability, setAvailability] = useState("none");
   const [filtered, setFiltered] = useState(false);
   const token = useSelector((state) => state.login.token);
+  const [page, setPage] = useState(1);
 
   const dispatch = useDispatch();
   const { status, workers, count, errorMessage } = useSelector(
     (state) => state.workerslist
   );
-  const newPage = (event) => {
-    console.log(event.target.value);
+
+  const handleChange = (event, value) => {
+    setPage(value);
     if (filtered) {
       dispatch(
         filterWorkers({
@@ -31,11 +34,11 @@ const Worker = () => {
           profession,
           review,
           availability,
-          skip: event.target.value * 3,
+          skip: (value - 1) * 3,
         })
       );
     } else {
-      dispatch(getAllWorkers({ token, skip: event.target.value * 3 }));
+      dispatch(getAllWorkers({ token, skip: (value - 1) * 3 }));
     }
   };
   const changeLocationHandler = (event) => {
@@ -76,18 +79,6 @@ const Worker = () => {
         <WorkerCard name={worker.name} profession={worker.profession} />
       </Link>
     ));
-  }
-  let pageList = [];
-  if (count) {
-    for (let i = 0; i < Math.ceil(count / 3); i++) {
-      pageList.push(
-        <NavLink to="#" activeClassName={classes.active}>
-          <button onClick={newPage} key={i} value={i}>
-            {i}
-          </button>
-        </NavLink>
-      );
-    }
   }
 
   return (
@@ -157,10 +148,14 @@ const Worker = () => {
           {status === "loading" && <h1>Loading</h1>}
           {workerList}
           {errorMessage && <p>{errorMessage}</p>}
-          <div className={classes.pagination}>
-            <Link to="#">&laquo;</Link>
-            {count && pageList}
-            <Link to="#">&raquo;</Link>
+          <div>
+            <Stack spacing={2}>
+              <Pagination
+                count={Math.ceil(count / 3)}
+                page={page}
+                onChange={handleChange}
+              />
+            </Stack>
           </div>
         </div>
       </div>

@@ -2,17 +2,14 @@ import React, { Fragment, useEffect, useState } from "react";
 import ProjectCard from "./MyProjectCard";
 import { Link } from "react-router-dom";
 import classes from "./MyProjects.module.css";
+import { Stack, Pagination } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
   postProject,
   removeProject,
 } from "../../store/actions/myproject-actions";
-import {
-  filterProjects,
-  getAllProjects,
-  getMyProjects,
-} from "../../store/actions/project-actions";
+import { getMyProjects } from "../../store/actions/project-actions";
 import Input from "../UI/Input";
 
 const MyProjects = () => {
@@ -21,6 +18,7 @@ const MyProjects = () => {
   const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("none");
   const [projectName, setProjectName] = useState(false);
+  const [page, setPage] = useState(1);
   const token = useSelector((state) => state.login.token);
 
   const dispatch = useDispatch();
@@ -28,13 +26,11 @@ const MyProjects = () => {
     (state) => state.project
   );
 
-  const newPage = (event) => {
-    dispatch(getMyProjects({ token, skip: event.target.value * 3 }));
+  const handleChange = (event, value) => {
+    dispatch(getMyProjects({ token, skip: (value - 1) * 3 }));
   };
   const SubmitHandler = (event) => {
     event.preventDefault();
-    // console.log(event.target.innerHTML);
-    // if (filtered) {
     dispatch(
       postProject({
         token,
@@ -46,10 +42,6 @@ const MyProjects = () => {
       })
     );
     dispatch(getMyProjects({ token, skip: 0 }));
-
-    // } else {
-    //   dispatch(getAllWorkers({ token, skip: event.target.innerHTML * 3 }));
-    // }
   };
   const changeLocationHandler = (event) => {
     setLocation(event.target.value);
@@ -90,16 +82,16 @@ const MyProjects = () => {
       // </Link>
     ));
   }
-  let pageList = [];
-  if (count) {
-    for (let i = 0; i < Math.ceil(count / 3); i++) {
-      pageList.push(
-        <button onClick={newPage} key={i}>
-          {i}
-        </button>
-      );
-    }
-  }
+  // let pageList = [];
+  // if (count) {
+  //   for (let i = 0; i < Math.ceil(count / 3); i++) {
+  //     pageList.push(
+  //       <button onClick={newPage} key={i}>
+  //         {i}
+  //       </button>
+  //     );
+  //   }
+  // }
 
   return (
     <Fragment>
@@ -183,9 +175,15 @@ const MyProjects = () => {
             </form>
           )}
         </div>
-        <Link to="#">&raquo;</Link>
-        {count && pageList}
-        <Link to="#">&raquo;</Link>
+        <div>
+          <Stack spacing={2}>
+            <Pagination
+              count={Math.ceil(count / 3)}
+              page={page}
+              onChange={handleChange}
+            />
+          </Stack>
+        </div>
       </div>
     </Fragment>
   );

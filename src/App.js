@@ -18,6 +18,7 @@ import WorkerProfile from "./components/worker/WorkerProfile";
 import Welcome from "./components/welcome/Welcome";
 import Unauthorized from "./components/welcome/Unauthorized";
 import NotFound from "./components/welcome/NotFound";
+import { Box } from "@mui/material";
 
 function App() {
   const token = useSelector((state) => state.login.token);
@@ -25,8 +26,8 @@ function App() {
 
   return (
     <>
-      <Header />
-      <main>
+      <Box>
+        <Header />
         <Routes>
           {!token && <Route path="/" element={<Welcome />} />}
           {token && <Route path="/" element={<Navigate to="home" />} />}
@@ -74,7 +75,7 @@ function App() {
           )}
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </main>
+      </Box>
     </>
   );
 }

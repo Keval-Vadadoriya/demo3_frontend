@@ -22,25 +22,8 @@ const Home = () => {
   }, []);
 
   return (
-    <div className={classes.x}>
-      {/* //   <div className={classes.side1}>
-    //     <Link to="profile" className={classes.link}>
-    //       Profile
-    //     </Link>
-
-    //     <Link to="chats" className={classes.link}>
-    //       Chats
-    //     </Link>
-
-    //     {role === "user" && ( */}
-      {/* //       <Link to="worker" className={classes.link}>
-    //         Workers
-    //       </Link>
-    //     )}
-    //   </div> */}
-      <div className={classes.side2}>
-        <Outlet />
-      </div>
+    <div className={classes.home}>
+      <Outlet />
     </div>
   );
 };

@@ -43,9 +43,11 @@ export const signupSlice = createSlice({
   },
   extraReducers: {
     [signupUser.fulfilled]: (state, action) => {
+      state.errorMessage = "";
       state.status = "succeeded";
     },
     [signupUser.pending]: (state, action) => {
+      state.errorMessage = "";
       state.status = "loading";
     },
     [signupUser.rejected]: (state, action) => {

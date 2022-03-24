@@ -53,10 +53,10 @@ function Chats() {
         })
       );
     });
-    if (role === "user") {
-      console.log("first");
-      socket.emit("addToChatList", userId, role, receiverId.workerid);
-    }
+    // if (role === "user") {
+    console.log("first");
+    socket.emit("addToChatList", userId, role, receiverId.workerid);
+    // }
   }, [receiverId.workerid]);
   console.log("Chatssssssss");
 

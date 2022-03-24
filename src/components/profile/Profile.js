@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import classes from "./Profile.module.css";
 import Input from "../UI/Input";
 import { editUser } from "../../store/user-slice";
+import { Container } from "@mui/material";
 const Profile = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -15,7 +16,6 @@ const Profile = () => {
   const [location, setLocation] = useState("");
   const [availability, setAvailability] = useState("none");
   const [locationIsValid, setLocationIsValid] = useState(false);
-  const [edit, setEdit] = useState(true);
   const user = useSelector((state) => state.user.user);
   const { status, errorMessage } = useSelector((state) => state.user);
   const role = useSelector((state) => state.login.role);
@@ -24,9 +24,6 @@ const Profile = () => {
   const token = useSelector((state) => state.login.token);
 
   const dispatch = useDispatch();
-  const editProfile = () => {
-    setEdit(!edit);
-  };
 
   //Submit Handler
   const SubmitHandler = (event) => {
@@ -62,9 +59,7 @@ const Profile = () => {
       }
     }
 
-    if (role === "worker") {
-      dispatch(editUser({ token, body: formData, role, userId }));
-    }
+    dispatch(editUser({ token, body: formData, role, userId }));
   };
 
   //Validations
@@ -92,15 +87,11 @@ const Profile = () => {
 
   return (
     <>
-      <div className={classes.profile}>
-        <div className={classes.first}>
-          {/* <h1>Name:{user.name}</h1>
-          <h1>Email:{user.email}</h1>
-          <h1>Age:{user.age}</h1> */}
-          <img src={`http://127.0.0.1:3001/${avatar}`} />
-          {/* <button onClick={editProfile}>Edit Profile</button> */}
-        </div>
-        {edit && (
+      <Container>
+        <div className={classes.profile}>
+          <div className={classes.first}>
+            <img src={`http://127.0.0.1:3001/${avatar}`} />
+          </div>
           <div className={`${classes["form-container"]} ${classes.second}`}>
             {status === "loading" && <p>Loading</p>}
             {status !== "loading" && (
@@ -115,7 +106,7 @@ const Profile = () => {
                 <Input
                   label="Name"
                   input={{
-                    placeholder: `${user.name ? user.name : ""}`,
+                    defaultValue: `${user.name ? user.name : ""}`,
                     id: "name",
                     name: "name",
                     onChange: (event) => setName(event.target.value),
@@ -127,7 +118,7 @@ const Profile = () => {
                   <Input
                     label="About You"
                     input={{
-                      placeholder: `${
+                      defaultValue: `${
                         user.description ? user.description : ""
                       }`,
                       id: "description",
@@ -141,7 +132,7 @@ const Profile = () => {
                 <Input
                   label="Email"
                   input={{
-                    placeholder: `${user.email ? user.email : ""}`,
+                    defaultValue: `${user.email ? user.email : ""}`,
                     id: "email",
                     name: "email",
                     onChange: (event) => setEmail(event.target.value),
@@ -152,7 +143,7 @@ const Profile = () => {
                 <Input
                   label="Contact"
                   input={{
-                    placeholder: `${user.contact ? user.contact : ""}`,
+                    defaultValue: `${user.contact ? user.contact : ""}`,
                     id: "contact",
                     name: "contact",
                     // onChange: changeContactHandler,
@@ -166,7 +157,8 @@ const Profile = () => {
                   label="Age"
                   input={{
                     // text: `${user.age}`,
-                    placeholder: `${user.age ? user.age : ""}`,
+                    defaultValue: `${user.age ? user.age : ""}`,
+                    // defaultValue: `${user.age ? user.age : ""}`,
                     id: "age",
                     name: "age",
                     onChange: (event) => setAge(event.target.value),
@@ -244,8 +236,8 @@ const Profile = () => {
               </form>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      </Container>
     </>
   );
 };

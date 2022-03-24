@@ -82,12 +82,17 @@ export const workersSlice = createSlice({
     //getAllWorkers
     [getAllWorkers.fulfilled]: (state, action) => {
       state.status = "succeeded";
+      state.errorMessage = "";
       // console.log(action.payload);
 
       state.workers = action.payload.workers;
-      state.count = action.payload.count;
+      console.log(action.payload.count);
+      if (action.payload.count !== null) {
+        state.count = action.payload.count;
+      }
     },
     [getAllWorkers.pending]: (state, action) => {
+      state.errorMessage = "";
       state.status = "loading";
     },
     [getAllWorkers.rejected]: (state, action) => {
@@ -96,12 +101,17 @@ export const workersSlice = createSlice({
     },
     //filter Workers
     [filterWorkers.fulfilled]: (state, action) => {
+      state.errorMessage = "";
       state.status = "succeeded";
       // console.log(action.payload);
       state.workers = action.payload.workers;
-      state.count = action.payload.count;
+      console.log(action.payload.count);
+      if (action.payload.count !== null) {
+        state.count = action.payload.count;
+      }
     },
     [filterWorkers.pending]: (state, action) => {
+      state.errorMessage = "";
       state.status = "loading";
     },
     [filterWorkers.rejected]: (state, action) => {
@@ -112,11 +122,13 @@ export const workersSlice = createSlice({
     },
     //get Worker
     [getWorker.fulfilled]: (state, action) => {
+      state.errorMessage = "";
       state.status = "succeeded";
       // console.log(action.payload);
       state.worker = action.payload;
     },
     [getWorker.pending]: (state) => {
+      state.errorMessage = "";
       state.status = "loading";
     },
     [getWorker.rejected]: (state, action) => {
