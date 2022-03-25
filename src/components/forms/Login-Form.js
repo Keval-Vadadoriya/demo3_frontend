@@ -2,10 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
-import { loginActions } from "../../store/login-slice";
-import { socketActions } from "../../store/socket-slice";
-import { userActions } from "../../store/user-slice";
-import { loggedInUser } from "../../store/actions/login-actions";
+import { loginActions, loggedInUser } from "../../store/login-slice";
 
 import Input from "../UI/Input";
 import classes from "./Form.module.css";
@@ -14,31 +11,15 @@ const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
-  const role = useSelector((state) => state.login.role);
-  const { status, user, errorMessage } = useSelector(
-    (state) => state.loginuser
+  const { status, role, token, errorMessage } = useSelector(
+    (state) => state.login
   );
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
   console.log(status);
   //Login Request
-  if (user) {
-    dispatch(
-      loginActions.setLoginStatus({
-        token: "Bearer " + user.token,
-      })
-    );
-    localStorage.setItem("userInfo", JSON.stringify(user.user));
-    localStorage.setItem("token", user.token);
-    localStorage.setItem("role", role);
-
-    dispatch(
-      userActions.setLoggedInUser({
-        user: user.user,
-      })
-    );
-    dispatch(socketActions.setSocket());
+  if (token) {
     navigate("/home");
   }
 

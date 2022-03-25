@@ -3,12 +3,19 @@ import WorkerCard from "./WorkerCard";
 import { Link, NavLink } from "react-router-dom";
 import classes from "./Worker.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { Stack, Pagination } from "@mui/material";
+import {
+  Stack,
+  Pagination,
+  CircularProgress,
+  Grid,
+  Container,
+} from "@mui/material";
 
 import {
   getAllWorkers,
   filterWorkers,
 } from "../../store/actions/workers-action";
+import { Box } from "@mui/system";
 
 const Worker = () => {
   const [location, setLocation] = useState("none");
@@ -16,7 +23,6 @@ const Worker = () => {
   const [review, setReview] = useState("none");
   const [availability, setAvailability] = useState("none");
   const [filtered, setFiltered] = useState(false);
-  const token = useSelector((state) => state.login.token);
   const [page, setPage] = useState(1);
 
   const dispatch = useDispatch();
@@ -29,7 +35,6 @@ const Worker = () => {
     if (filtered) {
       dispatch(
         filterWorkers({
-          token,
           location,
           profession,
           review,
@@ -38,7 +43,7 @@ const Worker = () => {
         })
       );
     } else {
-      dispatch(getAllWorkers({ token, skip: (value - 1) * 3 }));
+      dispatch(getAllWorkers({ skip: (value - 1) * 3 }));
     }
   };
   const changeLocationHandler = (event) => {
@@ -64,27 +69,30 @@ const Worker = () => {
   const filterWorkersBy = async (event) => {
     event.preventDefault();
     setFiltered(true);
-    dispatch(
-      filterWorkers({ token, location, profession, review, availability })
-    );
+    dispatch(filterWorkers({ location, profession, review, availability }));
   };
 
   useEffect(async () => {
-    dispatch(getAllWorkers({ token, skip: 0 }));
+    dispatch(getAllWorkers({ skip: 0 }));
   }, []);
   let workerList;
   if (workers) {
     workerList = workers.map((worker) => (
       <Link to={`${worker._id}`} className={classes.link} key={worker._id}>
-        <WorkerCard name={worker.name} profession={worker.profession} />
+        <WorkerCard
+          name={worker.name}
+          profession={worker.profession}
+          avatar={worker.avatar}
+          description={worker.description}
+        />
       </Link>
     ));
   }
 
   return (
     <Fragment>
-      <div className={classes.x}>
-        <div>
+      <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+        <div className={classes.x}>
           <form onSubmit={filterWorkersBy}>
             <h1>Filter By</h1>
 
@@ -145,8 +153,10 @@ const Worker = () => {
           </form>
         </div>
         <div className={classes.workerlist}>
-          {status === "loading" && <h1>Loading</h1>}
-          {workerList}
+          {status === "loading" && <CircularProgress />}
+          <Box sx={{ display: "flex", flexWrap: "wrap", zIndex: 1 }}>
+            {workerList}
+          </Box>
           {errorMessage && <p>{errorMessage}</p>}
           <div>
             <Stack spacing={2}>
@@ -158,7 +168,7 @@ const Worker = () => {
             </Stack>
           </div>
         </div>
-      </div>
+      </Box>
     </Fragment>
   );
 };

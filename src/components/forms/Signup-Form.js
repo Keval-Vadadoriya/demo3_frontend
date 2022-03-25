@@ -19,12 +19,13 @@ const SignupForm = (props) => {
   const [location, setLocation] = useState("");
   const [locationIsValid, setLocationIsValid] = useState(false);
   const role = useSelector((state) => state.login.role);
+  const token = useSelector((state) => state.login.token);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-  const { status, errorMessage } = useSelector((state) => state.signupuser);
-  if (status === "succeeded") {
-    navigate("/login");
+  const { status, errorMessage } = useSelector((state) => state.signup);
+  if (token) {
+    navigate("/home");
   }
   //changing Role
   const changeRole = () => {

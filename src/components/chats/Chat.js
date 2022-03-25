@@ -16,7 +16,7 @@ const Chat = () => {
   const userId = useSelector((state) => state.user.user._id);
   const user = useSelector((state) => state.user.user);
   const role = useSelector((state) => state.login.role);
-  const { status, chatList, errorMessage } = useSelector((state) => state.chat);
+  const { chatList } = useSelector((state) => state.chat);
   const socket = useSelector((state) => state.socket.socket);
   const dispatch = useDispatch();
 

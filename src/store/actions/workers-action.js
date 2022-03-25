@@ -1,12 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 export const getAllWorkers = createAsyncThunk(
   "workers/getAllWorkers",
-  async ({ token, skip }, { getState }) => {
+  async ({ skip }, getState) => {
+    const states = getState.getState();
+
     const response = await fetch(
       `http://192.168.200.175:3001/getallworkers?limit=3&&skip=${skip}`,
       {
         headers: {
-          Authorization: token,
+          Authorization: states.login.token,
         },
       }
     );
@@ -20,12 +22,14 @@ export const getAllWorkers = createAsyncThunk(
 );
 export const getWorker = createAsyncThunk(
   "workers/getWorker",
-  async ({ token, workerId }, { getState }) => {
+  async ({ workerId }, getState) => {
+    const states = getState.getState();
+
     const response = await fetch(
       `http://192.168.200.175:3001/getworker/${workerId}`,
       {
         headers: {
-          Authorization: token,
+          Authorization: states.login.token,
         },
       }
     );
@@ -40,10 +44,9 @@ export const getWorker = createAsyncThunk(
 
 export const filterWorkers = createAsyncThunk(
   "workers/filterWorkers",
-  async (
-    { token, location, profession, review, availability, skip },
-    { getState }
-  ) => {
+  async ({ location, profession, review, availability, skip }, getState) => {
+    const states = getState.getState();
+
     const response = await fetch(
       `http://192.168.200.175:3001/filterworkers?${
         location !== "none" ? `location=${location}` : ""
@@ -55,7 +58,7 @@ export const filterWorkers = createAsyncThunk(
 
       {
         headers: {
-          Authorization: token,
+          Authorization: states.login.token,
         },
       }
     );

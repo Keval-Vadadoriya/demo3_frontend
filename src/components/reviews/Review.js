@@ -8,7 +8,6 @@ import Rating from "react-rating";
 import { addReview, getReviews } from "../../store/actions/review-actions";
 
 const Review = () => {
-  const ownerId = useSelector((state) => state.user.user._id);
   const dispatch = useDispatch();
   const [description, setDescription] = useState("");
   const [review, setReview] = useState(0);
@@ -16,9 +15,6 @@ const Review = () => {
   const { status, reviews, errorMessage } = useSelector(
     (state) => state.reviews
   );
-  const token = useSelector((state) => state.login.token);
-
-  // console.log(status, reviews);
 
   const workerid = useParams();
   const changeDescriptionHandler = (event) => {
@@ -33,21 +29,16 @@ const Review = () => {
     if (description.length > 0) {
       dispatch(
         addReview({
-          token,
           description,
           review,
-          owner: ownerId,
           workerId: workerid.id,
         })
       );
     }
   };
-  if (status === "review added") {
-    dispatch(getReviews({ token, workerId: workerid.id }));
-  }
 
   useEffect(async () => {
-    dispatch(getReviews({ token, workerId: workerid.id }));
+    dispatch(getReviews({ workerId: workerid.id }));
   }, []);
   let reviewList;
   if (reviews) {

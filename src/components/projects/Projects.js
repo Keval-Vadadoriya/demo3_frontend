@@ -30,7 +30,6 @@ const Projects = () => {
     if (filtered) {
       dispatch(
         filterProjects({
-          token,
           location,
           profession,
           amount,
@@ -38,7 +37,7 @@ const Projects = () => {
         })
       );
     } else {
-      dispatch(getAllProjects({ token, skip: (value - 1) * 3 }));
+      dispatch(getAllProjects({ skip: (value - 1) * 3 }));
     }
   };
   const changeLocationHandler = (event) => {
@@ -62,18 +61,15 @@ const Projects = () => {
     event.preventDefault();
     setFiltered(true);
     setAmount(null);
-    dispatch(
-      filterProjects({ token, location, profession, money: amount, skip: 0 })
-    );
+    dispatch(filterProjects({ location, profession, money: amount, skip: 0 }));
   };
 
   useEffect(async () => {
-    dispatch(getAllProjects({ token, skip: 0 }));
+    dispatch(getAllProjects({ skip: 0 }));
   }, []);
   let projectList;
   if (projects) {
     projectList = projects.map((project) => (
-      // <Link to={`${worker._id}`} className={classes.link} key={worker._id}>
       <ProjectCard
         name={project.project_name}
         profession={project.profession}
@@ -81,19 +77,8 @@ const Projects = () => {
         key={project._id}
         owner={project.owner}
       />
-      // </Link>
     ));
   }
-  // let pageList = [];
-  // if (count) {
-  //   for (let i = 0; i < Math.ceil(count / 3); i++) {
-  //     pageList.push(
-  //       <button onClick={newPage} key={i} value={i}>
-  //         {i}
-  //       </button>
-  //     );
-  //   }
-  // }
 
   return (
     <Fragment>

@@ -2,12 +2,8 @@ import classes from "./header.module.css";
 import { useNavigate, Link } from "react-router-dom";
 import { loginActions } from "../../store/login-slice";
 import { useDispatch, useSelector } from "react-redux";
-import { loginuserActions } from "../../store/actions/login-actions";
 import LogoutOutlinedIcon from "@mui/icons-material/Logout";
 import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
-import { Button } from "@mui/material";
-// import worker from "./worker.jpeg";
-// import worker from "./worker.jpg";
 import worker from "./log.png";
 
 const Header = () => {
@@ -27,7 +23,6 @@ const Header = () => {
           token: "",
         })
       );
-      dispatch(loginuserActions.setUser());
       navigate("/");
     }
   };

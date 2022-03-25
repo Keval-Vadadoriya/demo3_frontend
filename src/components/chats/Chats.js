@@ -15,9 +15,7 @@ function Chats() {
   const dispatch = useDispatch();
   const socket = useSelector((state) => state.socket.socket);
   const [message, setMessage] = useState("");
-  const { status, chats, chatsOwner, errorMessage } = useSelector(
-    (state) => state.chat
-  );
+  const { chats, chatsOwner } = useSelector((state) => state.chat);
 
   //scroll to bottom
   const scrollToBottom = () => {
@@ -53,10 +51,8 @@ function Chats() {
         })
       );
     });
-    // if (role === "user") {
     console.log("first");
     socket.emit("addToChatList", userId, role, receiverId.workerid);
-    // }
   }, [receiverId.workerid]);
   console.log("Chatssssssss");
 

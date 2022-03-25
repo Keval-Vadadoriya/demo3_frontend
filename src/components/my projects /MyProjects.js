@@ -27,13 +27,13 @@ const MyProjects = () => {
   );
 
   const handleChange = (event, value) => {
-    dispatch(getMyProjects({ token, skip: (value - 1) * 3 }));
+    setPage(value);
+    dispatch(getMyProjects({ skip: (value - 1) * 3 }));
   };
   const SubmitHandler = (event) => {
     event.preventDefault();
     dispatch(
       postProject({
-        token,
         project_name: projectName,
         description,
         profession,
@@ -41,7 +41,6 @@ const MyProjects = () => {
         money: amount,
       })
     );
-    dispatch(getMyProjects({ token, skip: 0 }));
   };
   const changeLocationHandler = (event) => {
     setLocation(event.target.value);
@@ -60,17 +59,16 @@ const MyProjects = () => {
   };
   const removeProjectHandler = (projectId) => {
     console.log(token);
-    dispatch(removeProject({ token, projectId }));
-    dispatch(getMyProjects({ token, skip: 0 }));
+    dispatch(removeProject({ projectId }));
+    dispatch(getMyProjects({ skip: 0 }));
   };
 
   useEffect(async () => {
-    dispatch(getMyProjects({ token, skip: 0 }));
+    dispatch(getMyProjects({ skip: 0 }));
   }, []);
   let projectList;
   if (projects) {
     projectList = projects.map((project) => (
-      // <Link to={`${worker._id}`} className={classes.link} key={worker._id}>
       <ProjectCard
         _id={project._id}
         name={project.project_name}
@@ -79,19 +77,8 @@ const MyProjects = () => {
         key={project._id}
         onClick={removeProjectHandler}
       />
-      // </Link>
     ));
   }
-  // let pageList = [];
-  // if (count) {
-  //   for (let i = 0; i < Math.ceil(count / 3); i++) {
-  //     pageList.push(
-  //       <button onClick={newPage} key={i}>
-  //         {i}
-  //       </button>
-  //     );
-  //   }
-  // }
 
   return (
     <Fragment>

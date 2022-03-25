@@ -1,58 +1,59 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-export const loggedInUser = createAsyncThunk(
-  "loginuser/loggedInUser",
-  async (obj, { getState }) => {
-    const response = await fetch(
-      `http://192.168.200.175:3001/login?role=${obj.role}`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          email: obj.loginEmail,
-          password: obj.loginPassword,
-        }),
+// import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+// export const loggedInUser = createAsyncThunk(
+//   "loginuser/loggedInUser",
+//   async (obj, getState) => {
+//     console.log(getState);
+//     const response = await fetch(
+//       `http://192.168.200.175:3001/login?role=${obj.role}`,
+//       {
+//         method: "POST",
+//         body: JSON.stringify({
+//           email: obj.loginEmail,
+//           password: obj.loginPassword,
+//         }),
 
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
 
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
-    }
-    return data;
-  }
-);
+//     const data = await response.json();
+//     if (response.ok === false) {
+//       throw new Error(data.Error);
+//     }
+//     return data;
+//   }
+// );
 
-export const loginuserSlice = createSlice({
-  name: "loginuser",
-  initialState: {
-    status: "idle",
-    errorMessage: "",
-    user: null,
-  },
-  reducers: {
-    setUser(state, action) {
-      state.user = null;
-    },
-  },
-  extraReducers: {
-    [loggedInUser.fulfilled]: (state, action) => {
-      state.status = "succeeded";
-      state.errorMessage = "";
-      state.user = action.payload;
-    },
-    [loggedInUser.pending]: (state, action) => {
-      state.errorMessage = "";
-      state.status = "loading";
-    },
-    [loggedInUser.rejected]: (state, action) => {
-      state.status = "failed";
-      state.errorMessage = action.error.message;
-    },
-  },
-});
+// export const loginuserSlice = createSlice({
+//   name: "loginuser",
+//   initialState: {
+//     status: "idle",
+//     errorMessage: "",
+//     user: null,
+//   },
+//   reducers: {
+//     setUser(state, action) {
+//       state.user = null;
+//     },
+//   },
+//   extraReducers: {
+//     [loggedInUser.fulfilled]: (state, action) => {
+//       state.status = "succeeded";
+//       state.errorMessage = "";
+//       state.user = action.payload;
+//     },
+//     [loggedInUser.pending]: (state, action) => {
+//       state.errorMessage = "";
+//       state.status = "loading";
+//     },
+//     [loggedInUser.rejected]: (state, action) => {
+//       state.status = "failed";
+//       state.errorMessage = action.error.message;
+//     },
+//   },
+// });
 
-export const loginuserActions = loginuserSlice.actions;
-export default loginuserSlice.reducer;
+// export const loginuserActions = loginuserSlice.actions;
+// export default loginuserSlice.reducer;

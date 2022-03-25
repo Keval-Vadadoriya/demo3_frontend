@@ -5,14 +5,16 @@ data = JSON.parse(data);
 
 export const editUser = createAsyncThunk(
   "user/editUser",
-  async ({ token, body, role, userId }, { getState }) => {
+  async ({ body, role, userId }, getState) => {
+    const states = getState.getState();
+
     const response = await fetch(
       `http://192.168.200.175:3001/editprofile/${userId}?role=${role}`,
       {
         method: "POST",
         body: body,
         headers: {
-          Authorization: token,
+          Authorization: states.login.token,
         },
       }
     );
@@ -60,11 +62,3 @@ const userSlice = createSlice({
 export const userActions = userSlice.actions;
 
 export default userSlice;
-
-// export const editSlice = createSlice({
-//   name: "edituser",
-//   initialState: {
-//     // user: null,
-//   },
-//   reducers: {},
-// });

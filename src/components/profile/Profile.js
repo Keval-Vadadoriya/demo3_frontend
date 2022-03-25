@@ -59,7 +59,7 @@ const Profile = () => {
       }
     }
 
-    dispatch(editUser({ token, body: formData, role, userId }));
+    dispatch(editUser({ body: formData, role, userId }));
   };
 
   //Validations
