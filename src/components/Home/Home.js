@@ -3,6 +3,7 @@ import classes from "./Home.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { loginActions } from "../../store/login-slice";
+import Header from "../layout/Header";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -22,9 +23,12 @@ const Home = () => {
   }, []);
 
   return (
-    <div className={classes.home}>
-      <Outlet />
-    </div>
+    <>
+      {/* <Header /> */}
+      <div className={classes.home}>
+        <Outlet />
+      </div>
+    </>
   );
 };
 export default Home;

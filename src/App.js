@@ -26,10 +26,12 @@ function App() {
 
   return (
     <>
-      <Box>
+      <Box sx={{ minWidth: "xs" }}>
         <Header />
         <Routes>
           {!token && <Route path="/" element={<Welcome />} />}
+          {token && <Route path="/unauthorized" element={<Unauthorized />} />}
+          <Route path="/404" element={<NotFound />} />
           {token && <Route path="/" element={<Navigate to="home" />} />}
 
           <Route path="/signup" element={<SignupForm />} />
@@ -41,7 +43,7 @@ function App() {
                 <Route path=":workerid" element={<Chats />} />
               </Route>
               {role === "user" && (
-                <Route path="worker">
+                <Route path="workers">
                   <Route index element={<Worker />} />
                   <Route path=":workerid">
                     <Route index element={<WorkerProfile />} />

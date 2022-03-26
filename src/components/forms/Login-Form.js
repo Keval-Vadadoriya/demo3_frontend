@@ -6,6 +6,7 @@ import { loginActions, loggedInUser } from "../../store/login-slice";
 
 import Input from "../UI/Input";
 import classes from "./Form.module.css";
+import Header from "../layout/Header";
 
 const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState("");
@@ -42,58 +43,61 @@ const LoginForm = () => {
   };
 
   return (
-    <div className={classes["form-container"]}>
-      {status === "loading" && <p>Loading</p>}
-      {
-        <form onSubmit={onSubmitHandler} className={classes.form}>
-          <h1>Login Form</h1>
+    <>
+      {/* <Header /> */}
+      <div className={classes["form-container"]}>
+        {status === "loading" && <p>Loading</p>}
+        {
+          <form onSubmit={onSubmitHandler} className={classes.form}>
+            <h1>Login Form</h1>
 
-          <div className={classes.select}>
-            <label htmlFor="role">Role</label>
-            <select
-              name="role"
-              id="role"
-              onChange={changeRoleHandler}
-              defaultValue="none"
-              required={true}
-            >
-              <option value="none" disabled hidden>
-                select your Role
-              </option>
-              <option value="user">user</option>
-              <option value="worker">worker</option>
-            </select>
-          </div>
+            <div className={classes.select}>
+              <label htmlFor="role">Role</label>
+              <select
+                name="role"
+                id="role"
+                onChange={changeRoleHandler}
+                defaultValue="none"
+                required={true}
+              >
+                <option value="none" disabled hidden>
+                  select your Role
+                </option>
+                <option value="user">user</option>
+                <option value="worker">worker</option>
+              </select>
+            </div>
 
-          <Input
-            label="Email"
-            input={{
-              placeholder: "Enter an Email",
-              id: "email",
-              onChange: changeEmailHandler,
-              type: "email",
-              required: true,
-            }}
-          />
-          <Input
-            label="Password"
-            input={{
-              placeholder: "Enter a Password",
-              id: "password",
-              onChange: changePasswordHandler,
-              type: "password",
-              required: true,
-              minLength: 7,
-              autoComplete: "on",
-            }}
-          />
-          <input type="submit" value="Login"></input>
-          <span>Don't Have Account? </span>
-          <Link to="/signup">signup</Link>
-          {status !== "loading" && errorMessage && <p>{errorMessage}</p>}
-        </form>
-      }
-    </div>
+            <Input
+              label="Email"
+              input={{
+                placeholder: "Enter an Email",
+                id: "email",
+                onChange: changeEmailHandler,
+                type: "email",
+                required: true,
+              }}
+            />
+            <Input
+              label="Password"
+              input={{
+                placeholder: "Enter a Password",
+                id: "password",
+                onChange: changePasswordHandler,
+                type: "password",
+                required: true,
+                minLength: 7,
+                autoComplete: "on",
+              }}
+            />
+            <input type="submit" value="Login"></input>
+            <span>Don't Have Account? </span>
+            <Link to="/signup">signup</Link>
+            {status !== "loading" && errorMessage && <p>{errorMessage}</p>}
+          </form>
+        }
+      </div>
+    </>
   );
 };
 

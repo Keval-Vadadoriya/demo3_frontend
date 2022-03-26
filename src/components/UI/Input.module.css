@@ -23,3 +23,10 @@
   margin-bottom: 0.5rem;
   margin: 5px;
 }
+
+.invalid {
+  background-color: rgb(255, 112, 112);
+}
+.valid {
+  background-color: rgb(191, 236, 191);
+}

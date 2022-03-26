@@ -6,9 +6,17 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Stack,
   Pagination,
+  Snackbar,
+  Alert,
   CircularProgress,
   Grid,
   Container,
+  TextField,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormControl,
+  Button,
 } from "@mui/material";
 
 import {
@@ -91,83 +99,139 @@ const Worker = () => {
 
   return (
     <Fragment>
-      <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-        <div className={classes.x}>
-          <form onSubmit={filterWorkersBy}>
-            <h1>Filter By</h1>
-
-            <select
-              name="profession"
-              id="profession"
-              onChange={changeProfessionHandler}
-              value={profession}
-            >
-              <option value="none">select profession</option>
-              <option value="carpenter">Carpenter</option>
-              <option value="plumber">Plumber</option>
-              <option value="electrician">Electrician</option>
-            </select>
-            <select
-              name="location"
-              id="location"
-              onChange={changeLocationHandler}
-              value={location}
-            >
-              <option value="none" disabled hidden>
-                select location
-              </option>
-              <option value="surat">Surat</option>
-              <option value="anand">Anand</option>
-              <option value="vadodara">Vadodara</option>
-              <option value="ahmedabad">Ahmedabad</option>
-            </select>
-            <select
-              name="availability"
-              id="availability"
-              onChange={changeAvailabilityHandler}
-              value={availability}
-            >
-              <option value="none" disabled hidden>
-                select status
-              </option>
-              <option value={true}>Available</option>
-              <option value={false}>Not Available</option>
-            </select>
-            <select
-              name="review"
-              id="review"
-              onChange={changeReviewHandler}
-              value={review}
-            >
-              <option value="none" disabled hidden>
-                select review
-              </option>
-              <option value="0">{`>0`}</option>
-              <option value="1">{`>1`}</option>
-              <option value="2">{`>2`}</option>
-              <option value="3">{`>3`}</option>
-              <option value="4">{`>4`}</option>
-            </select>
-            <input type="submit" value="Apply"></input>
-            <button onClick={clearFilter}>clear</button>
-          </form>
-        </div>
-        <div className={classes.workerlist}>
+      <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" } }}>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={filterWorkersBy}
+          sx={{ minWidth: 160, maxWidth: 200, margin: 2 }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Profession
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={profession}
+                  label="Profession"
+                  onChange={changeProfessionHandler}
+                >
+                  <MenuItem value={"none"} disabled hidden>
+                    {"Select Profession"}
+                  </MenuItem>
+                  <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
+                  <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
+                  <MenuItem value={"electrician"}>{"Electrician"}</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Location</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={location}
+                  label="Location"
+                  onChange={changeLocationHandler}
+                >
+                  <MenuItem value={"none"} disabled hidden>
+                    {"Select Location"}
+                  </MenuItem>
+                  <MenuItem value={"surat"}>{"Surat"}</MenuItem>
+                  <MenuItem value={"anand"}>{"Anand"}</MenuItem>
+                  <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
+                  <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
+                  <MenuItem value={4}>{">4"}</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Availability
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={availability}
+                  label="availability"
+                  onChange={changeAvailabilityHandler}
+                >
+                  <MenuItem value={"none"} disabled hidden>
+                    {"Availability"}
+                  </MenuItem>
+                  <MenuItem value={true}>{"Available"}</MenuItem>
+                  <MenuItem value={false}>{"Not Available"}</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">review</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={review}
+                  label="review"
+                  onChange={changeReviewHandler}
+                >
+                  <MenuItem value={"none"} disabled>
+                    {"Select Review"}
+                  </MenuItem>
+                  <MenuItem value={0}>{">0"}</MenuItem>
+                  <MenuItem value={1}>{">1"}</MenuItem>
+                  <MenuItem value={2}>{">2"}</MenuItem>
+                  <MenuItem value={3}>{">3"}</MenuItem>
+                  <MenuItem value={4}>{">4"}</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Apply
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={clearFilter}
+              >
+                Clear
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+        <Container fixed>
           {status === "loading" && <CircularProgress />}
-          <Box sx={{ display: "flex", flexWrap: "wrap", zIndex: 1 }}>
-            {workerList}
-          </Box>
-          {errorMessage && <p>{errorMessage}</p>}
-          <div>
-            <Stack spacing={2}>
-              <Pagination
-                count={Math.ceil(count / 3)}
-                page={page}
-                onChange={handleChange}
-              />
-            </Stack>
-          </div>
-        </div>
+          <Box sx={{ display: "flex", flexWrap: "wrap" }}>{workerList}</Box>
+          <Snackbar open={errorMessage} autoHideDuration={6000}>
+            <Alert
+              onClose={clearFilter}
+              severity="error"
+              sx={{ width: "100%" }}
+            >
+              {errorMessage}
+            </Alert>
+          </Snackbar>
+          <Stack spacing={2}>
+            <Pagination
+              count={Math.ceil(count / 3)}
+              page={page}
+              onChange={handleChange}
+            />
+          </Stack>
+        </Container>
       </Box>
     </Fragment>
   );
