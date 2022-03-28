@@ -1,14 +1,17 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { getMyProjects } from "./project-actions";
 export const removeProject = createAsyncThunk(
   "myproject/removeProject",
-  async ({ token, projectId }, { getState }) => {
+  async ({ projectId }, getState) => {
+    const states = getState.getState();
+
     const response = await fetch(
       `http://192.168.200.175:3001/removeproject/${projectId}`,
       {
         method: "DELETE",
 
         headers: {
-          Authorization: token,
+          Authorization: states.login.token,
         },
       }
     );
@@ -24,9 +27,11 @@ export const removeProject = createAsyncThunk(
 export const postProject = createAsyncThunk(
   "myproject/postProject",
   async (
-    { token, project_name, description, profession, location, money },
-    { getState }
+    { project_name, description, profession, location, money },
+    getState
   ) => {
+    const states = getState.getState();
+    console.log(states);
     const response = await fetch(`http://192.168.200.175:3001/project`, {
       method: "POST",
       body: JSON.stringify({
@@ -37,7 +42,7 @@ export const postProject = createAsyncThunk(
         money,
       }),
       headers: {
-        Authorization: token,
+        Authorization: states.login.token,
         "Content-Type": "application/json",
       },
     });
@@ -45,6 +50,8 @@ export const postProject = createAsyncThunk(
     const data = await response.json();
     if (response.ok === false) {
       throw new Error(data.Error);
+    } else {
+      getState.dispatch(getMyProjects({ skip: 0 }));
     }
     return data;
   }

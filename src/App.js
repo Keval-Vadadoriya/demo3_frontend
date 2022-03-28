@@ -18,6 +18,7 @@ import WorkerProfile from "./components/worker/WorkerProfile";
 import Welcome from "./components/welcome/Welcome";
 import Unauthorized from "./components/welcome/Unauthorized";
 import NotFound from "./components/welcome/NotFound";
+import { Box } from "@mui/material";
 
 function App() {
   const token = useSelector((state) => state.login.token);
@@ -25,8 +26,8 @@ function App() {
 
   return (
     <>
-      <Header />
-      <main>
+      <Box sx={{ minWidth: "xs" }}>
+        <Header />
         <Routes>
           {!token && <Route path="/" element={<Welcome />} />}
           {token && <Route path="/" element={<Navigate to="home" />} />}
@@ -40,7 +41,7 @@ function App() {
                 <Route path=":workerid" element={<Chats />} />
               </Route>
               {role === "user" && (
-                <Route path="worker">
+                <Route path="workers">
                   <Route index element={<Worker />} />
                   <Route path=":workerid">
                     <Route index element={<WorkerProfile />} />
@@ -65,16 +66,23 @@ function App() {
                 </Route>
               )}
               {role === "worker" && (
-                <Route path="worker/*" element={<Unauthorized />} />
+                <>
+                  <Route path="worker/*" element={<Unauthorized />} />
+                  <Route path="myprojects/*" element={<Unauthorized />} />
+                </>
+              )}
+              {role === "user" && (
+                <Route path="projects/*" element={<Unauthorized />} />
               )}
             </Route>
           )}
           {!token && (
             <Route path="/home/*" element={<Navigate to="/login" />} />
           )}
-          <Route path="*" element={<NotFound />} />
+          {role && <Route path="*" element={<NotFound />} />}
         </Routes>
-      </main>
+        )
+      </Box>
     </>
   );
 }

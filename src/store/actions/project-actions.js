@@ -1,12 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 export const getAllProjects = createAsyncThunk(
   "project/getAllProjects",
-  async ({ token, skip }, { getState }) => {
+  async ({ skip }, getState) => {
+    const states = getState.getState();
+
     const response = await fetch(
       `http://192.168.200.175:3001/getallprojects?limit=5&&skip=${skip}`,
       {
         headers: {
-          Authorization: token,
+          Authorization: states.login.token,
         },
       }
     );
@@ -20,12 +22,14 @@ export const getAllProjects = createAsyncThunk(
 );
 export const getMyProjects = createAsyncThunk(
   "project/getMyProjects",
-  async ({ token, skip }, { getState }) => {
+  async ({ skip }, getState) => {
+    const states = getState.getState();
+
     const response = await fetch(
       `http://192.168.200.175:3001/getmyprojects?limit=5&&skip=${skip}`,
       {
         headers: {
-          Authorization: token,
+          Authorization: states.login.token,
         },
       }
     );
@@ -40,7 +44,9 @@ export const getMyProjects = createAsyncThunk(
 
 export const filterProjects = createAsyncThunk(
   "project/filterProjects",
-  async ({ token, location, profession, money, skip }, { getState }) => {
+  async ({ location, profession, money, skip }, getState) => {
+    const states = getState.getState();
+
     const response = await fetch(
       `http://192.168.200.175:3001/filterprojects?${
         location !== "none" ? `location=${location}` : ""
@@ -50,7 +56,7 @@ export const filterProjects = createAsyncThunk(
 
       {
         headers: {
-          Authorization: token,
+          Authorization: states.login.token,
         },
       }
     );
@@ -69,19 +75,21 @@ export const projectSlice = createSlice({
     status: "idle",
     errorMessage: "",
     projects: [],
-    count: null,
+    count: 0,
   },
   reducers: {},
   extraReducers: {
     //getAllWorkers
     [getAllProjects.fulfilled]: (state, action) => {
       state.status = "succeeded";
+      state.errorMessage = "";
       // console.log(action.payload);
 
       state.projects = action.payload.projects;
       state.count = action.payload.count;
     },
     [getAllProjects.pending]: (state, action) => {
+      state.errorMessage = "";
       state.status = "loading";
     },
     [getAllProjects.rejected]: (state, action) => {
@@ -91,11 +99,13 @@ export const projectSlice = createSlice({
     //filter Workers
     [filterProjects.fulfilled]: (state, action) => {
       state.status = "succeeded";
+      state.errorMessage = "";
       // console.log(action.payload);
       state.projects = action.payload.projects;
       state.count = action.payload.count;
     },
     [filterProjects.pending]: (state, action) => {
+      state.errorMessage = "";
       state.status = "loading";
     },
     [filterProjects.rejected]: (state, action) => {
@@ -107,10 +117,12 @@ export const projectSlice = createSlice({
     //get Worker
     [getMyProjects.fulfilled]: (state, action) => {
       state.status = "succeeded";
+      state.errorMessage = "";
       state.projects = action.payload.myProjects;
       state.count = action.payload.count;
     },
     [getMyProjects.pending]: (state) => {
+      state.errorMessage = "";
       state.status = "loading";
     },
     [getMyProjects.rejected]: (state, action) => {

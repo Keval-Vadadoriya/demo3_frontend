@@ -1,12 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 export const getReviews = createAsyncThunk(
   "reviews/getReviews",
-  async ({ token, workerId }, { getState }) => {
+  async ({ workerId }, getState) => {
+    const states = getState.getState();
+
     const response = await fetch(
       `http://192.168.200.175:3001/getreview/${workerId}`,
       {
         headers: {
-          Authorization: token,
+          Authorization: states.login.token,
         },
       }
     );
@@ -21,7 +23,9 @@ export const getReviews = createAsyncThunk(
 
 export const addReview = createAsyncThunk(
   "reviews/addReview",
-  async ({ token, description, review, owner, workerId }, { getState }) => {
+  async ({ description, review, workerId }, getState) => {
+    const states = getState.getState();
+
     const response = await fetch(
       `http://192.168.200.175:3001/review/${workerId}`,
       {
@@ -29,10 +33,10 @@ export const addReview = createAsyncThunk(
         body: JSON.stringify({
           description,
           review,
-          owner,
+          owner: states.user.user._id,
         }),
         headers: {
-          Authorization: token,
+          Authorization: states.login.token,
 
           "Content-Type": "application/json",
         },
@@ -42,6 +46,8 @@ export const addReview = createAsyncThunk(
     const data = await response.json();
     if (response.ok === false) {
       throw new Error(data.Error);
+    } else {
+      getState.dispatch(getReviews({ workerId }));
     }
     return data;
   }
@@ -70,7 +76,7 @@ export const reviewsSlice = createSlice({
       state.errorMessage = action.error.message;
     },
     [addReview.fulfilled]: (state, action) => {
-      state.status = "review added";
+      state.status = "succeeded";
       state.errorMessage = "";
     },
     [addReview.pending]: (state, action) => {

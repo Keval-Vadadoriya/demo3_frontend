@@ -1,52 +1,5 @@
-.x {
-  /* display: flexbox; */
-  /* position: fixed; */
-  /* top: 20vh; */
+/* .home {
   width: 100vw;
   height: 90vh;
-  /* overflow: hidden; */
-  /* overflow: scroll; */
-
-  /* background-color: red; */
-}
-.side1 {
-  background-color: #c2c2c2;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-evenly;
-
-  color: white;
-  position: sticky;
-  top: 10vh;
-  z-index: 1;
-  /* height: fit-content; */
-  /* width: 15%; */
-  /* float: left; */
-}
-
-/* .side1 ul {
-  position: -webkit-sticky;
-  display: block;
-  /* position: sticky;
-  top: 110px; */
-/* list-style-type: none;
-  text-decoration: none; */
-/* } */
-/* .side1 li a {
-  display: block;
-  background-color: white;
-  margin-top: 5px;
-  padding: 5px;
-  list-style-type: none;
-  text-decoration: none;
+  background-color: rgb(149, 201, 201);
 } */
-.side2 {
-  /* background-color: rgb(21, 255, 0); */
-  /* float: left; */
-  /* width: 85%;
-  height: 100%; */
-  margin: 10px;
-  padding: 10px;
-  /* height: fit-content; */
-  /* overflow: scroll; */
-}

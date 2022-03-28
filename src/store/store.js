@@ -1,9 +1,8 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
-import loginSlice from "./login-slice";
-import userSlice from "./user-slice";
-import socketSlice from "./socket-slice";
-import loginuser from "./actions/login-actions";
-import signupuser from "./actions/signup-actions";
+import login from "./login-slice";
+import user, { getUser } from "./user-slice";
+import socket from "./socket-slice";
+import signup from "./actions/signup-actions";
 import workerslist from "./actions/workers-action";
 import reviews from "./actions/review-actions";
 import chat from "./actions/chat-actions";
@@ -15,11 +14,10 @@ const customizedMiddleware = getDefaultMiddleware({
 });
 const store = configureStore({
   reducer: {
-    login: loginSlice.reducer,
-    user: userSlice.reducer,
-    socket: socketSlice.reducer,
-    loginuser,
-    signupuser,
+    login,
+    user,
+    socket,
+    signup,
     workerslist,
     reviews,
     chat,
@@ -28,5 +26,8 @@ const store = configureStore({
   },
   middleware: customizedMiddleware,
 });
-
+console.log(store.getState());
+if (store.getState().login.token) {
+  store.dispatch(getUser());
+}
 export default store;

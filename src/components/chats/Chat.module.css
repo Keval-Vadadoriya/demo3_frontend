@@ -1,24 +1,22 @@
-.x {
+.chat {
   display: flex;
-  width: 100vw;
-  height: 90vh;
+  width: 100%;
+  height: 100%;
   background-color: rgb(226, 233, 238);
-  /* overflow: hidden; */
 }
 
-.side1 {
-  /* background-color: rgb(21, 255, 0); */
-  /* float: left; */
-  width: 80vw;
-  height: 90vh;
-  margin: 10px;
+.chats {
+  width: 80%;
+  height: 100%;
+  box-sizing: border-box;
+
+  /* margin: 10px; */
   padding: 10px;
-  /* overflow: scroll; */
 }
-.side2 {
+.chatlist {
   background-color: rgb(223, 222, 211);
-  width: 20vw;
-  height: 90vh;
+  width: 20%;
+  height: 100%;
   overflow: scroll;
 }
 .link {

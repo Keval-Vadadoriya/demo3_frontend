@@ -2,17 +2,14 @@ import React, { Fragment, useEffect, useState } from "react";
 import ProjectCard from "./MyProjectCard";
 import { Link } from "react-router-dom";
 import classes from "./MyProjects.module.css";
+import { Stack, Pagination, Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
   postProject,
   removeProject,
 } from "../../store/actions/myproject-actions";
-import {
-  filterProjects,
-  getAllProjects,
-  getMyProjects,
-} from "../../store/actions/project-actions";
+import { getMyProjects } from "../../store/actions/project-actions";
 import Input from "../UI/Input";
 
 const MyProjects = () => {
@@ -21,6 +18,8 @@ const MyProjects = () => {
   const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("none");
   const [projectName, setProjectName] = useState(false);
+  const [addProject, setAddProject] = useState(false);
+  const [page, setPage] = useState(1);
   const token = useSelector((state) => state.login.token);
 
   const dispatch = useDispatch();
@@ -28,16 +27,17 @@ const MyProjects = () => {
     (state) => state.project
   );
 
-  const newPage = (event) => {
-    dispatch(getMyProjects({ token, skip: event.target.value * 3 }));
+  const addProjectHandler = () => {
+    setAddProject(!addProject);
+  };
+  const handleChange = (event, value) => {
+    setPage(value);
+    dispatch(getMyProjects({ skip: (value - 1) * 3 }));
   };
   const SubmitHandler = (event) => {
     event.preventDefault();
-    // console.log(event.target.innerHTML);
-    // if (filtered) {
     dispatch(
       postProject({
-        token,
         project_name: projectName,
         description,
         profession,
@@ -45,11 +45,6 @@ const MyProjects = () => {
         money: amount,
       })
     );
-    dispatch(getMyProjects({ token, skip: 0 }));
-
-    // } else {
-    //   dispatch(getAllWorkers({ token, skip: event.target.innerHTML * 3 }));
-    // }
   };
   const changeLocationHandler = (event) => {
     setLocation(event.target.value);
@@ -68,43 +63,40 @@ const MyProjects = () => {
   };
   const removeProjectHandler = (projectId) => {
     console.log(token);
-    dispatch(removeProject({ token, projectId }));
-    dispatch(getMyProjects({ token, skip: 0 }));
+    dispatch(removeProject({ projectId }));
+    dispatch(getMyProjects({ skip: 0 }));
   };
 
   useEffect(async () => {
-    dispatch(getMyProjects({ token, skip: 0 }));
+    dispatch(getMyProjects({ skip: 0 }));
   }, []);
   let projectList;
   if (projects) {
     projectList = projects.map((project) => (
-      // <Link to={`${worker._id}`} className={classes.link} key={worker._id}>
       <ProjectCard
-        _id={project._id}
-        name={project.project_name}
-        profession={project.profession}
-        location={project.location}
-        key={project._id}
+        project={project}
         onClick={removeProjectHandler}
+        key={project._id}
       />
-      // </Link>
     ));
-  }
-  let pageList = [];
-  if (count) {
-    for (let i = 0; i < Math.ceil(count / 3); i++) {
-      pageList.push(
-        <button onClick={newPage} key={i}>
-          {i}
-        </button>
-      );
-    }
   }
 
   return (
     <Fragment>
       <div className={classes.x}>
-        <div>{projectList && projectList}</div>
+        <div>
+          <Button onClick={addProjectHandler}>Add a New Project</Button>
+          {projectList && projectList}
+          <Stack spacing={2}>
+            <Pagination
+              count={Math.ceil(count / 3)}
+              page={page}
+              onChange={handleChange}
+            />
+          </Stack>
+        </div>
+      </div>
+      {addProject && (
         <div className={classes["form-container"]}>
           {status === "loading" && <p>Loading</p>}
           {status !== "loading" && (
@@ -183,10 +175,7 @@ const MyProjects = () => {
             </form>
           )}
         </div>
-        <Link to="#">&raquo;</Link>
-        {count && pageList}
-        <Link to="#">&raquo;</Link>
-      </div>
+      )}
     </Fragment>
   );
 };

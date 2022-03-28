@@ -15,4 +15,4 @@ const socketSlice = createSlice({
 
 export const socketActions = socketSlice.actions;
 
-export default socketSlice;
+export default socketSlice.reducer;

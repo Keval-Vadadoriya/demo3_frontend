@@ -3,6 +3,22 @@ import WorkerCard from "./WorkerCard";
 import { Link, NavLink } from "react-router-dom";
 import classes from "./Worker.module.css";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  Stack,
+  Pagination,
+  Snackbar,
+  Alert,
+  CircularProgress,
+  Grid,
+  Container,
+  TextField,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormControl,
+  Button,
+  Box,
+} from "@mui/material";
 
 import {
   getAllWorkers,
@@ -15,27 +31,36 @@ const Worker = () => {
   const [review, setReview] = useState("none");
   const [availability, setAvailability] = useState("none");
   const [filtered, setFiltered] = useState(false);
-  const token = useSelector((state) => state.login.token);
+  const [isSnackbar, setIsSnackbar] = useState(false);
+  const [page, setPage] = useState(1);
 
   const dispatch = useDispatch();
   const { status, workers, count, errorMessage } = useSelector(
     (state) => state.workerslist
   );
-  const newPage = (event) => {
-    console.log(event.target.value);
+  const handleSnackbar = () => {
+    setIsSnackbar(false);
+  };
+  useEffect(() => {
+    if (errorMessage) {
+      setIsSnackbar(true);
+    }
+  }, [errorMessage]);
+
+  const handleChange = (event, value) => {
+    setPage(value);
     if (filtered) {
       dispatch(
         filterWorkers({
-          token,
           location,
           profession,
           review,
           availability,
-          skip: event.target.value * 3,
+          skip: (value - 1) * 3,
         })
       );
     } else {
-      dispatch(getAllWorkers({ token, skip: event.target.value * 3 }));
+      dispatch(getAllWorkers({ skip: (value - 1) * 3 }));
     }
   };
   const changeLocationHandler = (event) => {
@@ -61,109 +86,162 @@ const Worker = () => {
   const filterWorkersBy = async (event) => {
     event.preventDefault();
     setFiltered(true);
-    dispatch(
-      filterWorkers({ token, location, profession, review, availability })
-    );
+    dispatch(filterWorkers({ location, profession, review, availability }));
   };
 
   useEffect(async () => {
-    dispatch(getAllWorkers({ token, skip: 0 }));
+    dispatch(getAllWorkers({ skip: 0 }));
   }, []);
   let workerList;
   if (workers) {
     workerList = workers.map((worker) => (
       <Link to={`${worker._id}`} className={classes.link} key={worker._id}>
-        <WorkerCard name={worker.name} profession={worker.profession} />
+        <WorkerCard
+          name={worker.name}
+          profession={worker.profession}
+          avatar={worker.avatar}
+          description={worker.description}
+          availability={worker.availability}
+        />
       </Link>
     ));
-  }
-  let pageList = [];
-  if (count) {
-    for (let i = 0; i < Math.ceil(count / 3); i++) {
-      pageList.push(
-        <NavLink to="#" activeClassName={classes.active}>
-          <button onClick={newPage} key={i} value={i}>
-            {i}
-          </button>
-        </NavLink>
-      );
-    }
   }
 
   return (
     <Fragment>
-      <div className={classes.x}>
-        <div>
-          <form onSubmit={filterWorkersBy}>
-            <h1>Filter By</h1>
-
-            <select
-              name="profession"
-              id="profession"
-              onChange={changeProfessionHandler}
-              value={profession}
+      <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" } }}>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={filterWorkersBy}
+          sx={{ minWidth: 160, maxWidth: 200, margin: 2 }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Profession
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={profession}
+                  label="Profession"
+                  onChange={changeProfessionHandler}
+                >
+                  <MenuItem value={"none"} disabled hidden>
+                    {"Select Profession"}
+                  </MenuItem>
+                  <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
+                  <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
+                  <MenuItem value={"electrician"}>{"Electrician"}</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Location</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={location}
+                  label="Location"
+                  onChange={changeLocationHandler}
+                >
+                  <MenuItem value={"none"} disabled hidden>
+                    {"Select Location"}
+                  </MenuItem>
+                  <MenuItem value={"surat"}>{"Surat"}</MenuItem>
+                  <MenuItem value={"anand"}>{"Anand"}</MenuItem>
+                  <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
+                  <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Availability
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={availability}
+                  label="availability"
+                  onChange={changeAvailabilityHandler}
+                >
+                  <MenuItem value={"none"} disabled hidden>
+                    {"Availability"}
+                  </MenuItem>
+                  <MenuItem value={true}>{"Available"}</MenuItem>
+                  <MenuItem value={false}>{"Not Available"}</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">review</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={review}
+                  label="review"
+                  onChange={changeReviewHandler}
+                >
+                  <MenuItem value={"none"} disabled>
+                    {"Select Review"}
+                  </MenuItem>
+                  <MenuItem value={0}>{">0"}</MenuItem>
+                  <MenuItem value={1}>{">1"}</MenuItem>
+                  <MenuItem value={2}>{">2"}</MenuItem>
+                  <MenuItem value={3}>{">3"}</MenuItem>
+                  <MenuItem value={4}>{">4"}</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Apply
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={clearFilter}
+              >
+                Clear
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+        <Container fixed>
+          {status === "loading" && <CircularProgress />}
+          <Box sx={{ display: "flex", flexWrap: "wrap" }}>{workerList}</Box>
+          <Snackbar open={isSnackbar} autoHideDuration={6000}>
+            <Alert
+              onClose={handleSnackbar}
+              severity={errorMessage ? "error" : "success"}
+              sx={{ width: "100%" }}
             >
-              <option value="none">select profession</option>
-              <option value="carpenter">Carpenter</option>
-              <option value="plumber">Plumber</option>
-              <option value="electrician">Electrician</option>
-            </select>
-            <select
-              name="location"
-              id="location"
-              onChange={changeLocationHandler}
-              value={location}
-            >
-              <option value="none" disabled hidden>
-                select location
-              </option>
-              <option value="surat">Surat</option>
-              <option value="anand">Anand</option>
-              <option value="vadodara">Vadodara</option>
-              <option value="ahmedabad">Ahmedabad</option>
-            </select>
-            <select
-              name="availability"
-              id="availability"
-              onChange={changeAvailabilityHandler}
-              value={availability}
-            >
-              <option value="none" disabled hidden>
-                select status
-              </option>
-              <option value={true}>Available</option>
-              <option value={false}>Not Available</option>
-            </select>
-            <select
-              name="review"
-              id="review"
-              onChange={changeReviewHandler}
-              value={review}
-            >
-              <option value="none" disabled hidden>
-                select review
-              </option>
-              <option value="0">{`>0`}</option>
-              <option value="1">{`>1`}</option>
-              <option value="2">{`>2`}</option>
-              <option value="3">{`>3`}</option>
-              <option value="4">{`>4`}</option>
-            </select>
-            <input type="submit" value="Apply"></input>
-            <button onClick={clearFilter}>clear</button>
-          </form>
-        </div>
-        <div className={classes.workerlist}>
-          {status === "loading" && <h1>Loading</h1>}
-          {workerList}
-          {errorMessage && <p>{errorMessage}</p>}
-          <div className={classes.pagination}>
-            <Link to="#">&laquo;</Link>
-            {count && pageList}
-            <Link to="#">&raquo;</Link>
-          </div>
-        </div>
-      </div>
+              {errorMessage}
+            </Alert>
+          </Snackbar>
+          <Stack spacing={2}>
+            <Pagination
+              count={Math.ceil(count / 3)}
+              page={page}
+              onChange={handleChange}
+            />
+          </Stack>
+        </Container>
+      </Box>
     </Fragment>
   );
 };

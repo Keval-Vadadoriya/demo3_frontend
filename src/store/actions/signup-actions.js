@@ -1,22 +1,17 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { userActions } from "../user-slice";
+import { loginActions } from "../login-slice";
 export const signupUser = createAsyncThunk(
-  "signupuser/signupUser",
-  async ({ body, role }, { getState }) => {
-    // console.log(obj.role, obj.loginEmail, obj.loginPassword);
+  "signup/signupUser",
+  async ({ body, role }, getState) => {
     const response = await fetch(
       `http://192.168.200.175:3001/signup?role=${role}`,
       {
         method: "POST",
-        // body: body,
         body: JSON.stringify(body),
 
         headers: {
-          // Accept: "application/json",
-          // "Access-Control-Allow-Origin": "*",
-          // "Content-Type": "multipart/form-data",
           "Content-Type": "application/json",
-
-          // Authorization: token,
         },
       }
     );
@@ -24,28 +19,30 @@ export const signupUser = createAsyncThunk(
     const data = await response.json();
     if (response.ok === false) {
       throw new Error(data.Error);
+    } else {
+      getState.dispatch(userActions.setLoggedInUser({ user: data.user }));
+      getState.dispatch(
+        loginActions.setToken({ token: "Bearer " + data.token })
+      );
     }
     return data;
   }
 );
 
 export const signupSlice = createSlice({
-  name: "signupuser",
+  name: "signup",
   initialState: {
     status: "idle",
     errorMessage: "",
-    // user: null,
   },
-  reducers: {
-    setStatus(state, action) {
-      state.status = "idle";
-    },
-  },
+  reducers: {},
   extraReducers: {
     [signupUser.fulfilled]: (state, action) => {
+      state.errorMessage = "";
       state.status = "succeeded";
     },
     [signupUser.pending]: (state, action) => {
+      state.errorMessage = "";
       state.status = "loading";
     },
     [signupUser.rejected]: (state, action) => {
