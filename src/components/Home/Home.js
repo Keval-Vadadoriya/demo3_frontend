@@ -4,18 +4,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { loginActions } from "../../store/login-slice";
 import Header from "../layout/Header";
+import { getUser } from "../../store/user-slice";
 
 const Home = () => {
   const dispatch = useDispatch();
   const socket = useSelector((state) => state.socket.socket);
   const userId = useSelector((state) => state.user.user._id);
-  socket.emit("setId", userId);
+  if (userId) {
+    socket.emit("setId", userId);
+  }
   useEffect(() => {
+    // dispatch(getUser());
     return () => {
       localStorage.clear();
       socket.disconnect(userId);
       dispatch(
-        loginActions.setLoginStatus({
+        loginActions.setToken({
           token: "",
         })
       );

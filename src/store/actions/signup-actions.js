@@ -22,7 +22,7 @@ export const signupUser = createAsyncThunk(
     } else {
       getState.dispatch(userActions.setLoggedInUser({ user: data.user }));
       getState.dispatch(
-        loginActions.setLoginStatus({ token: "Bearer " + data.token })
+        loginActions.setToken({ token: "Bearer " + data.token })
       );
     }
     return data;

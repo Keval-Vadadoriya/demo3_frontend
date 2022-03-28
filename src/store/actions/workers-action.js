@@ -49,12 +49,12 @@ export const filterWorkers = createAsyncThunk(
 
     const response = await fetch(
       `http://192.168.200.175:3001/filterworkers?${
-        location !== "none" ? `location=${location}` : ""
-      }${profession !== "none" ? `&&profession=${profession}` : ""}${
-        review !== "none" ? `&&review=${review}` : ""
+        location !== "none" ? `location=${location}&&` : ""
+      }${profession !== "none" ? `profession=${profession}&&` : ""}${
+        review !== "none" ? `review=${review}&&` : ""
       }${
-        availability !== "none" ? `&&availability=${availability}` : ""
-      }&&limit=3${skip ? `&&skip=${skip}` : ""}`,
+        availability !== "none" ? `availability=${availability}&&` : ""
+      }limit=3&&${skip ? `skip=${skip}` : ""}`,
 
       {
         headers: {
@@ -86,7 +86,6 @@ export const workersSlice = createSlice({
     [getAllWorkers.fulfilled]: (state, action) => {
       state.status = "succeeded";
       state.errorMessage = "";
-      // console.log(action.payload);
 
       state.workers = action.payload.workers;
       console.log(action.payload.count);
@@ -106,9 +105,7 @@ export const workersSlice = createSlice({
     [filterWorkers.fulfilled]: (state, action) => {
       state.errorMessage = "";
       state.status = "succeeded";
-      // console.log(action.payload);
       state.workers = action.payload.workers;
-      console.log(action.payload.count);
       if (action.payload.count !== null) {
         state.count = action.payload.count;
       }
@@ -120,14 +117,12 @@ export const workersSlice = createSlice({
     [filterWorkers.rejected]: (state, action) => {
       state.status = "failed";
       state.errorMessage = action.error.message;
-      // console.log(action.error.message);
       state.workers = null;
     },
     //get Worker
     [getWorker.fulfilled]: (state, action) => {
       state.errorMessage = "";
       state.status = "succeeded";
-      // console.log(action.payload);
       state.worker = action.payload;
     },
     [getWorker.pending]: (state) => {

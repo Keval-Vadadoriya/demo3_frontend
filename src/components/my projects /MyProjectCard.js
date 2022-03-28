@@ -1,14 +1,34 @@
 import React from "react";
 import classes from "./MyProjectCard.module.css";
 
-function MyProjectCard(props) {
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Button,
+  CardActionArea,
+  CardActions,
+  Grid,
+} from "@mui/material";
+
+function MyProjectCard({ project, onClick }) {
   return (
-    <div className={classes.card}>
-      <h1>{props.name}</h1>
-      <h3>{props.profession}</h3>
-      <h3>{props.location}</h3>
-      <button onClick={props.onClick.bind(null, props._id)}>remove</button>
-    </div>
+    <Card sx={{}}>
+      <CardActionArea>
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            {project.project_name}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {project.profession}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+      <CardActions>
+        <Button onClick={onClick.bind(null, project._id)}>Remove</Button>
+      </CardActions>
+    </Card>
   );
 }
 

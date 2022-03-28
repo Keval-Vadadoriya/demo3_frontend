@@ -17,13 +17,13 @@ import {
   MenuItem,
   FormControl,
   Button,
+  Box,
 } from "@mui/material";
 
 import {
   getAllWorkers,
   filterWorkers,
 } from "../../store/actions/workers-action";
-import { Box } from "@mui/system";
 
 const Worker = () => {
   const [location, setLocation] = useState("none");
@@ -31,12 +31,21 @@ const Worker = () => {
   const [review, setReview] = useState("none");
   const [availability, setAvailability] = useState("none");
   const [filtered, setFiltered] = useState(false);
+  const [isSnackbar, setIsSnackbar] = useState(false);
   const [page, setPage] = useState(1);
 
   const dispatch = useDispatch();
   const { status, workers, count, errorMessage } = useSelector(
     (state) => state.workerslist
   );
+  const handleSnackbar = () => {
+    setIsSnackbar(false);
+  };
+  useEffect(() => {
+    if (errorMessage) {
+      setIsSnackbar(true);
+    }
+  }, [errorMessage]);
 
   const handleChange = (event, value) => {
     setPage(value);
@@ -92,6 +101,7 @@ const Worker = () => {
           profession={worker.profession}
           avatar={worker.avatar}
           description={worker.description}
+          availability={worker.availability}
         />
       </Link>
     ));
@@ -145,7 +155,6 @@ const Worker = () => {
                   <MenuItem value={"anand"}>{"Anand"}</MenuItem>
                   <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
                   <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
-                  <MenuItem value={4}>{">4"}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -215,10 +224,10 @@ const Worker = () => {
         <Container fixed>
           {status === "loading" && <CircularProgress />}
           <Box sx={{ display: "flex", flexWrap: "wrap" }}>{workerList}</Box>
-          <Snackbar open={errorMessage} autoHideDuration={6000}>
+          <Snackbar open={isSnackbar} autoHideDuration={6000}>
             <Alert
-              onClose={clearFilter}
-              severity="error"
+              onClose={handleSnackbar}
+              severity={errorMessage ? "error" : "success"}
               sx={{ width: "100%" }}
             >
               {errorMessage}

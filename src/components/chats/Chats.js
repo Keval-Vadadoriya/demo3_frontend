@@ -53,7 +53,7 @@ function Chats() {
     });
     console.log("first");
     socket.emit("addToChatList", userId, role, receiverId.workerid);
-  }, [receiverId.workerid]);
+  }, [receiverId.workerid, userId]);
   console.log("Chatssssssss");
 
   const changeMessageHandler = (event) => {

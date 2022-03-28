@@ -30,8 +30,6 @@ function App() {
         <Header />
         <Routes>
           {!token && <Route path="/" element={<Welcome />} />}
-          {token && <Route path="/unauthorized" element={<Unauthorized />} />}
-          <Route path="/404" element={<NotFound />} />
           {token && <Route path="/" element={<Navigate to="home" />} />}
 
           <Route path="/signup" element={<SignupForm />} />
@@ -68,15 +66,22 @@ function App() {
                 </Route>
               )}
               {role === "worker" && (
-                <Route path="worker/*" element={<Unauthorized />} />
+                <>
+                  <Route path="worker/*" element={<Unauthorized />} />
+                  <Route path="myprojects/*" element={<Unauthorized />} />
+                </>
+              )}
+              {role === "user" && (
+                <Route path="projects/*" element={<Unauthorized />} />
               )}
             </Route>
           )}
           {!token && (
             <Route path="/home/*" element={<Navigate to="/login" />} />
           )}
-          <Route path="*" element={<NotFound />} />
+          {role && <Route path="*" element={<NotFound />} />}
         </Routes>
+        )
       </Box>
     </>
   );

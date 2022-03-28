@@ -30,7 +30,8 @@ const SignupForm = (props) => {
   }
   //changing Role
   const changeRole = () => {
-    if (role === "user") {
+    console.log("here");
+    if (role === "user" || role === "") {
       dispatch(loginActions.setRole({ role: "worker" }));
     }
     if (role === "worker") {

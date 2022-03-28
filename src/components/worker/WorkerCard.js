@@ -1,5 +1,4 @@
 import React from "react";
-import classes from "./WorkerCard.module.css";
 import {
   Card,
   CardContent,
@@ -14,7 +13,6 @@ import {
 function WorkerCard(props) {
   return (
     <>
-      {/* <Grid item xs={4}> */}
       <Card sx={{}}>
         <CardActionArea>
           <CardMedia
@@ -32,6 +30,12 @@ function WorkerCard(props) {
             <Typography variant="body2" color="text.secondary">
               {props.description}
             </Typography>
+            <Typography
+              variant="body2"
+              color={props.availability === true ? "green" : "red"}
+            >
+              {props.availability === true ? "available" : "false"}
+            </Typography>
           </CardContent>
         </CardActionArea>
         <CardActions>
@@ -40,7 +44,6 @@ function WorkerCard(props) {
           </Button>
         </CardActions>
       </Card>
-      {/* </Grid> */}
     </>
   );
 }

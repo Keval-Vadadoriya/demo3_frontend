@@ -29,23 +29,24 @@ export const loggedInUser = createAsyncThunk(
 
       getState.dispatch(socketActions.setSocket());
 
-      localStorage.setItem("userInfo", JSON.stringify(data.user));
+      // localStorage.setItem("userInfo", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);
-      localStorage.setItem("role", states.login.role);
+      // localStorage.setItem("role", states.login.role);
     }
     return data;
   }
 );
+
 const loginSlice = createSlice({
   name: "login",
   initialState: {
     status: "idle",
     errorMessage: "",
     token: localStorage.getItem("token"),
-    role: localStorage.getItem("role") ? localStorage.getItem("role") : "user",
+    role: "",
   },
   reducers: {
-    setLoginStatus(state, action) {
+    setToken(state, action) {
       state.token = action.payload.token;
     },
     setRole(state, action) {
@@ -57,7 +58,6 @@ const loginSlice = createSlice({
       state.status = "succeeded";
       state.errorMessage = "";
       state.token = "Bearer " + action.payload.token;
-      // state.user = action.payload;
     },
     [loggedInUser.pending]: (state, action) => {
       state.errorMessage = "";
@@ -72,4 +72,4 @@ const loginSlice = createSlice({
 
 export const loginActions = loginSlice.actions;
 
-export default loginSlice;
+export default loginSlice.reducer;

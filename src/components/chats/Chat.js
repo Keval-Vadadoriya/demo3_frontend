@@ -3,7 +3,7 @@ import { Outlet, Link } from "react-router-dom";
 import classes from "./Chat.module.css";
 import { useSelector, useDispatch } from "react-redux";
 import ChatListCard from "./ChatListCard";
-import { Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { chatActions } from "../../store/actions/chat-actions";
 import {
   List,
@@ -33,26 +33,26 @@ const Chat = () => {
         );
       }
     });
+    console.log(userId, role);
     socket.emit("getchatlist", userId, role);
-  }, []);
+  }, [userId]);
 
   let chatListUi;
   if (chatList) {
     chatListUi = chatList.map((worker) => {
       console.log(worker);
       return (
-        <Link
-          to={`/home/chats/${worker._id}`}
+        <ListItem
+          className={classes.hover}
           key={worker._id}
-          className={classes.link}
+          component={Link}
+          to={`/home/chats/${worker._id}`}
         >
-          <ListItem className={classes.hover}>
-            <ListItemAvatar>
-              <Avatar src={`http://127.0.0.1:3001/${worker.avatar}`} />
-            </ListItemAvatar>
-            <ListItemText id={worker._id} primary={`${worker.name}`} />
-          </ListItem>
-        </Link>
+          <ListItemAvatar>
+            <Avatar src={`http://127.0.0.1:3001/${worker.avatar}`} />
+          </ListItemAvatar>
+          <ListItemText id={worker._id} primary={`${worker.name}`} />
+        </ListItem>
       );
     });
   }
@@ -61,8 +61,10 @@ const Chat = () => {
     <Fragment>
       <Grid container>
         <Grid item xs={3}>
-          <div>
-            <h1>{user.name}</h1>
+          <Box position="sticky" top={70}>
+            <Typography variant="h4" marginLeft={1}>
+              {user.name}
+            </Typography>
             <List
               dense
               sx={{
@@ -74,7 +76,7 @@ const Chat = () => {
             >
               {chatList && chatListUi}
             </List>
-          </div>
+          </Box>
         </Grid>
         <Grid item xs={9}>
           <div>
