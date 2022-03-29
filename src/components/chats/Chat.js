@@ -4,6 +4,7 @@ import classes from "./Chat.module.css";
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Grid, Typography } from "@mui/material";
 import { chatActions } from "../../store/actions/chat-actions";
+import { host } from "../../config";
 import {
   List,
   ListItem,
@@ -50,7 +51,7 @@ const Chat = () => {
           to={`/home/chats/${worker._id}`}
         >
           <ListItemAvatar>
-            <Avatar src={`http://127.0.0.1:3001/${worker.avatar}`} />
+            <Avatar src={`${host}/${worker.avatar}`} />
           </ListItemAvatar>
           <ListItemText id={worker._id} primary={`${worker.name}`} />
         </ListItem>

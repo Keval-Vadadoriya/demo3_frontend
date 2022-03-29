@@ -4,6 +4,7 @@ import classes from "./Profile.module.css";
 import Input from "../UI/Input";
 import { editUser } from "../../store/user-slice";
 import { Container } from "@mui/material";
+import { host } from "../../config";
 const Profile = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -90,7 +91,7 @@ const Profile = () => {
       <Container>
         <div className={classes.profile}>
           <div className={classes.first}>
-            <img src={`http://127.0.0.1:3001/${avatar}`} />
+            <img src={`${host}/${avatar}`} />
           </div>
           <div className={`${classes["form-container"]} ${classes.second}`}>
             {status === "loading" && <p>Loading</p>}
@@ -221,7 +222,7 @@ const Profile = () => {
                   </div>
                 )}
                 <Input
-                  label={<img src={`http://127.0.0.1:3001/${avatar}`} />}
+                  label={<img src={`${host}/${avatar}`} />}
                   input={{
                     type: "file",
                     id: "avatar",

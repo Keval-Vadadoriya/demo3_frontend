@@ -1,20 +1,18 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { userActions } from "../user-slice";
 import { loginActions } from "../login-slice";
+import { host } from "../../config";
 export const signupUser = createAsyncThunk(
   "signup/signupUser",
   async ({ body, role }, getState) => {
-    const response = await fetch(
-      `http://192.168.200.175:3001/signup?role=${role}`,
-      {
-        method: "POST",
-        body: JSON.stringify(body),
+    const response = await fetch(`${host}/signup?role=${role}`, {
+      method: "POST",
+      body: JSON.stringify(body),
 
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     const data = await response.json();
     if (response.ok === false) {
@@ -32,7 +30,7 @@ export const verifyUser = createAsyncThunk(
   "signup/verifyUser",
   async ({ otp }, getState) => {
     const states = getState.getState();
-    const response = await fetch(`http://192.168.200.175:3001/verify/${otp}`, {
+    const response = await fetch(`${host}/verify/${otp}`, {
       method: "POST",
 
       headers: {

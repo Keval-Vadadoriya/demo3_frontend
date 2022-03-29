@@ -1,38 +1,31 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginActions } from "./login-slice";
-
-// let data = localStorage.getItem("userInfo");
-// data = JSON.parse(data);
+import { host } from "../config";
 
 export const editUser = createAsyncThunk(
   "user/editUser",
   async ({ body, role, userId }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/editprofile/${userId}?role=${role}`,
-      {
-        method: "POST",
-        body: body,
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
+    const response = await fetch(`${host}/editprofile/${userId}?role=${role}`, {
+      method: "POST",
+      body: body,
+      headers: {
+        Authorization: states.login.token,
+      },
+    });
 
     const data = await response.json();
     if (response.ok === false) {
       throw new Error(data.Error);
     }
-    // localStorage.setItem("userInfo", JSON.stringify(data));
-    // console.log(data);
     return data;
   }
 );
 export const getUser = createAsyncThunk("user/getUser", async (_, getState) => {
   const states = getState.getState();
 
-  const response = await fetch(`http://192.168.200.175:3001/getprofile`, {
+  const response = await fetch(`${host}/getprofile`, {
     method: "GET",
     headers: {
       Authorization: states.login.token,

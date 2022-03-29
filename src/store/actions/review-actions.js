@@ -1,17 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { host } from "../../config";
 export const getReviews = createAsyncThunk(
   "reviews/getReviews",
   async ({ workerId }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/getreview/${workerId}`,
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
+    const response = await fetch(`${host}/getreview/${workerId}`, {
+      headers: {
+        Authorization: states.login.token,
+      },
+    });
 
     const data = await response.json();
     if (response.ok === false) {
@@ -26,22 +24,19 @@ export const addReview = createAsyncThunk(
   async ({ description, review, workerId }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/review/${workerId}`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          description,
-          review,
-          owner: states.user.user._id,
-        }),
-        headers: {
-          Authorization: states.login.token,
+    const response = await fetch(`${host}/review/${workerId}`, {
+      method: "POST",
+      body: JSON.stringify({
+        description,
+        review,
+        owner: states.user.user._id,
+      }),
+      headers: {
+        Authorization: states.login.token,
 
-          "Content-Type": "application/json",
-        },
-      }
-    );
+        "Content-Type": "application/json",
+      },
+    });
 
     const data = await response.json();
     if (response.ok === false) {

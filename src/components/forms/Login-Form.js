@@ -29,8 +29,6 @@ import {
   Checkbox,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Copyright } from "@mui/icons-material";
-import { blue } from "@mui/material/colors";
 
 const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState("");
@@ -109,7 +107,7 @@ const LoginForm = () => {
   //Submit Handler
   const onSubmitHandler = (event) => {
     event.preventDefault();
-    dispatch(loggedInUser({ role, loginEmail, loginPassword }));
+    dispatch(loggedInUser({ loginEmail, loginPassword }));
   };
 
   // validations

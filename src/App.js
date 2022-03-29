@@ -23,7 +23,6 @@ import { Box } from "@mui/material";
 function App() {
   const token = useSelector((state) => state.login.token);
   const role = useSelector((state) => state.login.role);
-
   return (
     <>
       <Box sx={{ minWidth: "xs" }}>

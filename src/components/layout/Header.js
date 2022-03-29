@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 
 import * as React from "react";
-
+import { host } from "../../config";
 import MenuIcon from "@mui/icons-material/Menu";
 
 import {
@@ -227,11 +227,7 @@ const Header = () => {
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       alt="Remy Sharp"
-                      src={
-                        user.avatar
-                          ? `http://127.0.0.1:3001/${user?.avatar}`
-                          : ""
-                      }
+                      src={user.avatar ? `${host}/${user?.avatar}` : ""}
                     />
                   </IconButton>
                 </Tooltip>

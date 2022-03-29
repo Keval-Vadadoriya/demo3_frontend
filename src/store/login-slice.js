@@ -1,36 +1,34 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { socketActions } from "./socket-slice";
 import { userActions } from "./user-slice";
+import { host } from "../config";
 export const loggedInUser = createAsyncThunk(
   "login/loggedInUser",
   async (obj, getState) => {
+    console.log(obj);
     console.log(getState);
-    const response = await fetch(
-      `http://192.168.200.175:3001/login?role=${obj.role}`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          email: obj.loginEmail,
-          password: obj.loginPassword,
-        }),
+    const response = await fetch(`${host}/login`, {
+      method: "POST",
+      body: JSON.stringify({
+        email: obj.loginEmail,
+        password: obj.loginPassword,
+      }),
 
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     const data = await response.json();
     if (response.ok === false) {
       throw new Error(data.Error);
     } else {
       getState.dispatch(userActions.setLoggedInUser({ user: data.user }));
+      getState.dispatch(loginActions.setRole({ role: data.role }));
 
       getState.dispatch(socketActions.setSocket());
 
-      // localStorage.setItem("userInfo", JSON.stringify(data.user));
-      localStorage.setItem("token", data.token);
-      // localStorage.setItem("role", states.login.role);
+      localStorage.setItem("token", "Bearer " + data.token);
     }
     return data;
   }
@@ -39,16 +37,13 @@ export const verifyPassword = createAsyncThunk(
   "login/verifyPassword",
   async ({ otp, body }, getState) => {
     const states = getState.getState();
-    const response = await fetch(
-      `http://192.168.200.175:3001/verifyPassword/${otp}`,
-      {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(`${host}/verifyPassword/${otp}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     const data = await response.json();
     if (response.ok === false) {
@@ -67,7 +62,7 @@ export const forgotPassword = createAsyncThunk(
   "login/forgotPassword",
   async ({ body }, getState) => {
     const states = getState.getState();
-    const response = await fetch(`http://192.168.200.175:3001/forgotPassword`, {
+    const response = await fetch(`${host}/forgotPassword`, {
       method: "POST",
       body: JSON.stringify(body),
       headers: {

@@ -1,4 +1,5 @@
 import React from "react";
+import { host } from "../../config";
 import {
   Card,
   CardContent,
@@ -20,7 +21,7 @@ function WorkerCard(props) {
             height="200px"
             width="200px"
             maxwidth="200px"
-            image={`http://127.0.0.1:3001/${props.avatar}`}
+            image={`${host}/${props.avatar}`}
             alt="green iguana"
           />
           <CardContent>

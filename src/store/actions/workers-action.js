@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { host } from "../../config";
 export const getAllWorkers = createAsyncThunk(
   "workers/getAllWorkers",
   async ({ skip }, getState) => {
     const states = getState.getState();
 
     const response = await fetch(
-      `http://192.168.200.175:3001/getallworkers?limit=3&&skip=${skip}`,
+      `${host}/getallworkers?limit=3&&skip=${skip}`,
       {
         headers: {
           Authorization: states.login.token,
@@ -25,14 +26,11 @@ export const getWorker = createAsyncThunk(
   async ({ workerId }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/getworker/${workerId}`,
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
+    const response = await fetch(`${host}/getworker/${workerId}`, {
+      headers: {
+        Authorization: states.login.token,
+      },
+    });
 
     const data = await response.json();
     if (response.ok === false) {
@@ -48,7 +46,7 @@ export const filterWorkers = createAsyncThunk(
     const states = getState.getState();
 
     const response = await fetch(
-      `http://192.168.200.175:3001/filterworkers?${
+      `${host}/filterworkers?${
         location !== "none" ? `location=${location}&&` : ""
       }${profession !== "none" ? `profession=${profession}&&` : ""}${
         review !== "none" ? `review=${review}&&` : ""
