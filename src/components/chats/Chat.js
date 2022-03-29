@@ -2,7 +2,6 @@ import { Fragment, useEffect } from "react";
 import { Outlet, Link } from "react-router-dom";
 import classes from "./Chat.module.css";
 import { useSelector, useDispatch } from "react-redux";
-import ChatListCard from "./ChatListCard";
 import { Box, Grid, Typography } from "@mui/material";
 import { chatActions } from "../../store/actions/chat-actions";
 import {
@@ -34,7 +33,9 @@ const Chat = () => {
       }
     });
     console.log(userId, role);
-    socket.emit("getchatlist", userId, role);
+    if (userId && role) {
+      socket.emit("getchatlist", userId, role);
+    }
   }, [userId]);
 
   let chatListUi;

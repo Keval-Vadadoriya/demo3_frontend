@@ -42,17 +42,19 @@ function Chats() {
     });
   }, []);
   useEffect(async () => {
-    socket.emit("getchats", userId, role, receiverId.workerid, (response) => {
-      dispatch(
-        chatActions.setChats({
-          chats: response.chats,
-          role,
-          receiverId: receiverId.workerid,
-        })
-      );
-    });
-    console.log("first");
-    socket.emit("addToChatList", userId, role, receiverId.workerid);
+    if ((userId, role)) {
+      socket.emit("getchats", userId, role, receiverId.workerid, (response) => {
+        dispatch(
+          chatActions.setChats({
+            chats: response.chats,
+            role,
+            receiverId: receiverId.workerid,
+          })
+        );
+      });
+      console.log("first");
+      socket.emit("addToChatList", userId, role, receiverId.workerid);
+    }
   }, [receiverId.workerid, userId]);
   console.log("Chatssssssss");
 
