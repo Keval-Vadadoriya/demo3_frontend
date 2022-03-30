@@ -22,6 +22,7 @@ const Chat = () => {
 
   useEffect(() => {
     socket.on("chatlist", (list, chats) => {
+      console.log(list);
       dispatch(chatActions.setChatList({ list }));
       if (chats) {
         dispatch(
@@ -35,9 +36,10 @@ const Chat = () => {
     });
     console.log(userId, role);
     if (userId && role) {
+      console.log("hhh", userId, role);
       socket.emit("getchatlist", userId, role);
     }
-  }, [userId]);
+  }, [userId, role]);
 
   let chatListUi;
   if (chatList) {
@@ -48,12 +50,13 @@ const Chat = () => {
           className={classes.hover}
           key={worker._id}
           component={Link}
-          to={`/home/chats/${worker._id}`}
+          to={`/home/chats/${worker.user._id}`}
         >
           <ListItemAvatar>
-            <Avatar src={`${host}/${worker.avatar}`} />
+            <Avatar src={`${host}/${worker.user.avatar}`} />
           </ListItemAvatar>
-          <ListItemText id={worker._id} primary={`${worker.name}`} />
+          <ListItemText id={worker.user._id} primary={`${worker.user.name}`} />
+          <ListItemText id={worker.user._id} primary={`${worker.count}`} />
         </ListItem>
       );
     });

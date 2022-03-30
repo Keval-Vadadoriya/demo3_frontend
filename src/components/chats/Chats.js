@@ -42,7 +42,7 @@ function Chats() {
     });
   }, []);
   useEffect(async () => {
-    if ((userId, role)) {
+    if (userId && role) {
       socket.emit("getchats", userId, role, receiverId.workerid, (response) => {
         dispatch(
           chatActions.setChats({
@@ -52,10 +52,10 @@ function Chats() {
           })
         );
       });
-      console.log("first");
+      console.log("first", userId, receiverId.workerid);
       socket.emit("addToChatList", userId, role, receiverId.workerid);
     }
-  }, [receiverId.workerid, userId]);
+  }, [receiverId.workerid, userId, role]);
   console.log("Chatssssssss");
 
   const changeMessageHandler = (event) => {
