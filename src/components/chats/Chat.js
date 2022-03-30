@@ -22,7 +22,6 @@ const Chat = () => {
 
   useEffect(() => {
     socket.on("chatlist", (list, chats) => {
-      console.log(list);
       dispatch(chatActions.setChatList({ list }));
       if (chats) {
         dispatch(
@@ -34,9 +33,7 @@ const Chat = () => {
         );
       }
     });
-    console.log(userId, role);
     if (userId && role) {
-      console.log("hhh", userId, role);
       socket.emit("getchatlist", userId, role);
     }
   }, [userId, role]);
@@ -44,7 +41,6 @@ const Chat = () => {
   let chatListUi;
   if (chatList) {
     chatListUi = chatList.map((worker) => {
-      console.log(worker);
       return (
         <ListItem
           className={classes.hover}
@@ -79,7 +75,7 @@ const Chat = () => {
                 padding: 0,
               }}
             >
-              {chatList && chatListUi}
+              {chatListUi && chatListUi}
             </List>
           </Box>
         </Grid>

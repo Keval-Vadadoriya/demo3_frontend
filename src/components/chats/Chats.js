@@ -21,12 +21,42 @@ function Chats() {
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   };
+
+  const idss = receiverId.workerid;
+  console.log("idss", idss);
+  console.log(receiverId.workerid);
   useEffect(() => {
     scrollToBottom();
   }, [chats[receiverId.workerid]]);
+
   useEffect(async () => {
-    socket.on("messag", (message) => {
-      socket.emit("delivered", message._id, userId, receiverId.workerid, role);
+    // const delivered = ({ message, role, sender, receiver }) => {
+    //   socket.emit(
+    //     "delivered",
+    //     message._id,
+    //     sender,
+    //     receiver,
+    //     role,
+    //     (response) => {
+    //       dispatch(chatActions.setChatList({ list: response.chatList }));
+    //     }
+    //   );
+    // };
+    socket.on("messag", ({ message, role, sender, receiver }) => {
+      // delivered({ message, role, sender, receiver });
+
+      console.log("ff", idss === sender, idss, sender);
+      socket.emit(
+        "delivered",
+        message._id,
+        sender,
+        receiver,
+        role,
+        idss === sender ? true : false,
+        (response) => {
+          dispatch(chatActions.setChatList({ list: response.chatList }));
+        }
+      );
       dispatch(
         chatActions.setChat({ message, receiverId: receiverId.workerid })
       );
@@ -51,12 +81,11 @@ function Chats() {
             receiverId: receiverId.workerid,
           })
         );
+        dispatch(chatActions.setChatList({ list: response.chatList }));
       });
-      console.log("first", userId, receiverId.workerid);
       socket.emit("addToChatList", userId, role, receiverId.workerid);
     }
   }, [receiverId.workerid, userId, role]);
-  console.log("Chatssssssss");
 
   const changeMessageHandler = (event) => {
     setMessage(event.target.value);
