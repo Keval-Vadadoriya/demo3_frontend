@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import Input from "../UI/Input";
 import { useSelector, useDispatch } from "react-redux";
-import classes from "./Chats.module.css";
 
 import { chatActions } from "../../store/actions/chat-actions";
+import { Button, Grid, TextField, Box, Typography } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
 
 function Chats() {
   const receiverId = useParams();
@@ -106,50 +106,57 @@ function Chats() {
     messageList = chats[receiverId.workerid].map((message) => {
       const date = new Date(message.time);
       return (
-        <div
+        <Box
           key={message._id}
-          className={`${
-            message.owner === userId ? classes.sender : classes.receiver
-          } ${
-            message.owner !== userId && message.status === "sent"
-              ? classes.sent
-              : ""
-          }`}
+          sx={{
+            textAlign: message.owner === userId ? "right" : "left",
+            backgroundColor:
+              message.owner !== userId && message.status === "sent"
+                ? "brown"
+                : "",
+          }}
         >
-          <p className={classes.p}>
+          <Typography variant="body" sx={{ wordBreak: "break-all" }}>
             {message.message}
-            <span
-              className={classes.time}
-            >{`${date.getHours()}:${date.getMinutes()}`}</span>
+            <Typography
+              sx={{ fontSize: "15px", fontStyle: "italic" }}
+            >{`${date.getHours()}:${date.getMinutes()}`}</Typography>
             {message.owner === userId && (
-              <span className={classes.time}>{message.status}</span>
+              <Typography sx={{ fontSize: "15px", fontStyle: "italic" }}>
+                {message.status}
+              </Typography>
             )}
-          </p>
-        </div>
+          </Typography>
+        </Box>
       );
     });
   }
   return (
-    <div className={classes.chat}>
-      <div>
-        <h1>{chatsOwner && chatsOwner.name}</h1>
-        {messageList && <h1>{messageList}</h1>}
-        <div ref={messagesEndRef} />
-      </div>
-      <form onSubmit={sendMessageHandler} className={classes.form}>
-        <Input
-          input={{
-            placeholder: "name",
-            required: true,
-            id: "Name",
-            onChange: changeMessageHandler,
-            type: "text",
-            value: `${message}`,
-          }}
-        />
-        <input type="submit" value="send"></input>
-      </form>
-    </div>
+    <Box sx={{ overflow: "auto" }}>
+      <Box>
+        <Typography>{chatsOwner && chatsOwner.name}</Typography>
+        {messageList && messageList}
+        <Box ref={messagesEndRef} />
+      </Box>
+      <Box component="form" onSubmit={sendMessageHandler}>
+        <Grid item xs={12}>
+          <TextField
+            autoComplete="message"
+            name="Message"
+            required
+            fullWidth
+            id="Message"
+            label="Message"
+            autoFocus
+            value={message}
+            onChange={changeMessageHandler}
+          />
+        </Grid>
+        <Button type="submit">
+          <SendIcon fontSize="large" />
+        </Button>
+      </Box>
+    </Box>
   );
 }
 

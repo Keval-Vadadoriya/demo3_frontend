@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
 import ProjectCard from "./ProjectCard";
-import classes from "./Projects.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Stack,
@@ -82,7 +81,7 @@ const Projects = () => {
 
   return (
     <Fragment>
-      <div className={classes.x}>
+      <Box sx={{ display: "flex", alignItems: "baseline" }}>
         <Box
           component="form"
           noValidate
@@ -164,22 +163,20 @@ const Projects = () => {
             </Grid>
           </Grid>
         </Box>
-        <div className={classes.workerlist}>
+        <Box sx={{ display: "flex" }}>
           {status === "loading" && <h1>Loading</h1>}
           {projectList}
           {errorMessage && <p>{errorMessage}</p>}
 
-          <div>
-            <Stack spacing={2}>
-              <Pagination
-                count={Math.ceil(count / 3)}
-                page={page}
-                onChange={handleChange}
-              />
-            </Stack>
-          </div>
-        </div>
-      </div>
+          <Stack spacing={2}>
+            <Pagination
+              count={Math.ceil(count / 3)}
+              page={page}
+              onChange={handleChange}
+            />
+          </Stack>
+        </Box>
+      </Box>
     </Fragment>
   );
 };

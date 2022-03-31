@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
 import ProjectCard from "./MyProjectCard";
-import classes from "./MyProjects.module.css";
 import {
   Stack,
   Pagination,
@@ -98,19 +97,15 @@ const MyProjects = () => {
 
   return (
     <Fragment>
-      <div className={classes.x}>
-        <div>
-          <Button onClick={addProjectHandler}>Add a New Project</Button>
-          {projectList && projectList}
-          <Stack spacing={2}>
-            <Pagination
-              count={Math.ceil(count / 3)}
-              page={page}
-              onChange={handleChange}
-            />
-          </Stack>
-        </div>
-      </div>
+      <Button onClick={addProjectHandler}>Add a New Project</Button>
+      {projectList && projectList}
+      <Stack spacing={2}>
+        <Pagination
+          count={Math.ceil(count / 3)}
+          page={page}
+          onChange={handleChange}
+        />
+      </Stack>
       <Dialog open={addProject}>
         <DialogTitle>Add Project</DialogTitle>
         <DialogContent>

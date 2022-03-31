@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import WorkerCard from "./WorkerCard";
 import { Link } from "react-router-dom";
-import classes from "./Worker.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Stack,
@@ -94,7 +93,7 @@ const Worker = () => {
   let workerList;
   if (workers) {
     workerList = workers.map((worker) => (
-      <Link to={`${worker._id}`} className={classes.link} key={worker._id}>
+      <Box component={Link} to={`${worker._id}`} key={worker._id}>
         <WorkerCard
           name={worker.name}
           profession={worker.profession}
@@ -102,7 +101,7 @@ const Worker = () => {
           description={worker.description}
           availability={worker.availability}
         />
-      </Link>
+      </Box>
     ));
   }
 

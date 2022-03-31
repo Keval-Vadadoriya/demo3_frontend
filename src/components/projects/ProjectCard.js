@@ -1,15 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import classes from "./ProjectCard.module.css";
 import {
   Card,
   CardContent,
-  CardMedia,
   Typography,
-  Button,
   CardActionArea,
   CardActions,
-  Grid,
 } from "@mui/material";
 
 function ProjectCard({ project }) {

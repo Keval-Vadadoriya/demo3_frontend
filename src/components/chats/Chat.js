@@ -1,6 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
 import { Outlet, Link } from "react-router-dom";
-import classes from "./Chat.module.css";
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Grid, Typography } from "@mui/material";
 import { chatActions } from "../../store/actions/chat-actions";
@@ -43,12 +42,15 @@ const Chat = () => {
     chatListUi = chatList.map((worker) => {
       return (
         <ListItem
-          className={classes.hover}
           key={worker._id}
           component={Link}
           to={`/home/chats/${worker.user._id}`}
           sx={{
             backgroundColor: active === worker.user._id ? "#808080" : "white",
+            "&:hover": {
+              backgroundColor: "rgb(87, 87, 87)",
+              textColor: "white",
+            },
           }}
           onClick={() => {
             setActive(worker.user._id);

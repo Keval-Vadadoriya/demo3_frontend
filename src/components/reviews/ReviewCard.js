@@ -1,5 +1,4 @@
 import React from "react";
-import classes from "./ReviewCard.module.css";
 
 function ReviewCard(props) {
   return (

@@ -1,5 +1,4 @@
 import { Outlet } from "react-router-dom";
-import classes from "./Home.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { loginActions } from "../../store/login-slice";
@@ -25,9 +24,7 @@ const Home = () => {
 
   return (
     <>
-      <div className={classes.home}>
-        <Outlet />
-      </div>
+      <Outlet />
     </>
   );
 };

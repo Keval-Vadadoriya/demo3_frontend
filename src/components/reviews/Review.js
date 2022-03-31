@@ -93,7 +93,6 @@ const Review = (props) => {
             />
 
             <Rating value={initialRating} onChange={changeReviewHandler} />
-            <br />
             <Button type="submit">Add Review</Button>
           </Box>
         )}

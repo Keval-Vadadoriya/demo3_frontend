@@ -1,15 +1,12 @@
 import React from "react";
-import classes from "./MyProjectCard.module.css";
 
 import {
   Card,
   CardContent,
-  CardMedia,
   Typography,
   Button,
   CardActionArea,
   CardActions,
-  Grid,
 } from "@mui/material";
 
 function MyProjectCard({ project, onClick }) {
