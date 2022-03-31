@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import Input from "../UI/Input";
 import { useSelector, useDispatch } from "react-redux";
@@ -22,37 +22,19 @@ function Chats() {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
-  const idss = receiverId.workerid;
-  console.log("idss", idss);
-  console.log(receiverId.workerid);
   useEffect(() => {
     scrollToBottom();
   }, [chats[receiverId.workerid]]);
 
   useEffect(async () => {
-    // const delivered = ({ message, role, sender, receiver }) => {
-    //   socket.emit(
-    //     "delivered",
-    //     message._id,
-    //     sender,
-    //     receiver,
-    //     role,
-    //     (response) => {
-    //       dispatch(chatActions.setChatList({ list: response.chatList }));
-    //     }
-    //   );
-    // };
     socket.on("messag", ({ message, role, sender, receiver }) => {
-      // delivered({ message, role, sender, receiver });
-
-      console.log("ff", idss === sender, idss, sender);
       socket.emit(
         "delivered",
         message._id,
         sender,
         receiver,
         role,
-        idss === sender ? true : false,
+        // getId() === sender ? true : false,
         (response) => {
           dispatch(chatActions.setChatList({ list: response.chatList }));
         }

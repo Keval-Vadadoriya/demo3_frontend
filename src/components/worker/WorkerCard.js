@@ -1,5 +1,4 @@
 import React from "react";
-import { host } from "../../config";
 import {
   Card,
   CardContent,
@@ -8,7 +7,6 @@ import {
   Button,
   CardActionArea,
   CardActions,
-  Grid,
 } from "@mui/material";
 
 function WorkerCard(props) {
@@ -21,7 +19,7 @@ function WorkerCard(props) {
             height="200px"
             width="200px"
             maxwidth="200px"
-            image={`${host}/${props.avatar}`}
+            image={`${process.env.REACT_APP_HOST}/${props.avatar}`}
             alt="green iguana"
           />
           <CardContent>

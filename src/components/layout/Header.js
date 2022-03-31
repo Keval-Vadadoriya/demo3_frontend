@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 
 import * as React from "react";
-import { host } from "../../config";
 import MenuIcon from "@mui/icons-material/Menu";
 
 import {
@@ -227,7 +226,11 @@ const Header = () => {
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       alt="Remy Sharp"
-                      src={user.avatar ? `${host}/${user?.avatar}` : ""}
+                      src={
+                        user.avatar
+                          ? `${process.env.REACT_APP_HOST}/${user?.avatar}`
+                          : ""
+                      }
                     />
                   </IconButton>
                 </Tooltip>
@@ -259,7 +262,7 @@ const Header = () => {
               </Box>
             )}
             {!token && (
-              <Box sx={{ flexGrow: 0 }}>
+              <Box>
                 <Button onClick={loginHandler} sx={{ color: "black" }}>
                   Login
                 </Button>

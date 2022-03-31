@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useMediaQuery } from "@mui/material";
 
 import {
-  loginActions,
   loggedInUser,
   forgotPassword,
   verifyPassword,
@@ -25,8 +24,6 @@ import {
   Avatar,
   Typography,
   Grid,
-  FormControlLabel,
-  Checkbox,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 

@@ -1,8 +1,21 @@
 import React, { Fragment, useEffect, useState } from "react";
 import ProjectCard from "./MyProjectCard";
-import { Link } from "react-router-dom";
 import classes from "./MyProjects.module.css";
-import { Stack, Pagination, Button } from "@mui/material";
+import {
+  Stack,
+  Pagination,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  Grid,
+  TextField,
+  FormControl,
+  Select,
+  MenuItem,
+  DialogActions,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -10,7 +23,6 @@ import {
   removeProject,
 } from "../../store/actions/myproject-actions";
 import { getMyProjects } from "../../store/actions/project-actions";
-import Input from "../UI/Input";
 
 const MyProjects = () => {
   const [location, setLocation] = useState("none");
@@ -28,7 +40,10 @@ const MyProjects = () => {
   );
 
   const addProjectHandler = () => {
-    setAddProject(!addProject);
+    setAddProject(true);
+  };
+  const handleClose = () => {
+    setAddProject(false);
   };
   const handleChange = (event, value) => {
     setPage(value);
@@ -96,86 +111,96 @@ const MyProjects = () => {
           </Stack>
         </div>
       </div>
-      {addProject && (
-        <div className={classes["form-container"]}>
-          {status === "loading" && <p>Loading</p>}
-          {status !== "loading" && (
-            <form onSubmit={SubmitHandler} className={classes.form}>
-              <h1>Project</h1>
-              <Input
+      <Dialog open={addProject}>
+        <DialogTitle>Add Project</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To subscribe to this website, please enter your email address here.
+            We will send updates occasionally.
+          </DialogContentText>
+          <Grid>
+            <Grid item xs={12}>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="Project Name"
                 label="Project Name"
-                input={{
-                  placeholder: "Enter a Project Name",
-                  required: true,
-                  id: "name",
-                  name: "name",
-                  onChange: changeProjectNameHandler,
-                  type: "text",
-                }}
+                type="text"
+                fullWidth
+                variant="standard"
+                onChange={changeProjectNameHandler}
               />
-              <Input
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="description"
                 label="Description"
-                input={{
-                  placeholder: "Enter a Description",
-                  id: "description",
-                  name: "description",
-                  onChange: changeDescriptionHandler,
-                  type: "text",
-                }}
+                type="text"
+                fullWidth
+                variant="standard"
+                onChange={changeDescriptionHandler}
               />
-              <Input
-                label="Amount"
-                input={{
-                  placeholder: "Enter an amount",
-                  id: "amount",
-                  name: "amount",
-                  onChange: changeAmountHandler,
-                  type: "number",
-                  autoComplete: "on",
-                }}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="Amount"
+                label="amount"
+                type="Number"
+                fullWidth
+                variant="standard"
+                onChange={changeAmountHandler}
               />
-              <div className={classes.select}>
-                <label htmlFor="profession">Profession</label>
-                <select
-                  name="profession"
-                  id="profession"
+            </Grid>
+            <Grid item xs={12} marginTop={2} marginBottom={2}>
+              <FormControl fullWidth>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={profession}
+                  label="Profession"
+                  variant="standard"
                   onChange={changeProfessionHandler}
-                  defaultValue="none"
-                  required
                 >
-                  <option value="none" disabled hidden>
-                    select your profession
-                  </option>
-                  <option value="carpenter">Carpenter</option>
-                  <option value="plumber">Plumber</option>
-                  <option value="electrician">Electrician</option>
-                </select>
-              </div>
-
-              <div className={classes.select}>
-                <label htmlFor="location">Location</label>
-                <select
-                  name="location"
-                  id="location"
+                  <MenuItem value={"none"} disabled hidden>
+                    {"Select Profession"}
+                  </MenuItem>
+                  <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
+                  <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
+                  <MenuItem value={"electrician"}>{"Electrician"}</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} marginTop={2}>
+              <FormControl fullWidth>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={location}
+                  label="Location"
                   onChange={changeLocationHandler}
-                  defaultValue="none"
-                  required={true}
+                  variant="standard"
                 >
-                  <option value="none" disabled hidden>
-                    select your location
-                  </option>
-                  <option value="surat">Surat</option>
-                  <option value="ahmedabad">Ahmedabad</option>
-                  <option value="anand">Anand</option>
-                  <option value="vadodara">vadodara</option>
-                </select>
-              </div>
-              <input type="submit" value="Post"></input>
-              {status !== "loading" && errorMessage && <p>{errorMessage}</p>}
-            </form>
-          )}
-        </div>
-      )}
+                  <MenuItem value={"none"} disabled hidden>
+                    {"Select Location"}
+                  </MenuItem>
+                  <MenuItem value={"surat"}>{"Surat"}</MenuItem>
+                  <MenuItem value={"anand"}>{"Anand"}</MenuItem>
+                  <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
+                  <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={SubmitHandler}>Submit</Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 };

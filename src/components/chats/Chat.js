@@ -1,10 +1,9 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Outlet, Link } from "react-router-dom";
 import classes from "./Chat.module.css";
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Grid, Typography } from "@mui/material";
 import { chatActions } from "../../store/actions/chat-actions";
-import { host } from "../../config";
 import {
   List,
   ListItem,
@@ -19,6 +18,7 @@ const Chat = () => {
   const { chatList } = useSelector((state) => state.chat);
   const socket = useSelector((state) => state.socket.socket);
   const dispatch = useDispatch();
+  const [active, setActive] = useState("");
 
   useEffect(() => {
     socket.on("chatlist", (list, chats) => {
@@ -47,9 +47,17 @@ const Chat = () => {
           key={worker._id}
           component={Link}
           to={`/home/chats/${worker.user._id}`}
+          sx={{
+            backgroundColor: active === worker.user._id ? "#808080" : "white",
+          }}
+          onClick={() => {
+            setActive(worker.user._id);
+          }}
         >
           <ListItemAvatar>
-            <Avatar src={`${host}/${worker.user.avatar}`} />
+            <Avatar
+              src={`${process.env.REACT_APP_HOST}/${worker.user.avatar}`}
+            />
           </ListItemAvatar>
           <ListItemText id={worker.user._id} primary={`${worker.user.name}`} />
           <ListItemText id={worker.user._id} primary={`${worker.count}`} />

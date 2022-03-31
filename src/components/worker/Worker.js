@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import WorkerCard from "./WorkerCard";
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import classes from "./Worker.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,7 +11,6 @@ import {
   CircularProgress,
   Grid,
   Container,
-  TextField,
   InputLabel,
   Select,
   MenuItem,

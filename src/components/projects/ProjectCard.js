@@ -14,12 +14,6 @@ import {
 
 function ProjectCard({ project }) {
   return (
-    // <div className={classes.card}>
-    //   <h1>{project.project_name}</h1>
-    //   <h3>{project.profession}</h3>
-    //   <h3>{project.location}</h3>
-    //   <Link to={`/home/chats/${project.owner}`}>Chat</Link>
-    // </div>
     <Card sx={{}}>
       <CardActionArea>
         <CardContent>

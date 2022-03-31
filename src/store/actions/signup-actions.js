@@ -1,27 +1,25 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { userActions } from "../user-slice";
 import { loginActions } from "../login-slice";
-import { host } from "../../config";
+
 export const signupUser = createAsyncThunk(
   "signup/signupUser",
   async ({ body, role }, getState) => {
-    const response = await fetch(`${host}/signup?role=${role}`, {
-      method: "POST",
-      body: JSON.stringify(body),
+    const response = await fetch(
+      `${process.env.REACT_APP_HOST}/signup?role=${role}`,
+      {
+        method: "POST",
+        body: JSON.stringify(body),
 
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const data = await response.json();
     if (response.ok === false) {
       throw new Error(data.Error);
-    } else {
-      // getState.dispatch(userActions.setLoggedInUser({ user: data.user }));
-      // getState.dispatch(
-      //   loginActions.setToken({ token: "Bearer " + data.token })
-      // );
     }
     return data;
   }
@@ -29,14 +27,16 @@ export const signupUser = createAsyncThunk(
 export const verifyUser = createAsyncThunk(
   "signup/verifyUser",
   async ({ otp }, getState) => {
-    const states = getState.getState();
-    const response = await fetch(`${host}/verify/${otp}`, {
-      method: "POST",
+    const response = await fetch(
+      `${process.env.REACT_APP_HOST}/verify/${otp}`,
+      {
+        method: "POST",
 
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const data = await response.json();
     if (response.ok === false) {
@@ -57,14 +57,12 @@ export const signupSlice = createSlice({
   initialState: {
     status: "idle",
     errorMessage: "",
-    _id: null,
   },
   reducers: {},
   extraReducers: {
     [signupUser.fulfilled]: (state, action) => {
       state.errorMessage = "";
       state.status = "succeeded";
-      state._id = action.payload._id;
     },
     [signupUser.pending]: (state, action) => {
       state.errorMessage = "";

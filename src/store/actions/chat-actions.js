@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 // export const getChatList = createAsyncThunk(
 //   "chat/getChatList",
 //   async ({ userId, role }, { getState }) => {

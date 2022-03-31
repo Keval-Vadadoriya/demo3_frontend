@@ -1,6 +1,5 @@
 import React from "react";
-import { Container, Box, Typography } from "@mui/material";
-import Header from "../layout/Header";
+import { Box, Typography } from "@mui/material";
 function NotFound() {
   return (
     <>

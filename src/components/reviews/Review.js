@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
-import ReviewCard from "../reviews/ReviewCard";
 import { useParams } from "react-router-dom";
-import Input from "../UI/Input";
-import classes from "./Review.module.css";
 import { useSelector, useDispatch } from "react-redux";
-import Rating from "react-rating";
+import {
+  Box,
+  Button,
+  Container,
+  Rating,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { addReview, getReviews } from "../../store/actions/review-actions";
 
-const Review = () => {
+const Review = (props) => {
   const dispatch = useDispatch();
   const [description, setDescription] = useState("");
   const [review, setReview] = useState(0);
@@ -15,12 +19,13 @@ const Review = () => {
   const { status, reviews, errorMessage } = useSelector(
     (state) => state.reviews
   );
+  const role = useSelector((state) => state.login.role);
 
   const workerid = useParams();
   const changeDescriptionHandler = (event) => {
     setDescription(event.target.value);
   };
-  const changeReviewHandler = (value) => {
+  const changeReviewHandler = (event, value) => {
     setInitialRating(value);
     setReview(value);
   };
@@ -38,51 +43,62 @@ const Review = () => {
   };
 
   useEffect(async () => {
-    dispatch(getReviews({ workerId: workerid.id }));
+    if (role === "user") {
+      dispatch(getReviews({ workerId: workerid.id }));
+    }
+    if (role === "worker") {
+      dispatch(getReviews({ workerId: props.workerId }));
+    }
   }, []);
   let reviewList;
   if (reviews) {
     reviewList = reviews.map((review) => {
       return (
-        <ReviewCard
-          description={review.description}
-          name={review.owner.name}
-          rating={review.review}
+        <Box
+          component="div"
           key={review._id}
-        />
+          sx={{ backgroundColor: "#808080" }}
+        >
+          <Typography variant="h5" color="white">
+            {review.owner.name}
+          </Typography>
+          <Rating name="read-only" value={review.review} readOnly />
+          <Typography variant="h6" color="white">
+            {review.description}
+          </Typography>
+        </Box>
       );
     });
   }
   return (
-    <div className={classes.reviewlist}>
-      {errorMessage && <p>{errorMessage}</p>}
-      {status === "loading" && <h1>hey</h1>}
-      <div>{reviews && reviewList}</div>
-      <div className={classes.addReview}>
-        <form onSubmit={addReviewHandler}>
-          <h1>Add Review</h1>
+    <>
+      {/* {errorMessage && <p>{errorMessage}</p>} */}
+      {/* {status === "loading" && <h1>hey</h1>} */}
+      <Container>
+        {reviews && reviewList}
+        {errorMessage && <p>{errorMessage}</p>}
+        {role === "user" && (
+          <Box component="form" onSubmit={addReviewHandler}>
+            <Typography variant="h4">Add Review</Typography>
 
-          <Input
-            label="review"
-            input={{
-              placeholder: "Enter a Review",
-              id: "review",
-              onChange: changeDescriptionHandler,
-              type: "text",
-              required: true,
-            }}
-          />
-          <Rating
-            start={0}
-            stop={5}
-            onClick={changeReviewHandler}
-            initialRating={initialRating}
-          />
-          <br />
-          <input type="submit" value="Add Review"></input>
-        </form>
-      </div>
-    </div>
+            <TextField
+              required
+              fullWidth
+              name="review-description"
+              label="review-description"
+              type="text"
+              id="review-description"
+              autoComplete="review-description"
+              onChange={changeDescriptionHandler}
+            />
+
+            <Rating value={initialRating} onChange={changeReviewHandler} />
+            <br />
+            <Button type="submit">Add Review</Button>
+          </Box>
+        )}
+      </Container>
+    </>
   );
 };
 export default Review;

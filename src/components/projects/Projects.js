@@ -1,17 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
 import ProjectCard from "./ProjectCard";
-import { Link } from "react-router-dom";
 import classes from "./Projects.module.css";
-// import { Stack, Pagination } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Stack,
   Pagination,
-  Snackbar,
-  Alert,
-  CircularProgress,
   Grid,
-  Container,
   TextField,
   InputLabel,
   Select,
@@ -25,22 +19,18 @@ import {
   filterProjects,
   getAllProjects,
 } from "../../store/actions/project-actions";
-import Input from "../UI/Input";
 
 const Projects = () => {
   const [location, setLocation] = useState("none");
   const [profession, setProfession] = useState("none");
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("");
   const [filtered, setFiltered] = useState(false);
   const [page, setPage] = useState(1);
-  const token = useSelector((state) => state.login.token);
 
   const dispatch = useDispatch();
-  const { status, workers, errorMessage } = useSelector(
-    (state) => state.workerslist
-  );
+  const { status, errorMessage } = useSelector((state) => state.workerslist);
   const { projects, count } = useSelector((state) => state.project);
-  const handleChange = (event, value) => {
+  const handleChange = (_, value) => {
     setPage(value);
     console.log("handle", (value - 1) * 3);
     if (filtered) {
@@ -69,7 +59,7 @@ const Projects = () => {
 
   const clearFilter = () => {
     setLocation("none");
-    setAmount(0);
+    setAmount("");
     setProfession("none");
 
     setFiltered(false);
@@ -77,7 +67,6 @@ const Projects = () => {
   const filterWorkersBy = async (event) => {
     event.preventDefault();
     setFiltered(true);
-    setAmount(null);
     dispatch(filterProjects({ location, profession, money: amount, skip: 0 }));
   };
 
@@ -87,15 +76,7 @@ const Projects = () => {
   let projectList;
   if (projects) {
     projectList = projects.map((project) => (
-      <ProjectCard
-        project={project}
-        key={project._id}
-        // name={project.project_name}
-        // profession={project.profession}
-        // location={project.location}
-        // key={project._id}
-        // owner={project.owner}
-      />
+      <ProjectCard project={project} key={project._id} />
     ));
   }
 

@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { host } from "../../config";
+
 export const getAllWorkers = createAsyncThunk(
   "workers/getAllWorkers",
   async ({ skip }, getState) => {
     const states = getState.getState();
 
     const response = await fetch(
-      `${host}/getallworkers?limit=3&&skip=${skip}`,
+      `${process.env.REACT_APP_HOST}/getallworkers?limit=3&&skip=${skip}`,
       {
         headers: {
           Authorization: states.login.token,
@@ -26,11 +26,14 @@ export const getWorker = createAsyncThunk(
   async ({ workerId }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(`${host}/getworker/${workerId}`, {
-      headers: {
-        Authorization: states.login.token,
-      },
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_HOST}/getworker/${workerId}`,
+      {
+        headers: {
+          Authorization: states.login.token,
+        },
+      }
+    );
 
     const data = await response.json();
     if (response.ok === false) {
@@ -46,7 +49,7 @@ export const filterWorkers = createAsyncThunk(
     const states = getState.getState();
 
     const response = await fetch(
-      `${host}/filterworkers?${
+      `${process.env.REACT_APP_HOST}/filterworkers?${
         location !== "none" ? `location=${location}&&` : ""
       }${profession !== "none" ? `profession=${profession}&&` : ""}${
         review !== "none" ? `review=${review}&&` : ""
@@ -74,9 +77,9 @@ export const workersSlice = createSlice({
   initialState: {
     status: "idle",
     errorMessage: "",
-    workers: null,
+    workers: [],
     worker: null,
-    count: null,
+    count: "",
   },
   reducers: {},
   extraReducers: {

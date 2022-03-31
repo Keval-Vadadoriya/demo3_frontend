@@ -1,13 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { socketActions } from "./socket-slice";
 import { userActions } from "./user-slice";
-import { host } from "../config";
+
 export const loggedInUser = createAsyncThunk(
   "login/loggedInUser",
   async (obj, getState) => {
-    console.log(obj);
-    console.log(getState);
-    const response = await fetch(`${host}/login`, {
+    const response = await fetch(`${process.env.REACT_APP_HOST}/login`, {
       method: "POST",
       body: JSON.stringify({
         email: obj.loginEmail,
@@ -36,14 +34,16 @@ export const loggedInUser = createAsyncThunk(
 export const verifyPassword = createAsyncThunk(
   "login/verifyPassword",
   async ({ otp, body }, getState) => {
-    const states = getState.getState();
-    const response = await fetch(`${host}/verifyPassword/${otp}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_HOST}/verifyPassword/${otp}`,
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const data = await response.json();
     if (response.ok === false) {
@@ -61,24 +61,21 @@ export const verifyPassword = createAsyncThunk(
 export const forgotPassword = createAsyncThunk(
   "login/forgotPassword",
   async ({ body }, getState) => {
-    const states = getState.getState();
-    const response = await fetch(`${host}/forgotPassword`, {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_HOST}/forgotPassword`,
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     console.log("dfdsk", response.ok);
     const data = await response.json();
     if (response.ok === false) {
       throw new Error(data.Error);
-      // } else {
-      // getState.dispatch(userActions.setLoggedInUser({ user: data.user }));
-      // getState.dispatch(
-      //   loginActions.setToken({ token: "Bearer " + data.token })
-      // );
     }
     return data;
   }

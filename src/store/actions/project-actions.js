@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { host } from "../../config";
+
 export const getAllProjects = createAsyncThunk(
   "project/getAllProjects",
   async ({ skip }, getState) => {
     const states = getState.getState();
 
     const response = await fetch(
-      `${host}/getallprojects?limit=5&&skip=${skip}`,
+      `${process.env.REACT_APP_HOST}/getallprojects?limit=5&&skip=${skip}`,
       {
         headers: {
           Authorization: states.login.token,
@@ -27,7 +27,7 @@ export const getMyProjects = createAsyncThunk(
     const states = getState.getState();
 
     const response = await fetch(
-      `${host}/getmyprojects?limit=5&&skip=${skip}`,
+      `${process.env.REACT_APP_HOST}/getmyprojects?limit=5&&skip=${skip}`,
       {
         headers: {
           Authorization: states.login.token,
@@ -49,7 +49,7 @@ export const filterProjects = createAsyncThunk(
     const states = getState.getState();
 
     const response = await fetch(
-      `${host}/filterprojects?${
+      `${process.env.REACT_APP_HOST}/filterprojects?${
         location !== "none" ? `location=${location}` : ""
       }${profession !== "none" ? `&&profession=${profession}` : ""}${
         money ? `&&money=${money}` : ""

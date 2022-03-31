@@ -1,28 +1,47 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import classes from "./Profile.module.css";
-import Input from "../UI/Input";
+import EditIcon from "@mui/icons-material/Edit";
 import { editUser } from "../../store/user-slice";
-import { Container } from "@mui/material";
-import { host } from "../../config";
+import Review from "../reviews/Review";
+import {
+  Avatar,
+  Container,
+  Button,
+  Input,
+  Badge,
+  Box,
+  Grid,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 const Profile = () => {
+  const user = useSelector((state) => state.user.user);
+  console.log(user);
+  const [review, setReview] = useState(false);
+  const [edit, setEdit] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
   const [newAvatar, setNewAvatar] = useState("");
   const [description, setDescription] = useState("");
   const [age, setAge] = useState("");
-  const [profession, setProfession] = useState("");
+  const [profession, setProfession] = useState(user ? user.profession : "");
   const [professionIsValid, setProfessionIsValid] = useState(false);
-  const [location, setLocation] = useState("");
-  const [availability, setAvailability] = useState("none");
+  const [location, setLocation] = useState(user ? user.location : "");
+  const [availability, setAvailability] = useState(user.availability);
   const [locationIsValid, setLocationIsValid] = useState(false);
-  const user = useSelector((state) => state.user.user);
   const { status, errorMessage } = useSelector((state) => state.user);
   const role = useSelector((state) => state.login.role);
   const userId = useSelector((state) => state.user.user._id);
   const avatar = user.avatar;
-  const token = useSelector((state) => state.login.token);
 
   const dispatch = useDispatch();
 
@@ -55,14 +74,16 @@ const Profile = () => {
       if (description) {
         formData.append("description", description);
       }
-      if (availability) {
-        formData.append("availability", availability);
-      }
+      formData.append("availability", availability);
     }
-
+    console.log(formData);
     dispatch(editUser({ body: formData, role, userId }));
+    setEdit(false);
   };
 
+  const handleClose = () => {
+    setReview(false);
+  };
   //Validations
 
   const changeProfessionHandler = (event) => {
@@ -73,7 +94,8 @@ const Profile = () => {
       setProfessionIsValid(false);
     }
   };
-  const changeAvailabilityHandler = (event) => {
+  const changeAvailabilityHandler = (event, value) => {
+    console.log(value);
     setAvailability(event.target.value);
   };
 
@@ -88,156 +110,245 @@ const Profile = () => {
 
   return (
     <>
-      <Container>
-        <div className={classes.profile}>
-          <div className={classes.first}>
-            <img src={`${host}/${avatar}`} />
-          </div>
-          <div className={`${classes["form-container"]} ${classes.second}`}>
-            {status === "loading" && <p>Loading</p>}
-            {status !== "loading" && (
-              <form
-                action="/signup"
-                method="post"
-                encType="multipart/form-data"
-                onSubmit={SubmitHandler}
-                className={classes.form}
-              >
-                <h1>User Profile</h1>
-                <Input
-                  label="Name"
-                  input={{
-                    defaultValue: `${user.name ? user.name : ""}`,
-                    id: "name",
-                    name: "name",
-                    onChange: (event) => setName(event.target.value),
-                    type: "text",
-                    // Text: `${user.name ? user.name : ""}`,
-                  }}
-                />
-                {role === "worker" && (
-                  <Input
-                    label="About You"
-                    input={{
-                      defaultValue: `${
-                        user.description ? user.description : ""
-                      }`,
-                      id: "description",
-                      name: "description",
-                      onChange: (event) => setDescription(event.target.value),
-                      type: "text",
-                      // text: `${user.description ? user.description : ""}`,
-                    }}
+      <Container fullWidth>
+        <Button
+          onClick={() => {
+            setEdit(true);
+          }}
+        >
+          Edit Profile
+        </Button>
+        <Box
+          component="form"
+          encType="multipart/form-data"
+          onSubmit={SubmitHandler}
+        >
+          {status === "loading" && <p>Loading</p>}
+          {status !== "loading" && (
+            <>
+              <Grid container rowSpacing={2} marginTop={5}>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{ display: "flex", justifyContent: "center" }}
+                >
+                  <Badge
+                    color="secondary"
+                    badgeContent={
+                      <label htmlFor="contained-button-file">
+                        <Input
+                          accept="image/*"
+                          id="contained-button-file"
+                          type="file"
+                          sx={{ display: "none" }}
+                          onChange={(event) =>
+                            setNewAvatar(event.target.files[0])
+                          }
+                        />
+                        <EditIcon />
+                      </label>
+                    }
+                  >
+                    <Avatar
+                      src={
+                        newAvatar
+                          ? window.URL.createObjectURL(newAvatar)
+                          : `${process.env.REACT_APP_HOST}/${avatar}`
+                      }
+                      sx={{
+                        width: 100,
+                        height: 100,
+                      }}
+                    />
+                  </Badge>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    disabled={!edit}
+                    name="Name"
+                    label="Name"
+                    type="text"
+                    id="name"
+                    autoComplete="name"
+                    onChange={(event) => setName(event.target.value)}
+                    defaultValue={`${user.name ? user.name : ""}`}
                   />
+                </Grid>
+                {role === "worker" && (
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      disabled={!edit}
+                      name="About You"
+                      label="About You"
+                      type="text"
+                      id="About You"
+                      autoComplete="About You"
+                      onChange={(event) => setDescription(event.target.value)}
+                      defaultValue={`${
+                        user.description ? user.description : ""
+                      }`}
+                    />
+                  </Grid>
                 )}
-                <Input
-                  label="Email"
-                  input={{
-                    defaultValue: `${user.email ? user.email : ""}`,
-                    id: "email",
-                    name: "email",
-                    onChange: (event) => setEmail(event.target.value),
-                    type: "email",
-                    // text: `${user.email ? user.email : ""}`,
-                  }}
-                />
-                <Input
-                  label="Contact"
-                  input={{
-                    defaultValue: `${user.contact ? user.contact : ""}`,
-                    id: "contact",
-                    name: "contact",
-                    // onChange: changeContactHandler,
-                    onChange: (event) => setContact(event.target.value),
-                    type: "tel",
-                    pattern: "[6-9]{1}[0-9]{9}",
-                    // text: `${user.contact ? user.contact : ""}`,
-                  }}
-                />
-                <Input
-                  label="Age"
-                  input={{
-                    // text: `${user.age}`,
-                    defaultValue: `${user.age ? user.age : ""}`,
-                    // defaultValue: `${user.age ? user.age : ""}`,
-                    id: "age",
-                    name: "age",
-                    onChange: (event) => setAge(event.target.value),
-                    type: "text",
-                    min: 18,
-                  }}
-                />
-                {role !== "user" && (
-                  <div className={classes.select}>
-                    <label htmlFor="profession">Profession</label>
-                    <select
-                      name="profession"
-                      id="profession"
-                      onChange={changeProfessionHandler}
-                      defaultValue={`${user.profession}`}
-                    >
-                      <option value="none" disabled hidden>
-                        select your profession
-                      </option>
-                      <option value="carpenter">Carpenter</option>
-                      <option value="plumber">Plumber</option>
-                      <option value="electrician">Electrician</option>
-                    </select>
-                  </div>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    disabled={true}
+                    name="Email"
+                    label="Email"
+                    type="email"
+                    id="Email"
+                    autoComplete="Email"
+                    onChange={(event) => setEmail(event.target.value)}
+                    defaultValue={`${user.email ? user.email : ""}`}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    disabled={!edit}
+                    name="Contact"
+                    label="Contact"
+                    type="tel"
+                    pattern="[6-9]{1}[0-9]{9}"
+                    id="Contact"
+                    autoComplete="Contact"
+                    onChange={(event) => setContact(event.target.value)}
+                    defaultValue={`${user.contact ? user.contact : ""}`}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    disabled={!edit}
+                    name="Age"
+                    label="Age"
+                    type="Number"
+                    id="Age"
+                    autoComplete="Age"
+                    onChange={(event) => setAge(event.target.value)}
+                    defaultValue={`${user.age ? user.age : ""}`}
+                  />
+                </Grid>
+                {role === "worker" && (
+                  <Grid item xs={12}>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">
+                        Profession
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={profession}
+                        disabled={!edit}
+                        label="Profession"
+                        defaultValue={`${user.profession}`}
+                        onChange={changeProfessionHandler}
+                      >
+                        <MenuItem value={"none"} disabled hidden>
+                          {"Select Profession"}
+                        </MenuItem>
+                        <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
+                        <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
+                        <MenuItem value={"electrician"}>
+                          {"Electrician"}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
                 )}
-                {role !== "user" && (
-                  <div className={classes.select}>
-                    <label htmlFor="location">Location</label>
-                    <select
-                      name="location"
-                      id="location"
-                      onChange={changeLocationHandler}
-                      defaultValue={`${user.location}`}
-                    >
-                      <option value="none" disabled hidden>
-                        select your location
-                      </option>
-                      <option value="surat">Surat</option>
-                      <option value="ahmedabad">Ahmedabad</option>
-                      <option value="anand">Anand</option>
-                      <option value="vadodara">vadodara</option>
-                    </select>
-                  </div>
+                {role === "worker" && (
+                  <Grid item xs={12}>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">
+                        Location
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={location}
+                        disabled={!edit}
+                        label="Location"
+                        defaultValue={`${user.location}`}
+                        onChange={changeLocationHandler}
+                      >
+                        <MenuItem value={"none"} disabled hidden>
+                          {"Select Location"}
+                        </MenuItem>
+                        <MenuItem value={"surat"}>{"Surat"}</MenuItem>
+                        <MenuItem value={"anand"}>{"Anand"}</MenuItem>
+                        <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
+                        <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
                 )}
-                {role !== "user" && (
-                  <div className={classes.select}>
-                    <label htmlFor="availability">Availability</label>
-                    <select
-                      name="availability"
-                      id="availability"
-                      onChange={changeAvailabilityHandler}
-                      defaultValue={`${user.availability}`}
-                    >
-                      <option value="none" disabled hidden>
-                        select status
-                      </option>
-                      <option value={true}>Available</option>
-                      <option value={false}>Not Available</option>
-                    </select>
-                  </div>
+                {role === "worker" && (
+                  <Grid item xs={12}>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">
+                        Availability
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={location}
+                        disabled={!edit}
+                        label="Availability"
+                        defaultValue={`${user.availability}`}
+                        onChange={changeAvailabilityHandler}
+                      >
+                        <MenuItem value={"none"} disabled hidden>
+                          {"Select Availability"}
+                        </MenuItem>
+                        <MenuItem value={true}>{"Available"}</MenuItem>
+                        <MenuItem value={false}>{"Not Available"}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  // <Grid item xs={12}>
+                  //   <ToggleButtonGroup
+                  //     color="primary"
+                  //     value={availability}
+                  //     exclusive
+                  //     onChange={changeAvailabilityHandler}
+                  //   >
+                  //     <ToggleButton value={true}>Free</ToggleButton>
+                  //     <ToggleButton value={false}>Busy</ToggleButton>
+                  //   </ToggleButtonGroup>
+                  // </Grid>
                 )}
-                <Input
-                  label={<img src={`${host}/${avatar}`} />}
-                  input={{
-                    type: "file",
-                    id: "avatar",
-                    name: "avatar",
-                    accept: "image/png, image/jpeg",
-                    onChange: (event) => setNewAvatar(event.target.files[0]),
-                  }}
-                />
-                <input type="submit" value="Save Changes"></input>
 
-                {status !== "loading" && errorMessage && <p>{errorMessage}</p>}
-              </form>
-            )}
-          </div>
-        </div>
+                <Button type="submit">Save Changes</Button>
+              </Grid>
+
+              {status !== "loading" && errorMessage && <p>{errorMessage}</p>}
+            </>
+          )}
+        </Box>
+        {role === "worker" && (
+          <Button onClick={() => setReview(true)}>Reviews</Button>
+        )}
+        <Dialog
+          open={review}
+          onClose={handleClose}
+          scroll="paper"
+          aria-labelledby="scroll-dialog-title"
+          aria-describedby="scroll-dialog-description"
+        >
+          <DialogTitle id="scroll-dialog-title">Reviews</DialogTitle>
+          <DialogContent dividers={true}>
+            <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
+              <Review workerId={userId} />
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleClose}>Subscribe</Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </>
   );

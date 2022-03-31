@@ -1,19 +1,21 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginActions } from "./login-slice";
-import { host } from "../config";
 
 export const editUser = createAsyncThunk(
   "user/editUser",
   async ({ body, role, userId }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(`${host}/editprofile/${userId}?role=${role}`, {
-      method: "POST",
-      body: body,
-      headers: {
-        Authorization: states.login.token,
-      },
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_HOST}/editprofile/${userId}?role=${role}`,
+      {
+        method: "POST",
+        body: body,
+        headers: {
+          Authorization: states.login.token,
+        },
+      }
+    );
 
     const data = await response.json();
     if (response.ok === false) {
@@ -25,7 +27,7 @@ export const editUser = createAsyncThunk(
 export const getUser = createAsyncThunk("user/getUser", async (_, getState) => {
   const states = getState.getState();
 
-  const response = await fetch(`${host}/getprofile`, {
+  const response = await fetch(`${process.env.REACT_APP_HOST}/getprofile`, {
     method: "GET",
     headers: {
       Authorization: states.login.token,
