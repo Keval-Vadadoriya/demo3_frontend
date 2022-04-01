@@ -61,10 +61,12 @@ const userSlice = createSlice({
   },
   extraReducers: {
     [editUser.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.status = "Saved Changes Successfully";
+      state.errorMessage = "";
       state.user = action.payload;
     },
     [editUser.pending]: (state, action) => {
+      state.errorMessage = "";
       state.status = "loading";
     },
     [editUser.rejected]: (state, action) => {
@@ -72,10 +74,12 @@ const userSlice = createSlice({
       state.errorMessage = action.error.message;
     },
     [getUser.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.status = "user data";
+      state.errorMessage = "";
       state.user = action.payload.user;
     },
     [getUser.pending]: (state, action) => {
+      state.errorMessage = "";
       state.status = "loading";
     },
     [getUser.rejected]: (state, action) => {

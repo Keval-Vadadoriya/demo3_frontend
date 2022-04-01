@@ -79,7 +79,7 @@ export const workersSlice = createSlice({
     errorMessage: "",
     workers: [],
     worker: null,
-    count: "",
+    count: 0,
   },
   reducers: {},
   extraReducers: {

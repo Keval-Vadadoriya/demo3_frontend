@@ -1,4 +1,4 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, NavLink } from "react-router-dom";
 import { loginActions } from "../../store/login-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
@@ -22,6 +22,7 @@ import {
   MenuItem,
   withTheme,
 } from "@mui/material";
+import { red } from "@mui/material/colors";
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -67,7 +68,6 @@ const Header = () => {
   };
 
   const handleCloseUserMenu = (event, value) => {
-    console.log(event.target.value);
     setAnchorElUser(null);
   };
   return (
@@ -175,48 +175,59 @@ const Header = () => {
                     borderBottom: 1,
                     borderColor: "divider",
                   },
+                  textDecoration: "none",
                 }}
               >
-                <Tabs
-                  value={value}
-                  onChange={handleChange}
-                  textColor="secondary"
-                  indicatorColor="secondary"
-                  sx={{ textColor: "red" }}
-                  aria-label="wrapped label tabs example"
+                <Typography
+                  variant="h5"
+                  component={NavLink}
+                  to={"/home/chats"}
+                  style={({ isActive }) =>
+                    isActive ? { backgroundColor: "white" } : {}
+                  }
+                  sx={{ textDecoration: "none" }}
                 >
-                  <Tab
-                    key={"chats"}
-                    label={"chats"}
-                    component={Link}
-                    to={"/home/chats"}
-                    sx={{ color: "white", "&:hover": { color: "green" } }}
-                  />
-                  {role === "user" && (
-                    <Tab
-                      key={"workers"}
-                      label={"workers"}
-                      component={Link}
-                      to={"/home/workers"}
-                    />
-                  )}
-                  {role === "user" && (
-                    <Tab
-                      key={"myprojects"}
-                      label={"myprojects"}
-                      component={Link}
-                      to={"/home/myprojects"}
-                    />
-                  )}
-                  {role === "worker" && (
-                    <Tab
-                      key={"projects"}
-                      label={"projects"}
-                      component={Link}
-                      to={"/home/projects"}
-                    />
-                  )}
-                </Tabs>
+                  Chats
+                </Typography>
+                {role === "user" && (
+                  <Typography
+                    variant="h5"
+                    component={NavLink}
+                    to={"/home/workers"}
+                    style={({ isActive }) =>
+                      isActive ? { backgroundColor: "white" } : {}
+                    }
+                    sx={{ textDecoration: "none" }}
+                  >
+                    Workers
+                  </Typography>
+                )}
+                {role === "user" && (
+                  <Typography
+                    variant="h5"
+                    component={NavLink}
+                    to={"/home/myprojects"}
+                    style={({ isActive }) =>
+                      isActive ? { backgroundColor: "white" } : {}
+                    }
+                    sx={{ textDecoration: "none" }}
+                  >
+                    MyProjects
+                  </Typography>
+                )}
+                {role === "worker" && (
+                  <Typography
+                    variant="h5"
+                    component={NavLink}
+                    to={"/home/projects"}
+                    style={({ isActive }) =>
+                      isActive ? { backgroundColor: "white" } : {}
+                    }
+                    sx={{ textDecoration: "none" }}
+                  >
+                    Projects
+                  </Typography>
+                )}
               </Box>
             )}
 

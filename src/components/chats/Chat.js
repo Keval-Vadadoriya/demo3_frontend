@@ -1,5 +1,5 @@
-import { Fragment, useEffect, useState } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Fragment, useEffect } from "react";
+import { Outlet, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Grid, Typography } from "@mui/material";
 import { chatActions } from "../../store/actions/chat-actions";
@@ -17,7 +17,6 @@ const Chat = () => {
   const { chatList } = useSelector((state) => state.chat);
   const socket = useSelector((state) => state.socket.socket);
   const dispatch = useDispatch();
-  const [active, setActive] = useState("");
 
   useEffect(() => {
     socket.on("chatlist", (list, chats) => {
@@ -43,18 +42,17 @@ const Chat = () => {
       return (
         <ListItem
           key={worker._id}
-          component={Link}
+          component={NavLink}
           to={`/home/chats/${worker.user._id}`}
           sx={{
-            backgroundColor: active === worker.user._id ? "#808080" : "white",
             "&:hover": {
               backgroundColor: "rgb(87, 87, 87)",
               textColor: "white",
             },
           }}
-          onClick={() => {
-            setActive(worker.user._id);
-          }}
+          style={({ isActive }) =>
+            isActive ? { backgroundColor: "#808080" } : {}
+          }
         >
           <ListItemAvatar>
             <Avatar

@@ -77,7 +77,7 @@ export const reviewsSlice = createSlice({
       state.errorMessage = action.error.message;
     },
     [addReview.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.status = "Review Added Successfully";
       state.errorMessage = "";
     },
     [addReview.pending]: (state, action) => {

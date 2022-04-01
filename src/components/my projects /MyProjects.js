@@ -16,6 +16,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { snackbarActions } from "../../store/snackbar-slice";
 
 import {
   postProject,
@@ -34,9 +35,35 @@ const MyProjects = () => {
   const token = useSelector((state) => state.login.token);
 
   const dispatch = useDispatch();
-  const { status, projects, count, errorMessage } = useSelector(
-    (state) => state.project
-  );
+  const { projects, count } = useSelector((state) => state.project);
+  const { status, errorMessage } = useSelector((state) => state.myproject);
+
+  useEffect(() => {
+    if (status === "Project Posted Successfully") {
+      setAddProject(false);
+    }
+    if (
+      status === "Project Deleted Successfully" ||
+      status === "Project Posted Successfully"
+    ) {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "success",
+          message: status,
+        })
+      );
+    }
+    if (errorMessage !== "") {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "error",
+          message: errorMessage,
+        })
+      );
+    }
+  }, [status, errorMessage]);
 
   const addProjectHandler = () => {
     setAddProject(true);

@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { addReview, getReviews } from "../../store/actions/review-actions";
+import { snackbarActions } from "../../store/snackbar-slice";
 
 const Review = (props) => {
   const dispatch = useDispatch();
@@ -22,6 +23,27 @@ const Review = (props) => {
   const role = useSelector((state) => state.login.role);
 
   const workerid = useParams();
+
+  useEffect(() => {
+    if (status === "Review Added Successfully") {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "success",
+          message: status,
+        })
+      );
+    }
+    if (errorMessage) {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "error",
+          message: errorMessage,
+        })
+      );
+    }
+  }, [status, errorMessage]);
   const changeDescriptionHandler = (event) => {
     setDescription(event.target.value);
   };

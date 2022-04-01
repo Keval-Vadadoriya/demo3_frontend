@@ -24,6 +24,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { snackbarActions } from "../../store/snackbar-slice";
 
 const SignupForm = (props) => {
   const [open, setOpen] = useState(false);
@@ -50,7 +51,28 @@ const SignupForm = (props) => {
     if (status === "succeeded") {
       setOpen(true);
     }
-  }, [status]);
+    if (errorMessage) {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "error",
+          message: errorMessage,
+        })
+      );
+    }
+    if (
+      status === "Signup Successful" ||
+      status === "Verification Successful"
+    ) {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "success",
+          message: status,
+        })
+      );
+    }
+  }, [status, errorMessage]);
 
   const handleClose = () => {
     setOpen(false);

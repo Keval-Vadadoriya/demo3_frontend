@@ -67,7 +67,7 @@ export const myprojectSlice = createSlice({
   reducers: {},
   extraReducers: {
     [removeProject.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.status = "Project Deleted Successfully";
       state.errorMessage = "";
       state.reviews = action.payload;
     },
@@ -80,7 +80,7 @@ export const myprojectSlice = createSlice({
       state.errorMessage = action.error.message;
     },
     [postProject.fulfilled]: (state, action) => {
-      state.status = "review added";
+      state.status = "Project Posted Successfully";
       state.errorMessage = "";
     },
     [postProject.pending]: (state, action) => {

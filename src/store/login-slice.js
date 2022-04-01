@@ -49,11 +49,11 @@ export const verifyPassword = createAsyncThunk(
     if (response.ok === false) {
       throw new Error(data.Error);
     } else {
-      getState.dispatch(userActions.setLoggedInUser({ user: data.user }));
-      getState.dispatch(
-        loginActions.setToken({ token: "Bearer " + data.token })
-      );
-      localStorage.setItem("token", "Bearer " + data.token);
+      // getState.dispatch(userActions.setLoggedInUser({ user: data.user }));
+      // getState.dispatch(
+      //   loginActions.setToken({ token: "Bearer " + data.token })
+      // );
+      // localStorage.setItem("token", "Bearer " + data.token);
     }
     return data;
   }
@@ -99,7 +99,7 @@ const loginSlice = createSlice({
   },
   extraReducers: {
     [loggedInUser.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.status = "Login Successful";
       state.errorMessage = "";
       state.token = "Bearer " + action.payload.token;
     },
@@ -112,7 +112,7 @@ const loginSlice = createSlice({
       state.errorMessage = action.error.message;
     },
     [forgotPassword.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.status = "Sent";
       state.errorMessage = "";
     },
     [forgotPassword.pending]: (state, action) => {
@@ -124,7 +124,7 @@ const loginSlice = createSlice({
       state.errorMessage = action.error.message;
     },
     [verifyPassword.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.status = "Password Updated Successfully";
       state.errorMessage = "";
     },
     [verifyPassword.pending]: (state, action) => {

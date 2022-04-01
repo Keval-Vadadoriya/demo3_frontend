@@ -26,6 +26,7 @@ import {
   Grid,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { snackbarActions } from "../../store/snackbar-slice";
 
 const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState("");
@@ -37,9 +38,9 @@ const LoginForm = () => {
   const [verifyDialog, setVerifyDialog] = useState(false);
   const [otp, setOtp] = useState();
 
-  const { status, role, token, errorMessage } = useSelector(
-    (state) => state.login
-  );
+  const { status, token, errorMessage } = useSelector((state) => state.login);
+  const { status: verifyStatus, errorMessage: verifyerrorMessage } =
+    useSelector((state) => state.signup);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -49,14 +50,52 @@ const LoginForm = () => {
     if (errorMessage === "Plese Verify Your Email") {
       setOpen(true);
     }
-    if (status === "succeeded") {
+    if (status === "Password Updated Successfully") {
+      setVerifyDialog(false);
+    }
+    if (errorMessage) {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "error",
+          message: errorMessage,
+        })
+      );
+    }
+    console.log(status);
+    if (
+      status === "Login Successful" ||
+      status === "Password Updated Successfully" ||
+      status === "Sent"
+    ) {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "success",
+          message: status,
+        })
+      );
+    }
+    if (verifyStatus === "Verification Successful") {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "success",
+          message: verifyStatus,
+        })
+      );
+    }
+    if (status === "Sent") {
       setForgotDialog(false);
       setVerifyDialog(true);
     }
-  }, [status]);
+  }, [status, verifyStatus, errorMessage]);
 
-  const handleClose = () => {
+  const handleVerifyUserClose = () => {
     setOpen(false);
+  };
+  const handleVerifyPasswordClose = () => {
+    setVerifyDialog(false);
   };
   const verify = () => {
     dispatch(verifyUser({ otp }));
@@ -97,9 +136,15 @@ const LoginForm = () => {
   };
   //forgot password
   //Login Request
-  if (token) {
-    navigate("/home");
-  }
+  useEffect(() => {
+    if (
+      token &&
+      (status === "Login Successful" ||
+        verifyStatus === "Verification Successful")
+    ) {
+      navigate("/home");
+    }
+  }, [token, status, verifyStatus]);
 
   //Submit Handler
   const onSubmitHandler = (event) => {
@@ -192,12 +237,14 @@ const LoginForm = () => {
           </Box>
         </Box>
       </Container>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Subscribe</DialogTitle>
+
+      {/* Verify User Dialog */}
+      <Dialog fullscreen={matches} open={open} onClose={handleVerifyUserClose}>
+        <DialogTitle>Verify Email</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
+            To Verify email, please enter otp we have sent to your email address
+            here.
           </DialogContentText>
           <TextField
             autoFocus
@@ -211,16 +258,21 @@ const LoginForm = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleVerifyUserClose}>Cancel</Button>
           <Button onClick={verify}>Submit</Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={verifyDialog} onClose={handleForgotClose}>
-        <DialogTitle>Subscribe</DialogTitle>
+
+      {/* Verify Password Dialog */}
+      <Dialog
+        fullScreen={matches}
+        open={verifyDialog}
+        onClose={handleVerifyPasswordClose}
+      >
+        <DialogTitle>Password Verification</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
+            We have sent otp to ypur registered email address
           </DialogContentText>
           <TextField
             autoFocus
@@ -254,21 +306,21 @@ const LoginForm = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleVerifyPasswordClose}>Cancel</Button>
           <Button onClick={verifyPasswordx}>verify</Button>
         </DialogActions>
       </Dialog>
+
+      {/* forgot Dialogue */}
       <Dialog
         fullScreen={matches}
         open={forgotDialog}
         onClose={handleForgotClose}
       >
-        <DialogTitle>Subscribe</DialogTitle>
+        <DialogTitle>Forgot Password</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
-          </DialogContentText>
+          <DialogContentText>Please Enter Your Email Address</DialogContentText>
+          <DialogContentText>{errorMessage}</DialogContentText>
 
           <TextField
             autoFocus
@@ -282,7 +334,7 @@ const LoginForm = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleForgotClose}>Cancel</Button>
           <Button onClick={forgotPasswordx}>forgot</Button>
         </DialogActions>
       </Dialog>

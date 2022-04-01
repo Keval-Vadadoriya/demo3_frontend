@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import EditIcon from "@mui/icons-material/Edit";
 import { editUser } from "../../store/user-slice";
@@ -22,6 +22,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import { snackbarActions } from "../../store/snackbar-slice";
 const Profile = () => {
   const user = useSelector((state) => state.user.user);
   console.log(user);
@@ -38,12 +39,27 @@ const Profile = () => {
   const [location, setLocation] = useState(user ? user.location : "");
   const [availability, setAvailability] = useState(user.availability);
   const [locationIsValid, setLocationIsValid] = useState(false);
+  const [OldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordIsValid, setPasswordIsValid] = useState("");
   const { status, errorMessage } = useSelector((state) => state.user);
   const role = useSelector((state) => state.login.role);
   const userId = useSelector((state) => state.user.user._id);
   const avatar = user.avatar;
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (status === "Saved Changes Successfully") {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "success",
+          message: status,
+        })
+      );
+    }
+  }, [status]);
 
   //Submit Handler
   const SubmitHandler = (event) => {
@@ -63,6 +79,11 @@ const Profile = () => {
     }
     if (age) {
       formData.append("age", age);
+    }
+    if (passwordIsValid) {
+      console.log("valid");
+      formData.append("password", OldPassword);
+      formData.append("newpassword", newPassword);
     }
     if (role === "worker") {
       if (profession) {
@@ -225,13 +246,55 @@ const Profile = () => {
                     disabled={!edit}
                     name="Age"
                     label="Age"
-                    type="Number"
+                    type="number"
                     id="Age"
                     autoComplete="Age"
                     onChange={(event) => setAge(event.target.value)}
                     defaultValue={`${user.age ? user.age : ""}`}
                   />
                 </Grid>
+                {edit && (
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      disabled={!edit}
+                      name="Old Password"
+                      label="Old Password"
+                      type="password"
+                      id="Old Password"
+                      autoComplete="Old Password"
+                      onChange={(event) => setOldPassword(event.target.value)}
+                    />
+                  </Grid>
+                )}
+                {edit && (
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      name="New Password"
+                      label="New Password"
+                      type="password"
+                      id="New Password"
+                      autoComplete="New Password"
+                      onChange={(event) => setNewPassword(event.target.value)}
+                    />
+                  </Grid>
+                )}
+                {edit && (
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      name="Confirm Password"
+                      label="Confirm Password"
+                      type="password"
+                      id="Confirm Password"
+                      autoComplete="Confirm Password"
+                      onChange={(event) =>
+                        setPasswordIsValid(newPassword === event.target.value)
+                      }
+                    />
+                  </Grid>
+                )}
                 {role === "worker" && (
                   <Grid item xs={12}>
                     <FormControl fullWidth>
@@ -308,17 +371,6 @@ const Profile = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  // <Grid item xs={12}>
-                  //   <ToggleButtonGroup
-                  //     color="primary"
-                  //     value={availability}
-                  //     exclusive
-                  //     onChange={changeAvailabilityHandler}
-                  //   >
-                  //     <ToggleButton value={true}>Free</ToggleButton>
-                  //     <ToggleButton value={false}>Busy</ToggleButton>
-                  //   </ToggleButtonGroup>
-                  // </Grid>
                 )}
 
                 <Button type="submit">Save Changes</Button>

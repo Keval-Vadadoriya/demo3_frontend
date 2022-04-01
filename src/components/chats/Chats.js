@@ -27,7 +27,7 @@ function Chats() {
   }, [chats[receiverId.workerid]]);
 
   useEffect(async () => {
-    socket.on("messag", ({ message, role, sender, receiver }) => {
+    socket.on("message", ({ message, role, sender, receiver }) => {
       socket.emit(
         "delivered",
         message._id,
@@ -116,7 +116,7 @@ function Chats() {
                 : "",
           }}
         >
-          <Typography variant="body" sx={{ wordBreak: "break-all" }}>
+          <Typography variant="h5" sx={{ wordBreak: "break-all" }}>
             {message.message}
             <Typography
               sx={{ fontSize: "15px", fontStyle: "italic" }}
@@ -139,22 +139,26 @@ function Chats() {
         <Box ref={messagesEndRef} />
       </Box>
       <Box component="form" onSubmit={sendMessageHandler}>
-        <Grid item xs={12}>
-          <TextField
-            autoComplete="message"
-            name="Message"
-            required
-            fullWidth
-            id="Message"
-            label="Message"
-            autoFocus
-            value={message}
-            onChange={changeMessageHandler}
-          />
+        <Grid container>
+          <Grid item xs={11}>
+            <TextField
+              autoComplete="message"
+              name="Message"
+              required
+              fullWidth
+              id="Message"
+              label="Message"
+              autoFocus
+              value={message}
+              onChange={changeMessageHandler}
+            />
+          </Grid>
+          <Grid item xs={1}>
+            <Button type="submit">
+              <SendIcon fontSize="large" />
+            </Button>
+          </Grid>
         </Grid>
-        <Button type="submit">
-          <SendIcon fontSize="large" />
-        </Button>
       </Box>
     </Box>
   );

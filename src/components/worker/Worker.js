@@ -2,11 +2,10 @@ import React, { Fragment, useEffect, useState } from "react";
 import WorkerCard from "./WorkerCard";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { snackbarActions } from "../../store/snackbar-slice";
 import {
   Stack,
   Pagination,
-  Snackbar,
-  Alert,
   CircularProgress,
   Grid,
   Container,
@@ -29,19 +28,22 @@ const Worker = () => {
   const [review, setReview] = useState("none");
   const [availability, setAvailability] = useState("none");
   const [filtered, setFiltered] = useState(false);
-  const [isSnackbar, setIsSnackbar] = useState(false);
   const [page, setPage] = useState(1);
 
   const dispatch = useDispatch();
   const { status, workers, count, errorMessage } = useSelector(
     (state) => state.workerslist
   );
-  const handleSnackbar = () => {
-    setIsSnackbar(false);
-  };
+
   useEffect(() => {
-    if (errorMessage) {
-      setIsSnackbar(true);
+    if (errorMessage === "No Workers Found") {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "error",
+          message: errorMessage,
+        })
+      );
     }
   }, [errorMessage]);
 
@@ -222,15 +224,7 @@ const Worker = () => {
         <Container fixed>
           {status === "loading" && <CircularProgress />}
           <Box sx={{ display: "flex", flexWrap: "wrap" }}>{workerList}</Box>
-          <Snackbar open={isSnackbar} autoHideDuration={6000}>
-            <Alert
-              onClose={handleSnackbar}
-              severity={errorMessage ? "error" : "success"}
-              sx={{ width: "100%" }}
-            >
-              {errorMessage}
-            </Alert>
-          </Snackbar>
+
           <Stack spacing={2}>
             <Pagination
               count={Math.ceil(count / 3)}

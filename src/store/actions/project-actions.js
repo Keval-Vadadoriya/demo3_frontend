@@ -84,7 +84,6 @@ export const projectSlice = createSlice({
     [getAllProjects.fulfilled]: (state, action) => {
       state.status = "succeeded";
       state.errorMessage = "";
-      // console.log(action.payload);
 
       state.projects = action.payload.projects;
       state.count = action.payload.count;
@@ -101,7 +100,6 @@ export const projectSlice = createSlice({
     [filterProjects.fulfilled]: (state, action) => {
       state.status = "succeeded";
       state.errorMessage = "";
-      // console.log(action.payload);
       state.projects = action.payload.projects;
       state.count = action.payload.count;
     },
@@ -112,7 +110,6 @@ export const projectSlice = createSlice({
     [filterProjects.rejected]: (state, action) => {
       state.status = "failed";
       state.errorMessage = action.error.message;
-      // console.log(action.error.message);
       state.workers = null;
     },
     //get Worker
