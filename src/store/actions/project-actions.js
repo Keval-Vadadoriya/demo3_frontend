@@ -1,24 +1,34 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import baseURL from "../baseService";
 
 export const getAllProjects = createAsyncThunk(
   "project/getAllProjects",
   async ({ skip }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/getallprojects?limit=5&&skip=${skip}`,
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
+    try {
+      const response = await baseURL.get(
+        `/getallprojects?limit=5&&skip=${skip}`
+      );
 
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/getallprojects?limit=5&&skip=${skip}`,
+    //   {
+    //     headers: {
+    //       Authorization: states.login.token,
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // }
+    // return data;
   }
 );
 export const getMyProjects = createAsyncThunk(
@@ -26,20 +36,29 @@ export const getMyProjects = createAsyncThunk(
   async ({ skip }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/getmyprojects?limit=5&&skip=${skip}`,
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
+    try {
+      const response = await baseURL.get(
+        `/getmyprojects?limit=5&&skip=${skip}`
+      );
 
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/getmyprojects?limit=5&&skip=${skip}`,
+    //   {
+    //     headers: {
+    //       Authorization: states.login.token,
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // }
+    // return data;
   }
 );
 
@@ -48,25 +67,36 @@ export const filterProjects = createAsyncThunk(
   async ({ location, profession, money, skip }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/filterprojects?${
-        location !== "none" ? `location=${location}` : ""
-      }${profession !== "none" ? `&&profession=${profession}` : ""}${
-        money ? `&&money=${money}` : ""
-      }&&limit=5&&skip=${skip}`,
+    try {
+      const response = await baseURL.get(
+        `/filterprojects?${location !== "none" ? `location=${location}` : ""}${
+          profession !== "none" ? `&&profession=${profession}` : ""
+        }${money ? `&&money=${money}` : ""}&&limit=5&&skip=${skip}`
+      );
 
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/filterprojects?${
+    //     location !== "none" ? `location=${location}` : ""
+    //   }${profession !== "none" ? `&&profession=${profession}` : ""}${
+    //     money ? `&&money=${money}` : ""
+    //   }&&limit=5&&skip=${skip}`,
+
+    //   {
+    //     headers: {
+    //       Authorization: states.login.token,
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // }
+    // return data;
   }
 );
 
@@ -86,7 +116,9 @@ export const projectSlice = createSlice({
       state.errorMessage = "";
 
       state.projects = action.payload.projects;
-      state.count = action.payload.count;
+      if (action.payload.count !== 0) {
+        state.count = action.payload.count;
+      }
     },
     [getAllProjects.pending]: (state, action) => {
       state.errorMessage = "";

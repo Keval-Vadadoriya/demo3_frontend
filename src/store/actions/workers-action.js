@@ -1,24 +1,34 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import baseURL from "../baseService";
 
 export const getAllWorkers = createAsyncThunk(
   "workers/getAllWorkers",
   async ({ skip }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/getallworkers?limit=3&&skip=${skip}`,
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
+    try {
+      const response = await baseURL.get(
+        `/getallworkers?limit=3&&skip=${skip}`
+      );
 
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/getallworkers?limit=3&&skip=${skip}`,
+    //   {
+    //     headers: {
+    //       Authorization: states.login.token,
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // }
+    // return data;
   }
 );
 export const getWorker = createAsyncThunk(
@@ -26,20 +36,27 @@ export const getWorker = createAsyncThunk(
   async ({ workerId }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/getworker/${workerId}`,
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
+    try {
+      const response = await baseURL.get(`/getworker/${workerId}`);
 
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/getworker/${workerId}`,
+    //   {
+    //     headers: {
+    //       Authorization: states.login.token,
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // }
+    // return data;
   }
 );
 
@@ -48,27 +65,40 @@ export const filterWorkers = createAsyncThunk(
   async ({ location, profession, review, availability, skip }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/filterworkers?${
-        location !== "none" ? `location=${location}&&` : ""
-      }${profession !== "none" ? `profession=${profession}&&` : ""}${
-        review !== "none" ? `review=${review}&&` : ""
-      }${
-        availability !== "none" ? `availability=${availability}&&` : ""
-      }limit=3&&${skip ? `skip=${skip}` : ""}`,
+    try {
+      const response = await baseURL.get(
+        `/filterworkers?${location !== "none" ? `location=${location}&&` : ""}${
+          profession !== "none" ? `profession=${profession}&&` : ""
+        }${review !== "none" ? `review=${review}&&` : ""}${
+          availability !== "none" ? `availability=${availability}&&` : ""
+        }limit=3&&${skip ? `skip=${skip}` : ""}`
+      );
 
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/filterworkers?${
+    //     location !== "none" ? `location=${location}&&` : ""
+    //   }${profession !== "none" ? `profession=${profession}&&` : ""}${
+    //     review !== "none" ? `review=${review}&&` : ""
+    //   }${
+    //     availability !== "none" ? `availability=${availability}&&` : ""
+    //   }limit=3&&${skip ? `skip=${skip}` : ""}`,
+
+    //   {
+    //     headers: {
+    //       Authorization: states.login.token,
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // }
+    // return data;
   }
 );
 
@@ -90,7 +120,7 @@ export const workersSlice = createSlice({
 
       state.workers = action.payload.workers;
       console.log(action.payload.count);
-      if (action.payload.count !== null) {
+      if (action.payload.count !== 0) {
         state.count = action.payload.count;
       }
     },

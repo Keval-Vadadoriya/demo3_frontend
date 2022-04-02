@@ -131,7 +131,7 @@ const Profile = () => {
 
   return (
     <>
-      <Container fullWidth>
+      <Container>
         <Button
           onClick={() => {
             setEdit(true);
@@ -147,236 +147,238 @@ const Profile = () => {
           {status === "loading" && <p>Loading</p>}
           {status !== "loading" && (
             <>
-              <Grid container rowSpacing={2} marginTop={5}>
-                <Grid
-                  item
-                  xs={12}
-                  sx={{ display: "flex", justifyContent: "center" }}
-                >
-                  <Badge
-                    color="secondary"
-                    badgeContent={
-                      <label htmlFor="contained-button-file">
-                        <Input
-                          accept="image/*"
-                          id="contained-button-file"
-                          type="file"
-                          sx={{ display: "none" }}
-                          onChange={(event) =>
-                            setNewAvatar(event.target.files[0])
-                          }
-                        />
-                        <EditIcon />
-                      </label>
-                    }
+              {Object.keys(user).length !== 0 && (
+                <Grid container rowSpacing={2} marginTop={5}>
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{ display: "flex", justifyContent: "center" }}
                   >
-                    <Avatar
-                      src={
-                        newAvatar
-                          ? window.URL.createObjectURL(newAvatar)
-                          : `${process.env.REACT_APP_HOST}/${avatar}`
+                    <Badge
+                      color="secondary"
+                      badgeContent={
+                        <label htmlFor="contained-button-file">
+                          <Input
+                            accept="image/*"
+                            id="contained-button-file"
+                            type="file"
+                            sx={{ display: "none" }}
+                            onChange={(event) =>
+                              setNewAvatar(event.target.files[0])
+                            }
+                          />
+                          <EditIcon />
+                        </label>
                       }
-                      sx={{
-                        width: 100,
-                        height: 100,
-                      }}
-                    />
-                  </Badge>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    disabled={!edit}
-                    name="Name"
-                    label="Name"
-                    type="text"
-                    id="name"
-                    autoComplete="name"
-                    onChange={(event) => setName(event.target.value)}
-                    defaultValue={`${user.name ? user.name : ""}`}
-                  />
-                </Grid>
-                {role === "worker" && (
+                    >
+                      <Avatar
+                        src={
+                          newAvatar
+                            ? window.URL.createObjectURL(newAvatar)
+                            : `${process.env.REACT_APP_HOST}/${avatar}`
+                        }
+                        sx={{
+                          width: 100,
+                          height: 100,
+                        }}
+                      />
+                    </Badge>
+                  </Grid>
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
                       disabled={!edit}
-                      name="About You"
-                      label="About You"
+                      name="Name"
+                      label="Name"
                       type="text"
-                      id="About You"
-                      autoComplete="About You"
-                      onChange={(event) => setDescription(event.target.value)}
-                      defaultValue={`${
-                        user.description ? user.description : ""
-                      }`}
+                      id="name"
+                      autoComplete="name"
+                      onChange={(event) => setName(event.target.value)}
+                      defaultValue={`${user.name ? user.name : ""}`}
                     />
                   </Grid>
-                )}
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    disabled={true}
-                    name="Email"
-                    label="Email"
-                    type="email"
-                    id="Email"
-                    autoComplete="Email"
-                    onChange={(event) => setEmail(event.target.value)}
-                    defaultValue={`${user.email ? user.email : ""}`}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    disabled={!edit}
-                    name="Contact"
-                    label="Contact"
-                    type="tel"
-                    pattern="[6-9]{1}[0-9]{9}"
-                    id="Contact"
-                    autoComplete="Contact"
-                    onChange={(event) => setContact(event.target.value)}
-                    defaultValue={`${user.contact ? user.contact : ""}`}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    disabled={!edit}
-                    name="Age"
-                    label="Age"
-                    type="number"
-                    id="Age"
-                    autoComplete="Age"
-                    onChange={(event) => setAge(event.target.value)}
-                    defaultValue={`${user.age ? user.age : ""}`}
-                  />
-                </Grid>
-                {edit && (
+                  {role === "worker" && (
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        disabled={!edit}
+                        name="About You"
+                        label="About You"
+                        type="text"
+                        id="About You"
+                        autoComplete="About You"
+                        onChange={(event) => setDescription(event.target.value)}
+                        defaultValue={`${
+                          user.description ? user.description : ""
+                        }`}
+                      />
+                    </Grid>
+                  )}
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      disabled={true}
+                      name="Email"
+                      label="Email"
+                      type="email"
+                      id="Email"
+                      autoComplete="Email"
+                      onChange={(event) => setEmail(event.target.value)}
+                      defaultValue={`${user.email ? user.email : ""}`}
+                    />
+                  </Grid>
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
                       disabled={!edit}
-                      name="Old Password"
-                      label="Old Password"
-                      type="password"
-                      id="Old Password"
-                      autoComplete="Old Password"
-                      onChange={(event) => setOldPassword(event.target.value)}
+                      name="Contact"
+                      label="Contact"
+                      type="tel"
+                      inputProps={{
+                        pattern: "[6-9]{1}[0-9]{9}",
+                      }}
+                      id="Contact"
+                      autoComplete="Contact"
+                      onChange={(event) => setContact(event.target.value)}
+                      defaultValue={`${user.contact ? user.contact : ""}`}
                     />
                   </Grid>
-                )}
-                {edit && (
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
-                      name="New Password"
-                      label="New Password"
-                      type="password"
-                      id="New Password"
-                      autoComplete="New Password"
-                      onChange={(event) => setNewPassword(event.target.value)}
+                      disabled={!edit}
+                      name="Age"
+                      label="Age"
+                      type="number"
+                      id="Age"
+                      autoComplete="Age"
+                      onChange={(event) => setAge(event.target.value)}
+                      defaultValue={`${user.age ? user.age : ""}`}
                     />
                   </Grid>
-                )}
-                {edit && (
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      name="Confirm Password"
-                      label="Confirm Password"
-                      type="password"
-                      id="Confirm Password"
-                      autoComplete="Confirm Password"
-                      onChange={(event) =>
-                        setPasswordIsValid(newPassword === event.target.value)
-                      }
-                    />
-                  </Grid>
-                )}
-                {role === "worker" && (
-                  <Grid item xs={12}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">
-                        Profession
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={profession}
+                  {edit && (
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
                         disabled={!edit}
-                        label="Profession"
-                        defaultValue={`${user.profession}`}
-                        onChange={changeProfessionHandler}
-                      >
-                        <MenuItem value={"none"} disabled hidden>
-                          {"Select Profession"}
-                        </MenuItem>
-                        <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
-                        <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
-                        <MenuItem value={"electrician"}>
-                          {"Electrician"}
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                )}
-                {role === "worker" && (
-                  <Grid item xs={12}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">
-                        Location
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={location}
-                        disabled={!edit}
-                        label="Location"
-                        defaultValue={`${user.location}`}
-                        onChange={changeLocationHandler}
-                      >
-                        <MenuItem value={"none"} disabled hidden>
-                          {"Select Location"}
-                        </MenuItem>
-                        <MenuItem value={"surat"}>{"Surat"}</MenuItem>
-                        <MenuItem value={"anand"}>{"Anand"}</MenuItem>
-                        <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
-                        <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                )}
-                {role === "worker" && (
-                  <Grid item xs={12}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">
-                        Availability
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={location}
-                        disabled={!edit}
-                        label="Availability"
-                        defaultValue={`${user.availability}`}
-                        onChange={changeAvailabilityHandler}
-                      >
-                        <MenuItem value={"none"} disabled hidden>
-                          {"Select Availability"}
-                        </MenuItem>
-                        <MenuItem value={true}>{"Available"}</MenuItem>
-                        <MenuItem value={false}>{"Not Available"}</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                )}
+                        name="Old Password"
+                        label="Old Password"
+                        type="password"
+                        id="Old Password"
+                        autoComplete="Old Password"
+                        onChange={(event) => setOldPassword(event.target.value)}
+                      />
+                    </Grid>
+                  )}
+                  {edit && (
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        name="New Password"
+                        label="New Password"
+                        type="password"
+                        id="New Password"
+                        autoComplete="New Password"
+                        onChange={(event) => setNewPassword(event.target.value)}
+                      />
+                    </Grid>
+                  )}
+                  {edit && (
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        name="Confirm Password"
+                        label="Confirm Password"
+                        type="password"
+                        id="Confirm Password"
+                        autoComplete="Confirm Password"
+                        onChange={(event) =>
+                          setPasswordIsValid(newPassword === event.target.value)
+                        }
+                      />
+                    </Grid>
+                  )}
+                  {role === "worker" && (
+                    <Grid item xs={12}>
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">
+                          Profession
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={profession}
+                          disabled={!edit}
+                          label="Profession"
+                          defaultValue={`${user.profession}`}
+                          onChange={changeProfessionHandler}
+                        >
+                          <MenuItem value={"none"} disabled hidden>
+                            {"Select Profession"}
+                          </MenuItem>
+                          <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
+                          <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
+                          <MenuItem value={"electrician"}>
+                            {"Electrician"}
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  )}
+                  {role === "worker" && (
+                    <Grid item xs={12}>
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">
+                          Location
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={location}
+                          disabled={!edit}
+                          label="Location"
+                          defaultValue={`${user.location}`}
+                          onChange={changeLocationHandler}
+                        >
+                          <MenuItem value={"none"} disabled hidden>
+                            {"Select Location"}
+                          </MenuItem>
+                          <MenuItem value={"surat"}>{"Surat"}</MenuItem>
+                          <MenuItem value={"anand"}>{"Anand"}</MenuItem>
+                          <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
+                          <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  )}
+                  {role === "worker" && (
+                    <Grid item xs={12}>
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">
+                          Availability
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={location}
+                          disabled={!edit}
+                          label="Availability"
+                          defaultValue={`${user.availability}`}
+                          onChange={changeAvailabilityHandler}
+                        >
+                          <MenuItem value={"none"} disabled hidden>
+                            {"Select Availability"}
+                          </MenuItem>
+                          <MenuItem value={true}>{"Available"}</MenuItem>
+                          <MenuItem value={false}>{"Not Available"}</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  )}
 
-                <Button type="submit">Save Changes</Button>
-              </Grid>
-
-              {status !== "loading" && errorMessage && <p>{errorMessage}</p>}
+                  <Button type="submit">Save Changes</Button>
+                </Grid>
+              )}
             </>
           )}
         </Box>

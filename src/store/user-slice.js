@@ -1,52 +1,71 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginActions } from "./login-slice";
+import baseURL from "./baseService";
 
 export const editUser = createAsyncThunk(
   "user/editUser",
   async ({ body, role, userId }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/editprofile/${userId}?role=${role}`,
-      {
-        method: "POST",
-        body: body,
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
+    try {
+      const response = await baseURL.patch(
+        `/editprofile/${userId}?role=${role}`,
+        body
+      );
 
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/editprofile/${userId}?role=${role}`,
+    //   {
+    //     method: "POST",
+    //     body: body,
+    //     headers: {
+    //       Authorization: states.login.token,
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // }
+    // return data;
   }
 );
 export const getUser = createAsyncThunk("user/getUser", async (_, getState) => {
   const states = getState.getState();
 
-  const response = await fetch(`${process.env.REACT_APP_HOST}/getprofile`, {
-    method: "GET",
-    headers: {
-      Authorization: states.login.token,
-    },
-  });
+  try {
+    const response = await baseURL.get(`/getprofile`);
 
-  const data = await response.json();
-  if (response.ok === false) {
-    throw new Error(data.Error);
-  } else {
-    getState.dispatch(loginActions.setRole({ role: data.role }));
+    getState.dispatch(loginActions.setRole({ role: response.data.role }));
+    return response.data;
+  } catch (e) {
+    throw new Error(e.response.data.Error);
   }
-  console.log(data);
-  return data;
+  // const response = await fetch(`${process.env.REACT_APP_HOST}/getprofile`, {
+  //   method: "GET",
+  //   headers: {
+  //     Authorization: states.login.token,
+  //   },
+  // });
+
+  // const data = await response.json();
+  // if (response.ok === false) {
+  //   throw new Error(data.Error);
+  // } else {
+  //   getState.dispatch(loginActions.setRole({ role: data.role }));
+  // }
+  // console.log(data);
+  // return data;
 });
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    status: "idle",
+    status: "loading data",
     errorMessage: "",
     user: {},
   },
@@ -80,7 +99,7 @@ const userSlice = createSlice({
     },
     [getUser.pending]: (state, action) => {
       state.errorMessage = "";
-      state.status = "loading";
+      state.status = "loading data";
     },
     [getUser.rejected]: (state, action) => {
       state.status = "failed";

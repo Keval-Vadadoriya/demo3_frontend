@@ -1,24 +1,32 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import baseURL from "../baseService";
 
 export const getReviews = createAsyncThunk(
   "reviews/getReviews",
   async ({ workerId }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/getreview/${workerId}`,
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
+    try {
+      const response = await baseURL.get(`/getreview/${workerId}`);
 
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/getreview/${workerId}`,
+    //   {
+    //     headers: {
+    //       Authorization: states.login.token,
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // }
+    // return data;
   }
 );
 
@@ -27,30 +35,42 @@ export const addReview = createAsyncThunk(
   async ({ description, review, workerId }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/review/${workerId}`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          description,
-          review,
-          owner: states.user.user._id,
-        }),
-        headers: {
-          Authorization: states.login.token,
+    try {
+      const response = await baseURL.post(`/review/${workerId}`, {
+        description,
+        review,
+        owner: states.user.user._id,
+      });
 
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
-    } else {
       getState.dispatch(getReviews({ workerId }));
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/review/${workerId}`,
+    //   {
+    //     method: "POST",
+    //     body: JSON.stringify({
+    //       description,
+    //       review,
+    //       owner: states.user.user._id,
+    //     }),
+    //     headers: {
+    //       Authorization: states.login.token,
+
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // } else {
+    //   getState.dispatch(getReviews({ workerId }));
+    // }
+    // return data;
   }
 );
 

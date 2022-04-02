@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { chatActions } from "../../store/actions/chat-actions";
 import { Button, Grid, TextField, Box, Typography } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import { socketActions } from "../../store/socket-slice";
 
 function Chats() {
   const receiverId = useParams();
@@ -16,6 +17,7 @@ function Chats() {
   const socket = useSelector((state) => state.socket.socket);
   const [message, setMessage] = useState("");
   const { chats, chatsOwner } = useSelector((state) => state.chat);
+  const data = useSelector((state) => state.socket.data);
 
   //scroll to bottom
   const scrollToBottom = () => {
@@ -26,21 +28,41 @@ function Chats() {
     scrollToBottom();
   }, [chats[receiverId.workerid]]);
 
-  useEffect(async () => {
-    socket.on("message", ({ message, role, sender, receiver }) => {
+  useEffect(() => {
+    if (data) {
       socket.emit(
         "delivered",
-        message._id,
-        sender,
-        receiver,
-        role,
-        // getId() === sender ? true : false,
+        data.message._id,
+        data.sender,
+        data.receiver,
+        data.role,
+        receiverId.workerid === data.sender ? true : false,
         (response) => {
           dispatch(chatActions.setChatList({ list: response.chatList }));
         }
       );
+    }
+  }, [data]);
+
+  useEffect(async () => {
+    socket.on("message", (data) => {
+      // socket.emit(
+      //   "delivered",
+      //   message._id,
+      //   sender,
+      //   receiver,
+      //   role,
+      //   // getId() === sender ? true : false,
+      //   (response) => {
+      //     dispatch(chatActions.setChatList({ list: response.chatList }));
+      //   }
+      // );
+      dispatch(socketActions.setData({ data }));
       dispatch(
-        chatActions.setChat({ message, receiverId: receiverId.workerid })
+        chatActions.setChat({
+          message: data.message,
+          receiverId: receiverId.workerid,
+        })
       );
     });
     socket.on("messageDelivered", (_id) => {

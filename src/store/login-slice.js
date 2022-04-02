@@ -1,83 +1,88 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { socketActions } from "./socket-slice";
 import { userActions } from "./user-slice";
+import baseURL from "./baseService";
 
 export const loggedInUser = createAsyncThunk(
   "login/loggedInUser",
   async (obj, getState) => {
-    const response = await fetch(`${process.env.REACT_APP_HOST}/login`, {
-      method: "POST",
-      body: JSON.stringify({
-        email: obj.loginEmail,
-        password: obj.loginPassword,
-      }),
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
-    } else {
-      getState.dispatch(userActions.setLoggedInUser({ user: data.user }));
-      getState.dispatch(loginActions.setRole({ role: data.role }));
+    const body = {
+      email: obj.loginEmail,
+      password: obj.loginPassword,
+    };
+    try {
+      const response = await baseURL.post("/login", body);
+      getState.dispatch(
+        userActions.setLoggedInUser({ user: response.data.user })
+      );
+      getState.dispatch(loginActions.setRole({ role: response.data.role }));
 
       getState.dispatch(socketActions.setSocket());
 
-      localStorage.setItem("token", "Bearer " + data.token);
+      baseURL.defaults.headers.common["Authorization"] =
+        "Bearer " + response.data.token;
+      localStorage.setItem("token", "Bearer " + response.data.token);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
   }
 );
 export const verifyPassword = createAsyncThunk(
   "login/verifyPassword",
   async ({ otp, body }, getState) => {
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/verifyPassword/${otp}`,
-      {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    try {
+      const response = await baseURL.post(`/verifyPassword/${otp}`, body);
 
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
-    } else {
-      // getState.dispatch(userActions.setLoggedInUser({ user: data.user }));
-      // getState.dispatch(
-      //   loginActions.setToken({ token: "Bearer " + data.token })
-      // );
-      // localStorage.setItem("token", "Bearer " + data.token);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/verifyPassword/${otp}`,
+    //   {
+    //     method: "POST",
+    //     body: JSON.stringify(body),
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // }
+    // return data;
   }
 );
 export const forgotPassword = createAsyncThunk(
   "login/forgotPassword",
   async ({ body }, getState) => {
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/forgotPassword`,
-      {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    try {
+      const response = await baseURL.post(`/forgotPassword`, body);
 
-    console.log("dfdsk", response.ok);
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/forgotPassword`,
+    //   {
+    //     method: "POST",
+    //     body: JSON.stringify(body),
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // );
+
+    // console.log("dfdsk", response.ok);
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // }
+    // return data;
   }
 );
 

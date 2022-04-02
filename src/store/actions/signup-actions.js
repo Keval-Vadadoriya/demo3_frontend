@@ -1,54 +1,78 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { userActions } from "../user-slice";
 import { loginActions } from "../login-slice";
+import baseURL from "../baseService";
 
 export const signupUser = createAsyncThunk(
   "signup/signupUser",
   async ({ body, role }, getState) => {
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/signup?role=${role}`,
-      {
-        method: "POST",
-        body: JSON.stringify(body),
+    try {
+      const response = await baseURL.post(`/signup?role=${role}`);
 
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/signup?role=${role}`,
+    //   {
+    //     method: "POST",
+    //     body: JSON.stringify(body),
+
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // }
+    // return data;
   }
 );
 export const verifyUser = createAsyncThunk(
   "signup/verifyUser",
   async ({ otp }, getState) => {
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/verify/${otp}`,
-      {
-        method: "POST",
+    try {
+      const response = await baseURL.post(`/verify/${otp}`);
 
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
-    } else {
-      getState.dispatch(userActions.setLoggedInUser({ user: data.user }));
       getState.dispatch(
-        loginActions.setToken({ token: "Bearer " + data.token })
+        userActions.setLoggedInUser({ user: response.data.user })
       );
-      localStorage.setItem("token", "Bearer " + data.token);
+      getState.dispatch(
+        loginActions.setToken({ token: "Bearer " + response.data.token })
+      );
+      baseURL.defaults.headers.common["Authorization"] =
+        "Bearer " + response.data.token;
+      localStorage.setItem("token", "Bearer " + response.data.token);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/verify/${otp}`,
+    //   {
+    //     method: "POST",
+
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // } else {
+    //   getState.dispatch(userActions.setLoggedInUser({ user: data.user }));
+    //   getState.dispatch(
+    //     loginActions.setToken({ token: "Bearer " + data.token })
+    //   );
+    //   localStorage.setItem("token", "Bearer " + data.token);
+    // }
+    // return data;
   }
 );
 

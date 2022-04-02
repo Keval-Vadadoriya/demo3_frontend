@@ -212,6 +212,7 @@ const Header = () => {
                     }
                     sx={{ textDecoration: "none" }}
                   >
+                    {console.log("here")}
                     MyProjects
                   </Typography>
                 )}

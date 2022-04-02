@@ -1,59 +1,75 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getMyProjects } from "./project-actions";
+import baseURL from "../baseService";
 export const removeProject = createAsyncThunk(
   "myproject/removeProject",
   async ({ projectId }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/removeproject/${projectId}`,
-      {
-        method: "DELETE",
+    try {
+      const response = await baseURL.delete(`/removeproject/${projectId}`);
 
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
+      getState.dispatch(getMyProjects({ skip: 0 }));
 
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_HOST}/removeproject/${projectId}`,
+    //   {
+    //     method: "DELETE",
+
+    //     headers: {
+    //       Authorization: states.login.token,
+    //     },
+    //   }
+    // );
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // }
+    // return data;
   }
 );
 
 export const postProject = createAsyncThunk(
   "myproject/postProject",
-  async (
-    { project_name, description, profession, location, money },
-    getState
-  ) => {
+  async (body, getState) => {
     const states = getState.getState();
-    console.log(states);
-    const response = await fetch(`${process.env.REACT_APP_HOST}/project`, {
-      method: "POST",
-      body: JSON.stringify({
-        project_name,
-        description,
-        profession,
-        location,
-        money,
-      }),
-      headers: {
-        Authorization: states.login.token,
-        "Content-Type": "application/json",
-      },
-    });
 
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
-    } else {
+    try {
+      const response = await baseURL.post(`/project`, body);
+
       getState.dispatch(getMyProjects({ skip: 0 }));
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+    // console.log(states);
+    // const response = await fetch(`${process.env.REACT_APP_HOST}/project`, {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     project_name,
+    //     description,
+    //     profession,
+    //     location,
+    //     money,
+    //   }),
+    //   headers: {
+    //     Authorization: states.login.token,
+    //     "Content-Type": "application/json",
+    //   },
+    // });
+
+    // const data = await response.json();
+    // if (response.ok === false) {
+    //   throw new Error(data.Error);
+    // } else {
+    //   getState.dispatch(getMyProjects({ skip: 0 }));
+    // }
+    // return data;
   }
 );
 
