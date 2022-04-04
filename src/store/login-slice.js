@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { socketActions } from "./socket-slice";
 import { userActions } from "./user-slice";
-import baseURL from "./baseService";
+import baseService from "./baseService";
 
 export const loggedInUser = createAsyncThunk(
   "login/loggedInUser",
@@ -11,7 +11,7 @@ export const loggedInUser = createAsyncThunk(
       password: obj.loginPassword,
     };
     try {
-      const response = await baseURL.post("/login", body);
+      const response = await baseService.post("/login", body);
       getState.dispatch(
         userActions.setLoggedInUser({ user: response.data.user })
       );
@@ -19,7 +19,7 @@ export const loggedInUser = createAsyncThunk(
 
       getState.dispatch(socketActions.setSocket());
 
-      baseURL.defaults.headers.common["Authorization"] =
+      baseService.defaults.headers.common["Authorization"] =
         "Bearer " + response.data.token;
       localStorage.setItem("token", "Bearer " + response.data.token);
       return response.data;
@@ -32,57 +32,24 @@ export const verifyPassword = createAsyncThunk(
   "login/verifyPassword",
   async ({ otp, body }, getState) => {
     try {
-      const response = await baseURL.post(`/verifyPassword/${otp}`, body);
+      const response = await baseService.post(`/verifyPassword/${otp}`, body);
 
       return response.data;
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_HOST}/verifyPassword/${otp}`,
-    //   {
-    //     method: "POST",
-    //     body: JSON.stringify(body),
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // );
-
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // }
-    // return data;
   }
 );
 export const forgotPassword = createAsyncThunk(
   "login/forgotPassword",
   async ({ body }, getState) => {
     try {
-      const response = await baseURL.post(`/forgotPassword`, body);
+      const response = await baseService.post(`/forgotPassword`, body);
 
       return response.data;
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_HOST}/forgotPassword`,
-    //   {
-    //     method: "POST",
-    //     body: JSON.stringify(body),
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // );
-
-    // console.log("dfdsk", response.ok);
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // }
-    // return data;
   }
 );
 

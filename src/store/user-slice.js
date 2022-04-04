@@ -1,14 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginActions } from "./login-slice";
-import baseURL from "./baseService";
+import baseService from "./baseService";
 
 export const editUser = createAsyncThunk(
   "user/editUser",
   async ({ body, role, userId }, getState) => {
-    const states = getState.getState();
-
     try {
-      const response = await baseURL.patch(
+      const response = await baseService.patch(
         `/editprofile/${userId}?role=${role}`,
         body
       );
@@ -17,50 +15,17 @@ export const editUser = createAsyncThunk(
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_HOST}/editprofile/${userId}?role=${role}`,
-    //   {
-    //     method: "POST",
-    //     body: body,
-    //     headers: {
-    //       Authorization: states.login.token,
-    //     },
-    //   }
-    // );
-
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // }
-    // return data;
   }
 );
 export const getUser = createAsyncThunk("user/getUser", async (_, getState) => {
-  const states = getState.getState();
-
   try {
-    const response = await baseURL.get(`/getprofile`);
+    const response = await baseService.get(`/getprofile`);
 
     getState.dispatch(loginActions.setRole({ role: response.data.role }));
     return response.data;
   } catch (e) {
     throw new Error(e.response.data.Error);
   }
-  // const response = await fetch(`${process.env.REACT_APP_HOST}/getprofile`, {
-  //   method: "GET",
-  //   headers: {
-  //     Authorization: states.login.token,
-  //   },
-  // });
-
-  // const data = await response.json();
-  // if (response.ok === false) {
-  //   throw new Error(data.Error);
-  // } else {
-  //   getState.dispatch(loginActions.setRole({ role: data.role }));
-  // }
-  // console.log(data);
-  // return data;
 });
 const userSlice = createSlice({
   name: "user",

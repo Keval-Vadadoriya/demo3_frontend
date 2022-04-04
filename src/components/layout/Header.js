@@ -1,14 +1,11 @@
 import { useNavigate, Link, NavLink } from "react-router-dom";
 import { loginActions } from "../../store/login-slice";
 import { useDispatch, useSelector } from "react-redux";
+import { makeStyles } from "@mui/styles";
 import { useState } from "react";
-
-import * as React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 
 import {
-  Tab,
-  Tabs,
   AppBar,
   Box,
   Toolbar,
@@ -20,21 +17,36 @@ import {
   Button,
   Tooltip,
   MenuItem,
-  withTheme,
 } from "@mui/material";
-import { red } from "@mui/material/colors";
+
+const useStyles = makeStyles({
+  root: {
+    background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+    border: 0,
+    borderRadius: 3,
+    boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+    color: "white",
+    height: 48,
+    padding: "0 30px",
+  },
+  link: {
+    margin: "5px",
+    backgroundColor: "grey",
+    "&:active": {
+      backgroundColor: "blue",
+    },
+  },
+});
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [value, setValue] = useState(0);
   const token = useSelector((state) => state.login.token);
   const role = useSelector((state) => state.login.role);
   const user = useSelector((state) => state.user.user);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
+  const classes = useStyles();
   const loginHandler = () => {
     navigate("/login", { replace: true });
   };
@@ -52,9 +64,6 @@ const Header = () => {
     }
   };
 
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -67,7 +76,7 @@ const Header = () => {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = (event, value) => {
+  const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
   return (
@@ -76,12 +85,13 @@ const Header = () => {
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Typography
+              className={classes.root}
               variant="h6"
               noWrap
               component="div"
               sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
             >
-              DEMO
+              EasyWork
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -163,7 +173,7 @@ const Header = () => {
               component="div"
               sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
             >
-              DEMO
+              EasyWork
             </Typography>
             {token && (
               <Box
@@ -182,9 +192,10 @@ const Header = () => {
                   variant="h5"
                   component={NavLink}
                   to={"/home/chats"}
-                  style={({ isActive }) =>
-                    isActive ? { backgroundColor: "white" } : {}
-                  }
+                  className={classes.link}
+                  // style={({ isActive }) =>
+                  //   isActive ? { backgroundColor: "white" } : {}
+                  // }
                   sx={{ textDecoration: "none" }}
                 >
                   Chats
@@ -193,10 +204,11 @@ const Header = () => {
                   <Typography
                     variant="h5"
                     component={NavLink}
+                    className={classes.link}
                     to={"/home/workers"}
-                    style={({ isActive }) =>
-                      isActive ? { backgroundColor: "white" } : {}
-                    }
+                    // style={({ isActive }) =>
+                    //   isActive ? { backgroundColor: "white" } : {}
+                    // }
                     sx={{ textDecoration: "none" }}
                   >
                     Workers
@@ -206,10 +218,11 @@ const Header = () => {
                   <Typography
                     variant="h5"
                     component={NavLink}
+                    className={classes.link}
                     to={"/home/myprojects"}
-                    style={({ isActive }) =>
-                      isActive ? { backgroundColor: "white" } : {}
-                    }
+                    // style={({ isActive }) =>
+                    //   isActive ? { backgroundColor: "white" } : {}
+                    // }
                     sx={{ textDecoration: "none" }}
                   >
                     {console.log("here")}
@@ -220,10 +233,11 @@ const Header = () => {
                   <Typography
                     variant="h5"
                     component={NavLink}
+                    className={classes.link}
                     to={"/home/projects"}
-                    style={({ isActive }) =>
-                      isActive ? { backgroundColor: "white" } : {}
-                    }
+                    // style={({ isActive }) =>
+                    //   isActive ? { backgroundColor: "white" } : {}
+                    // }
                     sx={{ textDecoration: "none" }}
                   >
                     Projects
@@ -274,7 +288,7 @@ const Header = () => {
               </Box>
             )}
             {!token && (
-              <Box>
+              <Box sx={{ position: "fixed", right: "0" }}>
                 <Button onClick={loginHandler} sx={{ color: "black" }}>
                   Login
                 </Button>

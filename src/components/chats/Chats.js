@@ -1,13 +1,81 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import { chatActions } from "../../store/actions/chat-actions";
-import { Button, Grid, TextField, Box, Typography } from "@mui/material";
+import {
+  Button,
+  Grid,
+  TextField,
+  Box,
+  Typography,
+  Avatar,
+} from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { socketActions } from "../../store/socket-slice";
+import { makeStyles } from "@mui/styles";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { snackbarActions } from "../../store/snackbar-slice";
+
+const useStyles = makeStyles({
+  chatOwner: {
+    backgroundColor: "grey",
+    color: "white",
+    fontSize: 20,
+    padding: 5,
+    borderRadius: 10,
+    position: "-webkit-sticky",
+    position: "sticky",
+    top: 0,
+  },
+  sendMessage: {
+    // position: "fixed",
+    position: "-webkit-sticky",
+    position: "sticky",
+    margin: 10,
+    top: "calc(100vh-20px)",
+    bottom: 0,
+    backgroundColor: "white",
+  },
+  chats: {
+    top: 0,
+    height: "90vh",
+    overflowY: "scroll",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginRight: 20,
+    margin: "5px",
+    "&::-webkit-scrollbar": {
+      // width: "5px",
+      display: "none",
+    },
+    // "&::-webkit-scrollbar-track": {
+    //   boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+    //   webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+    // },
+    // "&::-webkit-scrollbar-thumb": {
+    //   backgroundColor: "rgba(0,0,0,.1)",
+    //   outline: "1px solid slategrey",
+    // },
+  },
+  chatList: {
+    backgroundColor: "rgb(200,200,200)",
+    // marginTop: 5,
+    // marginBottom: 10,
+    overflow: "hidden",
+  },
+  message: {
+    margin: 10,
+    padding: 7,
+    borderRadius: 15,
+  },
+});
 
 function Chats() {
+  const navigate = useNavigate();
+  const classes = useStyles();
   const receiverId = useParams();
   let messageList;
   const messagesEndRef = useRef();
@@ -46,22 +114,11 @@ function Chats() {
 
   useEffect(async () => {
     socket.on("message", (data) => {
-      // socket.emit(
-      //   "delivered",
-      //   message._id,
-      //   sender,
-      //   receiver,
-      //   role,
-      //   // getId() === sender ? true : false,
-      //   (response) => {
-      //     dispatch(chatActions.setChatList({ list: response.chatList }));
-      //   }
-      // );
       dispatch(socketActions.setData({ data }));
       dispatch(
         chatActions.setChat({
           message: data.message,
-          receiverId: receiverId.workerid,
+          receiverId: data.sender,
         })
       );
     });
@@ -74,6 +131,7 @@ function Chats() {
         })
       );
     });
+    dispatch(snackbarActions.setPage({ page: false }));
   }, []);
   useEffect(async () => {
     if (userId && role) {
@@ -130,58 +188,86 @@ function Chats() {
       return (
         <Box
           key={message._id}
+          className={classes.message}
           sx={{
             textAlign: message.owner === userId ? "right" : "left",
             backgroundColor:
               message.owner !== userId && message.status === "sent"
-                ? "brown"
-                : "",
+                ? "rgb(218, 255, 227)"
+                : "white",
           }}
         >
-          <Typography variant="h5" sx={{ wordBreak: "break-all" }}>
+          <Typography variant="h5" sx={{ wordBreak: "break-word" }}>
             {message.message}
             <Typography
               sx={{ fontSize: "15px", fontStyle: "italic" }}
-            >{`${date.getHours()}:${date.getMinutes()}`}</Typography>
-            {message.owner === userId && (
-              <Typography sx={{ fontSize: "15px", fontStyle: "italic" }}>
-                {message.status}
-              </Typography>
-            )}
+            >{`${date.toLocaleString("en-US", {
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            })}${
+              message.owner === userId ? ` ${message.status}` : ""
+            }`}</Typography>
           </Typography>
         </Box>
       );
     });
   }
   return (
-    <Box sx={{ overflow: "auto" }}>
-      <Box>
-        <Typography>{chatsOwner && chatsOwner.name}</Typography>
-        {messageList && messageList}
-        <Box ref={messagesEndRef} />
-      </Box>
-      <Box component="form" onSubmit={sendMessageHandler}>
-        <Grid container>
-          <Grid item xs={11}>
-            <TextField
-              autoComplete="message"
-              name="Message"
-              required
-              fullWidth
-              id="Message"
-              label="Message"
-              autoFocus
-              value={message}
-              onChange={changeMessageHandler}
+    <Box className={classes.chats}>
+      <Grid container>
+        <Grid item xs={12} className={classes.chatOwner}>
+          <Button
+            onClick={() => {
+              dispatch(snackbarActions.setPage({ page: true }));
+              socket.removeAllListeners();
+              navigate(-1);
+            }}
+          >
+            <ArrowBackIosIcon />
+            <Avatar
+              src={`${process.env.REACT_APP_HOST}/${chatsOwner.avatar}`}
+              sx={{ marginLeft: 1 }}
             />
-          </Grid>
-          <Grid item xs={1}>
-            <Button type="submit">
-              <SendIcon fontSize="large" />
-            </Button>
+          </Button>
+          <Typography sx={{ display: "inline", marginLeft: 3, fontSize: 25 }}>
+            {chatsOwner && chatsOwner.name}
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Box className={classes.chatList}>{messageList && messageList}</Box>
+          <Box ref={messagesEndRef} />
+        </Grid>
+
+        <Grid
+          item
+          xs={12}
+          component="form"
+          onSubmit={sendMessageHandler}
+          className={classes.sendMessage}
+        >
+          <Grid container>
+            <Grid item xs={11}>
+              <TextField
+                autoComplete="message"
+                name="Message"
+                required
+                fullWidth
+                id="Message"
+                label="Message"
+                autoFocus
+                value={message}
+                onChange={changeMessageHandler}
+              />
+            </Grid>
+            <Grid item xs={1}>
+              <Button type="submit">
+                <SendIcon fontSize="large" />
+              </Button>
+            </Grid>
           </Grid>
         </Grid>
-      </Box>
+      </Grid>
     </Box>
   );
 }

@@ -1,7 +1,8 @@
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { loginActions } from "../../store/login-slice";
+import { Box } from "@mui/system";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -32,7 +33,9 @@ const Home = () => {
 
   return (
     <>
-      <Outlet />
+      <Box sx={{ height: "110%", backgroundColor: "white" }}>
+        <Outlet />
+      </Box>
     </>
   );
 };

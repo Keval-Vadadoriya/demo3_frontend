@@ -4,8 +4,8 @@ if (localStorage.getItem("token"))
   axios.defaults.headers.common["Authorization"] =
     localStorage.getItem("token");
 
-const baseURL = axios.create({
+const baseService = axios.create({
   baseURL: process.env.REACT_APP_HOST,
 });
 
-export default baseURL;
+export default baseService;

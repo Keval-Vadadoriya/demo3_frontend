@@ -19,11 +19,20 @@ function ProjectCard({ project }) {
           <Typography variant="body2" color="text.secondary">
             {project.profession}
           </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {project.location}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {project.description}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {project.money}
+          </Typography>
         </CardContent>
       </CardActionArea>
       <CardActions>
         <Typography component={Link} to={`/home/chats/${project.owner}`}>
-          Chats
+          Chat
         </Typography>
       </CardActions>
     </Card>

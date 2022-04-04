@@ -1,13 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getMyProjects } from "./project-actions";
-import baseURL from "../baseService";
+import baseService from "../baseService";
 export const removeProject = createAsyncThunk(
   "myproject/removeProject",
   async ({ projectId }, getState) => {
-    const states = getState.getState();
-
     try {
-      const response = await baseURL.delete(`/removeproject/${projectId}`);
+      const response = await baseService.delete(`/removeproject/${projectId}`);
 
       getState.dispatch(getMyProjects({ skip: 0 }));
 
@@ -15,61 +13,20 @@ export const removeProject = createAsyncThunk(
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_HOST}/removeproject/${projectId}`,
-    //   {
-    //     method: "DELETE",
-
-    //     headers: {
-    //       Authorization: states.login.token,
-    //     },
-    //   }
-    // );
-
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // }
-    // return data;
   }
 );
 
 export const postProject = createAsyncThunk(
   "myproject/postProject",
   async (body, getState) => {
-    const states = getState.getState();
-
     try {
-      const response = await baseURL.post(`/project`, body);
+      const response = await baseService.post(`/project`, body);
 
       getState.dispatch(getMyProjects({ skip: 0 }));
       return response.data;
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // console.log(states);
-    // const response = await fetch(`${process.env.REACT_APP_HOST}/project`, {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     project_name,
-    //     description,
-    //     profession,
-    //     location,
-    //     money,
-    //   }),
-    //   headers: {
-    //     Authorization: states.login.token,
-    //     "Content-Type": "application/json",
-    //   },
-    // });
-
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // } else {
-    //   getState.dispatch(getMyProjects({ skip: 0 }));
-    // }
-    // return data;
   }
 );
 

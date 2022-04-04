@@ -1,13 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import baseURL from "../baseService";
+import baseService from "../baseService";
 
 export const getAllProjects = createAsyncThunk(
   "project/getAllProjects",
   async ({ skip }, getState) => {
-    const states = getState.getState();
-
     try {
-      const response = await baseURL.get(
+      const response = await baseService.get(
         `/getallprojects?limit=5&&skip=${skip}`
       );
 
@@ -15,29 +13,13 @@ export const getAllProjects = createAsyncThunk(
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_HOST}/getallprojects?limit=5&&skip=${skip}`,
-    //   {
-    //     headers: {
-    //       Authorization: states.login.token,
-    //     },
-    //   }
-    // );
-
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // }
-    // return data;
   }
 );
 export const getMyProjects = createAsyncThunk(
   "project/getMyProjects",
   async ({ skip }, getState) => {
-    const states = getState.getState();
-
     try {
-      const response = await baseURL.get(
+      const response = await baseService.get(
         `/getmyprojects?limit=5&&skip=${skip}`
       );
 
@@ -45,58 +27,23 @@ export const getMyProjects = createAsyncThunk(
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_HOST}/getmyprojects?limit=5&&skip=${skip}`,
-    //   {
-    //     headers: {
-    //       Authorization: states.login.token,
-    //     },
-    //   }
-    // );
-
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // }
-    // return data;
   }
 );
 
 export const filterProjects = createAsyncThunk(
   "project/filterProjects",
   async ({ location, profession, money, skip }, getState) => {
-    const states = getState.getState();
-
     try {
-      const response = await baseURL.get(
+      const response = await baseService.get(
         `/filterprojects?${location !== "none" ? `location=${location}` : ""}${
           profession !== "none" ? `&&profession=${profession}` : ""
         }${money ? `&&money=${money}` : ""}&&limit=5&&skip=${skip}`
       );
-
+      console.log(response.data);
       return response.data;
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_HOST}/filterprojects?${
-    //     location !== "none" ? `location=${location}` : ""
-    //   }${profession !== "none" ? `&&profession=${profession}` : ""}${
-    //     money ? `&&money=${money}` : ""
-    //   }&&limit=5&&skip=${skip}`,
-
-    //   {
-    //     headers: {
-    //       Authorization: states.login.token,
-    //     },
-    //   }
-    // );
-
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // }
-    // return data;
   }
 );
 
@@ -133,7 +80,9 @@ export const projectSlice = createSlice({
       state.status = "succeeded";
       state.errorMessage = "";
       state.projects = action.payload.projects;
-      state.count = action.payload.count;
+      if (action.payload.count) {
+        state.count = action.payload.count;
+      }
     },
     [filterProjects.pending]: (state, action) => {
       state.errorMessage = "";

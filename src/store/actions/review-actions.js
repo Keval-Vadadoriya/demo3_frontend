@@ -1,32 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import baseURL from "../baseService";
+import baseService from "../baseService";
 
 export const getReviews = createAsyncThunk(
   "reviews/getReviews",
   async ({ workerId }, getState) => {
-    const states = getState.getState();
-
     try {
-      const response = await baseURL.get(`/getreview/${workerId}`);
+      const response = await baseService.get(`/getreview/${workerId}`);
 
       return response.data;
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_HOST}/getreview/${workerId}`,
-    //   {
-    //     headers: {
-    //       Authorization: states.login.token,
-    //     },
-    //   }
-    // );
-
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // }
-    // return data;
   }
 );
 
@@ -36,7 +20,7 @@ export const addReview = createAsyncThunk(
     const states = getState.getState();
 
     try {
-      const response = await baseURL.post(`/review/${workerId}`, {
+      const response = await baseService.post(`/review/${workerId}`, {
         description,
         review,
         owner: states.user.user._id,
@@ -47,30 +31,6 @@ export const addReview = createAsyncThunk(
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_HOST}/review/${workerId}`,
-    //   {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //       description,
-    //       review,
-    //       owner: states.user.user._id,
-    //     }),
-    //     headers: {
-    //       Authorization: states.login.token,
-
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // );
-
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // } else {
-    //   getState.dispatch(getReviews({ workerId }));
-    // }
-    // return data;
   }
 );
 

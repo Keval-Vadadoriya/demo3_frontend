@@ -1,13 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import baseURL from "../baseService";
+import baseService from "../baseService";
 
 export const getAllWorkers = createAsyncThunk(
   "workers/getAllWorkers",
   async ({ skip }, getState) => {
-    const states = getState.getState();
-
     try {
-      const response = await baseURL.get(
+      const response = await baseService.get(
         `/getallworkers?limit=3&&skip=${skip}`
       );
 
@@ -15,58 +13,26 @@ export const getAllWorkers = createAsyncThunk(
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_HOST}/getallworkers?limit=3&&skip=${skip}`,
-    //   {
-    //     headers: {
-    //       Authorization: states.login.token,
-    //     },
-    //   }
-    // );
-
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // }
-    // return data;
   }
 );
 export const getWorker = createAsyncThunk(
   "workers/getWorker",
   async ({ workerId }, getState) => {
-    const states = getState.getState();
-
     try {
-      const response = await baseURL.get(`/getworker/${workerId}`);
+      const response = await baseService.get(`/getworker/${workerId}`);
 
       return response.data;
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_HOST}/getworker/${workerId}`,
-    //   {
-    //     headers: {
-    //       Authorization: states.login.token,
-    //     },
-    //   }
-    // );
-
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // }
-    // return data;
   }
 );
 
 export const filterWorkers = createAsyncThunk(
   "workers/filterWorkers",
   async ({ location, profession, review, availability, skip }, getState) => {
-    const states = getState.getState();
-
     try {
-      const response = await baseURL.get(
+      const response = await baseService.get(
         `/filterworkers?${location !== "none" ? `location=${location}&&` : ""}${
           profession !== "none" ? `profession=${profession}&&` : ""
         }${review !== "none" ? `review=${review}&&` : ""}${
@@ -78,27 +44,6 @@ export const filterWorkers = createAsyncThunk(
     } catch (e) {
       throw new Error(e.response.data.Error);
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_HOST}/filterworkers?${
-    //     location !== "none" ? `location=${location}&&` : ""
-    //   }${profession !== "none" ? `profession=${profession}&&` : ""}${
-    //     review !== "none" ? `review=${review}&&` : ""
-    //   }${
-    //     availability !== "none" ? `availability=${availability}&&` : ""
-    //   }limit=3&&${skip ? `skip=${skip}` : ""}`,
-
-    //   {
-    //     headers: {
-    //       Authorization: states.login.token,
-    //     },
-    //   }
-    // );
-
-    // const data = await response.json();
-    // if (response.ok === false) {
-    //   throw new Error(data.Error);
-    // }
-    // return data;
   }
 );
 

@@ -61,6 +61,14 @@ const Projects = () => {
     setAmount("");
     setProfession("none");
 
+    dispatch(
+      filterProjects({
+        location: "none",
+        profession: "none",
+        money: 0,
+        skip: 0,
+      })
+    );
     setFiltered(false);
   };
   const filterWorkersBy = async (event) => {

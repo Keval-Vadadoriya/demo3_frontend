@@ -6,6 +6,7 @@ const snackbarSlice = createSlice({
     open: false,
     severity: "success",
     message: "",
+    page: true,
   },
 
   reducers: {
@@ -13,6 +14,9 @@ const snackbarSlice = createSlice({
       state.open = action.payload.open;
       state.severity = action.payload.severity;
       state.message = action.payload.message;
+    },
+    setPage(state, action) {
+      state.page = action.payload.page;
     },
   },
 });

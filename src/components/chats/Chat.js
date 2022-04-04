@@ -10,13 +10,50 @@ import {
   Avatar,
   ListItemText,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+const useStyles = makeStyles({
+  chat: {
+    position: "sticky",
+    top: 70,
+    height: "100%",
+    backgroundColor: "rgb(206, 255, 218)",
+  },
+  chatList: {
+    boxSizing: "border-box",
+    width: "100%",
+    // maxWidth: 360,
+    padding: 10,
+  },
+  chatListItem: {
+    margin: 5,
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: "rgb(195, 199, 196)",
+    "&:hover": {
+      backgroundColor: "rgb(87, 87, 87)",
+      textColor: "white",
+    },
+  },
+  userName: {
+    borderRadius: 10,
+    padding: 5,
+    fontSize: 40,
+    marginLeft: 1,
+    position: "sticky",
+    top: "65px",
+    zIndex: "1",
+    backgroundColor: "rgb(150,150,150)",
+  },
+});
 const Chat = () => {
+  const classes = useStyles();
   const userId = useSelector((state) => state.user.user._id);
   const user = useSelector((state) => state.user.user);
   const role = useSelector((state) => state.login.role);
   const { chatList } = useSelector((state) => state.chat);
   const socket = useSelector((state) => state.socket.socket);
   const dispatch = useDispatch();
+  const page = useSelector((state) => state.snackbar.page);
 
   useEffect(() => {
     socket.on("chatlist", (list, chats) => {
@@ -31,6 +68,11 @@ const Chat = () => {
         );
       }
     });
+    return () => {
+      socket.removeAllListeners("chatlist");
+    };
+  });
+  useEffect(() => {
     if (userId && role) {
       socket.emit("getchatlist", userId, role);
     }
@@ -44,12 +86,7 @@ const Chat = () => {
           key={worker._id}
           component={NavLink}
           to={`/home/chats/${worker.user._id}`}
-          sx={{
-            "&:hover": {
-              backgroundColor: "rgb(87, 87, 87)",
-              textColor: "white",
-            },
-          }}
+          className={classes.chatListItem}
           style={({ isActive }) =>
             isActive ? { backgroundColor: "#808080" } : {}
           }
@@ -68,31 +105,24 @@ const Chat = () => {
 
   return (
     <Fragment>
-      <Grid container>
-        <Grid item xs={3}>
-          <Box position="sticky" top={70}>
-            <Typography variant="h4" marginLeft={1}>
-              {user.name}
-            </Typography>
-            <List
-              dense
-              sx={{
-                width: "100%",
-                // maxWidth: 360,
-                bgcolor: "background.paper",
-                padding: 0,
-              }}
-            >
+      <Grid container sx={{ height: "92vh" }}>
+        <Grid
+          item
+          xs={12}
+          md={3}
+          sx={{
+            visibility: { xs: page ? "visible" : "hidden", md: "visible" },
+          }}
+        >
+          <Box className={classes.chat}>
+            <Box className={classes.userName}>{user.name}</Box>
+            <List dense className={classes.chatList}>
               {chatListUi && chatListUi}
             </List>
           </Box>
         </Grid>
-        <Grid item xs={9}>
-          <div>
-            <div>
-              <Outlet />
-            </div>
-          </div>
+        <Grid item xs={12} md={9}>
+          <Outlet />
         </Grid>
       </Grid>
     </Fragment>
