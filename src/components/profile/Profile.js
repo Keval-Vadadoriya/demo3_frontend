@@ -34,9 +34,9 @@ const Profile = () => {
   const [newAvatar, setNewAvatar] = useState("");
   const [description, setDescription] = useState("");
   const [age, setAge] = useState("");
-  const [profession, setProfession] = useState(user ? user.profession : "");
+  const [profession, setProfession] = useState(user.profession);
   const [professionIsValid, setProfessionIsValid] = useState(false);
-  const [location, setLocation] = useState(user ? user.location : "");
+  const [location, setLocation] = useState(user.location);
   const [availability, setAvailability] = useState(user.availability);
   const [locationIsValid, setLocationIsValid] = useState(false);
   const [OldPassword, setOldPassword] = useState("");
@@ -128,6 +128,7 @@ const Profile = () => {
       setLocationIsValid(false);
     }
   };
+  console.log(user.availability);
 
   return (
     <>
@@ -337,16 +338,16 @@ const Profile = () => {
                           value={location}
                           disabled={!edit}
                           label="Location"
-                          defaultValue={`${user.location}`}
+                          defaultValue={user.location}
                           onChange={changeLocationHandler}
                         >
                           <MenuItem value={"none"} disabled hidden>
                             {"Select Location"}
                           </MenuItem>
-                          <MenuItem value={"surat"}>{"Surat"}</MenuItem>
-                          <MenuItem value={"anand"}>{"Anand"}</MenuItem>
-                          <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
-                          <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
+                          <MenuItem value="surat">Surat</MenuItem>
+                          <MenuItem value="anand">Anand</MenuItem>
+                          <MenuItem value="vadodara">Vadodara</MenuItem>
+                          <MenuItem value="ahmedabad">Ahmedabad</MenuItem>
                         </Select>
                       </FormControl>
                     </Grid>
@@ -363,10 +364,10 @@ const Profile = () => {
                           value={location}
                           disabled={!edit}
                           label="Availability"
-                          defaultValue={`${user.availability}`}
+                          defaultValue={user.availability}
                           onChange={changeAvailabilityHandler}
                         >
-                          <MenuItem value={"none"} disabled hidden>
+                          <MenuItem value={"none"} disabled>
                             {"Select Availability"}
                           </MenuItem>
                           <MenuItem value={true}>{"Available"}</MenuItem>

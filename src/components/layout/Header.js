@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@mui/styles";
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useTheme } from "@mui/styles";
 
 import {
   AppBar,
@@ -21,8 +22,10 @@ import {
 
 const useStyles = makeStyles({
   root: {
-    background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
-    border: 0,
+    // background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+    // border: "1px solid black",
+    fontSize: "30px",
+    textAlign: "center",
     borderRadius: 3,
     boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
     color: "white",
@@ -31,13 +34,19 @@ const useStyles = makeStyles({
   },
   link: {
     margin: "5px",
-    backgroundColor: "grey",
-    "&:active": {
-      backgroundColor: "blue",
-    },
+    backgroundColor: "rgb(44,44,44)",
+    color: "white",
+    margin: 10,
+    padding: 5,
+    borderRadius: 5,
   },
+  appbar: (theme) => ({
+    backgroundColor: "rgb(255, 102, 0)",
+    // backgroundColor: theme.palette.primary.main,
+  }),
 });
 const Header = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = useSelector((state) => state.login.token);
@@ -46,7 +55,7 @@ const Header = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
-  const classes = useStyles();
+  const classes = useStyles(theme);
   const loginHandler = () => {
     navigate("/login", { replace: true });
   };
@@ -81,7 +90,7 @@ const Header = () => {
   };
   return (
     <>
-      <AppBar position="sticky">
+      <AppBar position="sticky" className={classes.appbar}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Typography
@@ -193,9 +202,15 @@ const Header = () => {
                   component={NavLink}
                   to={"/home/chats"}
                   className={classes.link}
-                  // style={({ isActive }) =>
-                  //   isActive ? { backgroundColor: "white" } : {}
-                  // }
+                  style={({ isActive }) =>
+                    isActive
+                      ? {
+                          backgroundColor: "grey",
+                          color: "orange",
+                          boxShadow: "2px 2px 2px  black",
+                        }
+                      : {}
+                  }
                   sx={{ textDecoration: "none" }}
                 >
                   Chats
@@ -206,9 +221,15 @@ const Header = () => {
                     component={NavLink}
                     className={classes.link}
                     to={"/home/workers"}
-                    // style={({ isActive }) =>
-                    //   isActive ? { backgroundColor: "white" } : {}
-                    // }
+                    style={({ isActive }) =>
+                      isActive
+                        ? {
+                            backgroundColor: "grey",
+                            color: "orange",
+                            boxShadow: "2px 2px 2px  black",
+                          }
+                        : {}
+                    }
                     sx={{ textDecoration: "none" }}
                   >
                     Workers
@@ -220,9 +241,15 @@ const Header = () => {
                     component={NavLink}
                     className={classes.link}
                     to={"/home/myprojects"}
-                    // style={({ isActive }) =>
-                    //   isActive ? { backgroundColor: "white" } : {}
-                    // }
+                    style={({ isActive }) =>
+                      isActive
+                        ? {
+                            backgroundColor: "grey",
+                            color: "orange",
+                            boxShadow: "2px 2px 2px  black",
+                          }
+                        : {}
+                    }
                     sx={{ textDecoration: "none" }}
                   >
                     {console.log("here")}
@@ -235,9 +262,15 @@ const Header = () => {
                     component={NavLink}
                     className={classes.link}
                     to={"/home/projects"}
-                    // style={({ isActive }) =>
-                    //   isActive ? { backgroundColor: "white" } : {}
-                    // }
+                    style={({ isActive }) =>
+                      isActive
+                        ? {
+                            backgroundColor: "grey",
+                            color: "orange",
+                            boxShadow: "2px 2px 2px  black",
+                          }
+                        : {}
+                    }
                     sx={{ textDecoration: "none" }}
                   >
                     Projects
@@ -249,7 +282,16 @@ const Header = () => {
             {token && (
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <IconButton
+                    onClick={handleOpenUserMenu}
+                    sx={{
+                      p: 0,
+                      size: "small",
+                      padding: { xs: "2", md: "7px" },
+                      backgroundColor: "rgb(85, 85, 72)",
+                      boxShadow: "5",
+                    }}
+                  >
                     <Avatar
                       alt="Remy Sharp"
                       src={

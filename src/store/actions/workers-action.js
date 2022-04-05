@@ -6,7 +6,7 @@ export const getAllWorkers = createAsyncThunk(
   async ({ skip }, getState) => {
     try {
       const response = await baseService.get(
-        `/getallworkers?limit=3&&skip=${skip}`
+        `/getallworkers?limit=9&&skip=${skip}`
       );
 
       return response.data;

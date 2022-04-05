@@ -10,23 +10,23 @@ import {
 
 function ProjectCard({ project }) {
   return (
-    <Card sx={{}}>
+    <Card sx={{ margin: "5px", border: "1px dashed black" }}>
       <CardActionArea>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             {project.project_name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {project.profession}
+            Requirement :- {project.profession}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {project.location}
+            Location :- {project.location}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {project.description}
+            description :- {project.description}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {project.money}
+            money :- {project.money}
           </Typography>
         </CardContent>
       </CardActionArea>

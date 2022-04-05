@@ -35,7 +35,7 @@ const useStyles = makeStyles({
     color: "black",
     padding: "10px 20px",
     backgroundColor: "green",
-    marginLeft: "10px",
+    margin: "10px",
   },
 });
 

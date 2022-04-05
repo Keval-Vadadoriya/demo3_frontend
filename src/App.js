@@ -18,8 +18,11 @@ import Unauthorized from "./components/welcome/Unauthorized";
 import NotFound from "./components/welcome/NotFound";
 import { Box, Snackbar, Alert, Slide } from "@mui/material";
 import { snackbarActions } from "./store/snackbar-slice";
+import { useTheme } from "@mui/styles";
 
 function App() {
+  const theme = useTheme();
+  console.log(theme);
   const { open, severity, message } = useSelector((state) => state.snackbar);
   const token = useSelector((state) => state.login.token);
   const role = useSelector((state) => state.login.role);

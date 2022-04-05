@@ -10,6 +10,7 @@ import {
   Box,
   Typography,
   Avatar,
+  Container,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { socketActions } from "../../store/socket-slice";
@@ -45,8 +46,8 @@ const useStyles = makeStyles({
     borderTopRightRadius: 10,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    marginRight: 20,
-    margin: "5px",
+    marginTop: 10,
+    // margin: "5px",
     "&::-webkit-scrollbar": {
       // width: "5px",
       display: "none",
@@ -113,6 +114,8 @@ function Chats() {
   }, [data]);
 
   useEffect(async () => {
+    socket.removeAllListeners();
+
     socket.on("message", (data) => {
       dispatch(socketActions.setData({ data }));
       dispatch(
@@ -215,59 +218,61 @@ function Chats() {
   }
   return (
     <Box className={classes.chats}>
-      <Grid container>
-        <Grid item xs={12} className={classes.chatOwner}>
-          <Button
-            onClick={() => {
-              dispatch(snackbarActions.setPage({ page: true }));
-              socket.removeAllListeners();
-              navigate(-1);
-            }}
-          >
-            <ArrowBackIosIcon />
-            <Avatar
-              src={`${process.env.REACT_APP_HOST}/${chatsOwner.avatar}`}
-              sx={{ marginLeft: 1 }}
-            />
-          </Button>
-          <Typography sx={{ display: "inline", marginLeft: 3, fontSize: 25 }}>
-            {chatsOwner && chatsOwner.name}
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Box className={classes.chatList}>{messageList && messageList}</Box>
-          <Box ref={messagesEndRef} />
-        </Grid>
-
-        <Grid
-          item
-          xs={12}
-          component="form"
-          onSubmit={sendMessageHandler}
-          className={classes.sendMessage}
-        >
-          <Grid container>
-            <Grid item xs={11}>
-              <TextField
-                autoComplete="message"
-                name="Message"
-                required
-                fullWidth
-                id="Message"
-                label="Message"
-                autoFocus
-                value={message}
-                onChange={changeMessageHandler}
+      <Container>
+        <Grid container>
+          <Grid item xs={12} className={classes.chatOwner}>
+            <Button
+              onClick={() => {
+                dispatch(snackbarActions.setPage({ page: true }));
+                // socket.removeAllListeners();
+                navigate(-1);
+              }}
+            >
+              <ArrowBackIosIcon />
+              <Avatar
+                src={`${process.env.REACT_APP_HOST}/${chatsOwner.avatar}`}
+                sx={{ marginLeft: 1 }}
               />
-            </Grid>
-            <Grid item xs={1}>
-              <Button type="submit">
-                <SendIcon fontSize="large" />
-              </Button>
+            </Button>
+            <Typography sx={{ display: "inline", marginLeft: 3, fontSize: 25 }}>
+              {chatsOwner && chatsOwner.name}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Box className={classes.chatList}>{messageList && messageList}</Box>
+            <Box ref={messagesEndRef} />
+          </Grid>
+
+          <Grid
+            item
+            xs={12}
+            component="form"
+            onSubmit={sendMessageHandler}
+            className={classes.sendMessage}
+          >
+            <Grid container>
+              <Grid item xs={10} md={11}>
+                <TextField
+                  autoComplete="message"
+                  name="Message"
+                  required
+                  fullWidth
+                  id="Message"
+                  label="Message"
+                  autoFocus
+                  value={message}
+                  onChange={changeMessageHandler}
+                />
+              </Grid>
+              <Grid item xs={1}>
+                <Button type="submit">
+                  <SendIcon fontSize="large" />
+                </Button>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </Container>
     </Box>
   );
 }

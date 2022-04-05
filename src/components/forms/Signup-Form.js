@@ -247,6 +247,7 @@ const SignupForm = (props) => {
                       id="demo-simple-select"
                       value={profession}
                       label="Profession"
+                      required
                       onChange={changeProfessionHandler}
                     >
                       <MenuItem value={"none"} disabled hidden>
@@ -269,6 +270,7 @@ const SignupForm = (props) => {
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
                       value={location}
+                      required
                       label="Location"
                       onChange={changeLocationHandler}
                     >

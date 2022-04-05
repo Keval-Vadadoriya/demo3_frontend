@@ -32,12 +32,12 @@ export const getMyProjects = createAsyncThunk(
 
 export const filterProjects = createAsyncThunk(
   "project/filterProjects",
-  async ({ location, profession, money, skip }, getState) => {
+  async ({ location, profession, sort, skip }, getState) => {
     try {
       const response = await baseService.get(
         `/filterprojects?${location !== "none" ? `location=${location}` : ""}${
           profession !== "none" ? `&&profession=${profession}` : ""
-        }${money ? `&&money=${money}` : ""}&&limit=5&&skip=${skip}`
+        }${sort !== "none" ? `&&sort=${sort}` : ""}&&limit=5&&skip=${skip}`
       );
       console.log(response.data);
       return response.data;

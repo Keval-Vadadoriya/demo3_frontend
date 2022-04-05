@@ -1,7 +1,7 @@
 import { Fragment, useEffect } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { chatActions } from "../../store/actions/chat-actions";
 import {
   List,
@@ -16,7 +16,8 @@ const useStyles = makeStyles({
     position: "sticky",
     top: 70,
     height: "100%",
-    backgroundColor: "rgb(206, 255, 218)",
+
+    backgroundColor: "rgb(255,205, 164)",
   },
   chatList: {
     boxSizing: "border-box",
@@ -28,7 +29,7 @@ const useStyles = makeStyles({
     margin: 5,
     padding: 5,
     borderRadius: 5,
-    backgroundColor: "rgb(195, 199, 196)",
+    backgroundColor: "rgb(256, 256, 256)",
     "&:hover": {
       backgroundColor: "rgb(87, 87, 87)",
       textColor: "white",
@@ -56,6 +57,7 @@ const Chat = () => {
   const page = useSelector((state) => state.snackbar.page);
 
   useEffect(() => {
+    socket.removeAllListeners("chatlist");
     socket.on("chatlist", (list, chats) => {
       dispatch(chatActions.setChatList({ list }));
       if (chats) {
@@ -68,10 +70,7 @@ const Chat = () => {
         );
       }
     });
-    return () => {
-      socket.removeAllListeners("chatlist");
-    };
-  });
+  }, []);
   useEffect(() => {
     if (userId && role) {
       socket.emit("getchatlist", userId, role);

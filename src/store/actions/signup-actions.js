@@ -7,7 +7,7 @@ export const signupUser = createAsyncThunk(
   "signup/signupUser",
   async ({ body, role }, getState) => {
     try {
-      const response = await baseService.post(`/signup?role=${role}`);
+      const response = await baseService.post(`/signup?role=${role}`, body);
 
       return response.data;
     } catch (e) {

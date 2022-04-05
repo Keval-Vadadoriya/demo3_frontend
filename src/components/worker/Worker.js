@@ -95,15 +95,23 @@ const Worker = () => {
   let workerList;
   if (workers) {
     workerList = workers.map((worker) => (
-      <Box component={Link} to={`${worker._id}`} key={worker._id}>
-        <WorkerCard
-          name={worker.name}
-          profession={worker.profession}
-          avatar={worker.avatar}
-          description={worker.description}
-          availability={worker.availability}
-        />
-      </Box>
+      <Grid item xs={12} md={4} key={worker._id}>
+        <Box
+          component={Link}
+          to={`${worker._id}`}
+          sx={{
+            textDecoration: "none",
+          }}
+        >
+          <WorkerCard
+            name={worker.name}
+            profession={worker.profession}
+            avatar={worker.avatar}
+            availability={worker.availability}
+            review={worker.review}
+          />
+        </Box>
+      </Grid>
     ));
   }
 
@@ -223,7 +231,16 @@ const Worker = () => {
         </Box>
         <Container fixed>
           {status === "loading" && <CircularProgress />}
-          <Box sx={{ display: "flex", flexWrap: "wrap" }}>{workerList}</Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              flexDirection: { xs: "column", md: "row" },
+              flexWrap: "wrap",
+            }}
+          >
+            <Grid container>{workerList}</Grid>
+          </Box>
 
           <Stack spacing={2}>
             <Pagination

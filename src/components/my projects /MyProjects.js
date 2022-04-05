@@ -14,6 +14,8 @@ import {
   Select,
   MenuItem,
   DialogActions,
+  Box,
+  Container,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { snackbarActions } from "../../store/snackbar-slice";
@@ -124,105 +126,124 @@ const MyProjects = () => {
 
   return (
     <Fragment>
-      <Button onClick={addProjectHandler}>Add a New Project</Button>
-      {projectList && projectList}
-      <Stack spacing={2}>
-        <Pagination
-          count={Math.ceil(count / 3)}
-          page={page}
-          onChange={handleChange}
-        />
-      </Stack>
-      <Dialog open={addProject}>
-        <DialogTitle>Add Project</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
-          </DialogContentText>
-          <Grid>
-            <Grid item xs={12}>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="Project Name"
-                label="Project Name"
-                type="text"
-                fullWidth
-                variant="standard"
-                onChange={changeProjectNameHandler}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="description"
-                label="Description"
-                type="text"
-                fullWidth
-                variant="standard"
-                onChange={changeDescriptionHandler}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="Amount"
-                label="amount"
-                type="Number"
-                fullWidth
-                variant="standard"
-                onChange={changeAmountHandler}
-              />
-            </Grid>
-            <Grid item xs={12} marginTop={2} marginBottom={2}>
-              <FormControl fullWidth>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={profession}
-                  label="Profession"
-                  variant="standard"
-                  onChange={changeProfessionHandler}
-                >
-                  <MenuItem value={"none"} disabled hidden>
-                    {"Select Profession"}
-                  </MenuItem>
-                  <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
-                  <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
-                  <MenuItem value={"electrician"}>{"Electrician"}</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} marginTop={2}>
-              <FormControl fullWidth>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={location}
-                  label="Location"
-                  onChange={changeLocationHandler}
-                  variant="standard"
-                >
-                  <MenuItem value={"none"} disabled hidden>
-                    {"Select Location"}
-                  </MenuItem>
-                  <MenuItem value={"surat"}>{"Surat"}</MenuItem>
-                  <MenuItem value={"anand"}>{"Anand"}</MenuItem>
-                  <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
-                  <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={SubmitHandler}>Submit</Button>
-        </DialogActions>
-      </Dialog>
+      <Container>
+        <Box
+          sx={{
+            height: "100%",
+            backgroundColor: "rgb(255,205, 164)",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Button onClick={addProjectHandler}>Add a New Project</Button>
+          {projectList && projectList}
+          <Stack
+            spacing={2}
+            sx={{
+              position: "sticky",
+              bottom: 20,
+              backgroundColor: "gray",
+            }}
+            alignSelf="center"
+          >
+            <Pagination
+              count={Math.ceil(count / 3)}
+              page={page}
+              onChange={handleChange}
+            />
+          </Stack>
+          <Dialog open={addProject}>
+            <DialogTitle>Add Project</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                To subscribe to this website, please enter your email address
+                here. We will send updates occasionally.
+              </DialogContentText>
+              <Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="Project Name"
+                    label="Project Name"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                    onChange={changeProjectNameHandler}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="description"
+                    label="Description"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                    onChange={changeDescriptionHandler}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="Amount"
+                    label="amount"
+                    type="Number"
+                    fullWidth
+                    variant="standard"
+                    onChange={changeAmountHandler}
+                  />
+                </Grid>
+                <Grid item xs={12} marginTop={2} marginBottom={2}>
+                  <FormControl fullWidth>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={profession}
+                      label="Profession"
+                      variant="standard"
+                      onChange={changeProfessionHandler}
+                    >
+                      <MenuItem value={"none"} disabled hidden>
+                        {"Select Profession"}
+                      </MenuItem>
+                      <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
+                      <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
+                      <MenuItem value={"electrician"}>{"Electrician"}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} marginTop={2}>
+                  <FormControl fullWidth>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={location}
+                      label="Location"
+                      onChange={changeLocationHandler}
+                      variant="standard"
+                    >
+                      <MenuItem value={"none"} disabled hidden>
+                        {"Select Location"}
+                      </MenuItem>
+                      <MenuItem value={"surat"}>{"Surat"}</MenuItem>
+                      <MenuItem value={"anand"}>{"Anand"}</MenuItem>
+                      <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
+                      <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={SubmitHandler}>Submit</Button>
+            </DialogActions>
+          </Dialog>
+        </Box>
+      </Container>
     </Fragment>
   );
 };
