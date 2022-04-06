@@ -7,7 +7,6 @@ import {
   Avatar,
   Rating,
 } from "@mui/material";
-import { Scale } from "@mui/icons-material";
 
 function WorkerCard(props) {
   return (

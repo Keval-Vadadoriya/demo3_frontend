@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  useMediaQuery,
 } from "@mui/material";
 
 import {
@@ -26,6 +27,7 @@ import {
 } from "../../store/actions/project-actions";
 
 const Projects = () => {
+  const matches = useMediaQuery("(max-width:600px)");
   const [location, setLocation] = useState("none");
   const [profession, setProfession] = useState("none");
   const [filtered, setFiltered] = useState(false);
@@ -51,7 +53,6 @@ const Projects = () => {
 
   const handleChange = (_, value) => {
     setPage(value);
-    console.log("handle", (value - 1) * 3);
     if (filtered) {
       dispatch(
         filterProjects({
@@ -133,7 +134,7 @@ const Projects = () => {
           >
             Filter data
           </Button>
-          <Dialog open={filter}>
+          <Dialog fullScreen={matches} open={filter}>
             <DialogTitle>Filter By</DialogTitle>
             <DialogContent>
               <DialogContentText>

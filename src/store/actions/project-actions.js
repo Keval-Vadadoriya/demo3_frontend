@@ -55,7 +55,11 @@ export const projectSlice = createSlice({
     projects: [],
     count: 0,
   },
-  reducers: {},
+  reducers: {
+    setErrorMessage(state, action) {
+      state.errorMessage = action.payload.errorMessage;
+    },
+  },
   extraReducers: {
     //getAllWorkers
     [getAllProjects.fulfilled]: (state, action) => {
@@ -63,7 +67,7 @@ export const projectSlice = createSlice({
       state.errorMessage = "";
 
       state.projects = action.payload.projects;
-      if (action.payload.count !== 0) {
+      if (action.payload.count !== 0 && !isNaN(action.payload.count)) {
         state.count = action.payload.count;
       }
     },
@@ -80,7 +84,7 @@ export const projectSlice = createSlice({
       state.status = "succeeded";
       state.errorMessage = "";
       state.projects = action.payload.projects;
-      if (action.payload.count) {
+      if (action.payload.count !== 0 && !isNaN(action.payload.count)) {
         state.count = action.payload.count;
       }
     },
@@ -98,7 +102,9 @@ export const projectSlice = createSlice({
       state.status = "succeeded";
       state.errorMessage = "";
       state.projects = action.payload.myProjects;
-      state.count = action.payload.count;
+      if (action.payload.count !== 0 && !isNaN(action.payload.count)) {
+        state.count = action.payload.count;
+      }
     },
     [getMyProjects.pending]: (state) => {
       state.errorMessage = "";

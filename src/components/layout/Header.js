@@ -81,7 +81,6 @@ const Header = () => {
   };
 
   const handleCloseNavMenu = (event) => {
-    console.log(event.target.value);
     setAnchorElNav(null);
   };
 
@@ -252,7 +251,6 @@ const Header = () => {
                     }
                     sx={{ textDecoration: "none" }}
                   >
-                    {console.log("here")}
                     MyProjects
                   </Typography>
                 )}

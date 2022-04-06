@@ -78,7 +78,7 @@ const Chat = () => {
   }, [userId, role]);
 
   let chatListUi;
-  if (chatList) {
+  if (chatList.length !== 0) {
     chatListUi = chatList.map((worker) => {
       return (
         <ListItem

@@ -230,7 +230,7 @@ function Chats() {
             >
               <ArrowBackIosIcon />
               <Avatar
-                src={`${process.env.REACT_APP_HOST}/${chatsOwner.avatar}`}
+                src={`${process.env.REACT_APP_HOST}/${chatsOwner?.avatar}`}
                 sx={{ marginLeft: 1 }}
               />
             </Button>

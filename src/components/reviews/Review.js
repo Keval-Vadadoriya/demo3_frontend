@@ -9,10 +9,24 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { addReview, getReviews } from "../../store/actions/review-actions";
+import {
+  reviewActions,
+  addReview,
+  getReviews,
+} from "../../store/actions/review-actions";
 import { snackbarActions } from "../../store/snackbar-slice";
+import { makeStyles } from "@mui/styles";
+const useStyles = makeStyles({
+  review: {
+    backgroundColor: "#808080",
+    margin: "10px",
+    padding: "10px",
+    borderRadius: "20px",
+  },
+});
 
 const Review = (props) => {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const [description, setDescription] = useState("");
   const [review, setReview] = useState(0);
@@ -25,6 +39,15 @@ const Review = (props) => {
   const workerid = useParams();
 
   useEffect(() => {
+    console.log("here");
+    if (role === "user") {
+      dispatch(getReviews({ workerId: workerid.id }));
+    }
+    if (role === "worker") {
+      dispatch(getReviews({ workerId: props.workerId }));
+    }
+  }, [role]);
+  useEffect(() => {
     if (status === "Review Added Successfully") {
       dispatch(
         snackbarActions.setSnackbar({
@@ -33,6 +56,7 @@ const Review = (props) => {
           message: status,
         })
       );
+      dispatch(reviewActions.setStatus({ status: "idle" }));
     }
     if (errorMessage) {
       dispatch(
@@ -42,6 +66,7 @@ const Review = (props) => {
           message: errorMessage,
         })
       );
+      dispatch(reviewActions.setErrorMessage({ errorMessage: "" }));
     }
   }, [status, errorMessage]);
   const changeDescriptionHandler = (event) => {
@@ -53,6 +78,8 @@ const Review = (props) => {
   };
   const addReviewHandler = async (event) => {
     event.preventDefault();
+    setInitialRating(0);
+    setDescription("");
     if (description.length > 0) {
       dispatch(
         addReview({
@@ -64,14 +91,6 @@ const Review = (props) => {
     }
   };
 
-  useEffect(async () => {
-    if (role === "user") {
-      dispatch(getReviews({ workerId: workerid.id }));
-    }
-    if (role === "worker") {
-      dispatch(getReviews({ workerId: props.workerId }));
-    }
-  }, []);
   let reviewList;
   if (reviews) {
     reviewList = reviews.map((review) => {
@@ -79,10 +98,11 @@ const Review = (props) => {
         <Box
           component="div"
           key={review._id}
-          sx={{ backgroundColor: "#808080" }}
+          className={classes.review}
+          sx={{}}
         >
           <Typography variant="h5" color="white">
-            {review.owner.name}
+            By {review.owner.name}
           </Typography>
           <Rating name="read-only" value={review.review} readOnly />
           <Typography variant="h6" color="white">
@@ -94,8 +114,6 @@ const Review = (props) => {
   }
   return (
     <>
-      {/* {errorMessage && <p>{errorMessage}</p>} */}
-      {/* {status === "loading" && <h1>hey</h1>} */}
       <Container>
         {reviews && reviewList}
         {errorMessage && <p>{errorMessage}</p>}
@@ -111,6 +129,7 @@ const Review = (props) => {
               type="text"
               id="review-description"
               autoComplete="review-description"
+              value={description}
               onChange={changeDescriptionHandler}
             />
 

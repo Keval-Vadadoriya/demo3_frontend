@@ -57,10 +57,10 @@ function Welcome() {
             </Typography>
           </Grid>
           <Grid item xs={12} className={classes.buttons}>
-            <Button onClick={setRole} value="user" className={classes.button}>
+            <Button onClick={setRole} value="worker" className={classes.button}>
               Starving To Work?Click Here
             </Button>
-            <Button onClick={setRole} value="worker" className={classes.button}>
+            <Button onClick={setRole} value="user" className={classes.button}>
               Looking For Worker?Click Here
             </Button>
           </Grid>

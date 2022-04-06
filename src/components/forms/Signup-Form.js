@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { loginActions } from "../../store/login-slice";
-import { signupUser, verifyUser } from "../../store/actions/signup-actions";
+import {
+  signupActions,
+  signupUser,
+  verifyUser,
+} from "../../store/actions/signup-actions";
 
 import {
   Dialog,
@@ -22,11 +26,13 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  useMediaQuery,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { snackbarActions } from "../../store/snackbar-slice";
 
 const SignupForm = (props) => {
+  const matches = useMediaQuery("(max-width:600px)");
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -48,7 +54,7 @@ const SignupForm = (props) => {
     navigate("/home");
   }
   useEffect(() => {
-    if (status === "succeeded") {
+    if (status === "Signup Successful") {
       setOpen(true);
     }
     if (errorMessage) {
@@ -59,6 +65,7 @@ const SignupForm = (props) => {
           message: errorMessage,
         })
       );
+      dispatch(signupActions.setErrorMessage({ errorMessage: "" }));
     }
     if (
       status === "Signup Successful" ||
@@ -71,6 +78,7 @@ const SignupForm = (props) => {
           message: status,
         })
       );
+      dispatch(signupActions.setStatus({ status: "idle" }));
     }
   }, [status, errorMessage]);
 
@@ -163,12 +171,7 @@ const SignupForm = (props) => {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={SubmitHandler}
-            sx={{ mt: 3 }}
-          >
+          <Box component="form" onSubmit={SubmitHandler} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <FormControl fullWidth>
@@ -304,12 +307,11 @@ const SignupForm = (props) => {
           </Box>
         </Box>
       </Container>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Subscribe</DialogTitle>
+      <Dialog fullScreen={matches} open={open} onClose={handleClose}>
+        <DialogTitle>Email Verification</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
+            To verify, please enter otp we have sent to your email address here.
           </DialogContentText>
           <TextField
             autoFocus

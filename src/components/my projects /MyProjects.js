@@ -15,18 +15,21 @@ import {
   MenuItem,
   DialogActions,
   Box,
+  useMediaQuery,
   Container,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { snackbarActions } from "../../store/snackbar-slice";
 
 import {
+  myprojectActions,
   postProject,
   removeProject,
 } from "../../store/actions/myproject-actions";
 import { getMyProjects } from "../../store/actions/project-actions";
 
 const MyProjects = () => {
+  const matches = useMediaQuery("(max-width:600px)");
   const [location, setLocation] = useState("none");
   const [profession, setProfession] = useState("none");
   const [amount, setAmount] = useState(0);
@@ -55,6 +58,7 @@ const MyProjects = () => {
           message: status,
         })
       );
+      dispatch(myprojectActions.setStatus({ status: "idle" }));
     }
     if (errorMessage !== "") {
       dispatch(
@@ -64,6 +68,7 @@ const MyProjects = () => {
           message: errorMessage,
         })
       );
+      dispatch(myprojectActions.setErrorMessage({ errorMessage: "" }));
     }
   }, [status, errorMessage]);
 
@@ -79,6 +84,7 @@ const MyProjects = () => {
   };
   const SubmitHandler = (event) => {
     event.preventDefault();
+
     dispatch(
       postProject({
         project_name: projectName,
@@ -105,9 +111,10 @@ const MyProjects = () => {
     setDescription(event.target.value);
   };
   const removeProjectHandler = (projectId) => {
-    console.log(token);
-    dispatch(removeProject({ projectId }));
-    dispatch(getMyProjects({ skip: 0 }));
+    if (window.confirm("Are You Sure?")) {
+      dispatch(removeProject({ projectId }));
+      dispatch(getMyProjects({ skip: 0 }));
+    }
   };
 
   useEffect(async () => {
@@ -152,7 +159,7 @@ const MyProjects = () => {
               onChange={handleChange}
             />
           </Stack>
-          <Dialog open={addProject}>
+          <Dialog fullScreen={matches} open={addProject}>
             <DialogTitle>Add Project</DialogTitle>
             <DialogContent>
               <DialogContentText>

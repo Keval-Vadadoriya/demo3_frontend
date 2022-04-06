@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import EditIcon from "@mui/icons-material/Edit";
-import { editUser } from "../../store/user-slice";
+import { editUser, userActions } from "../../store/user-slice";
 import Review from "../reviews/Review";
+import React from "react";
 import {
   Avatar,
   Container,
@@ -21,11 +22,18 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  useMediaQuery,
 } from "@mui/material";
+import Slide from "@mui/material/Slide";
 import { snackbarActions } from "../../store/snackbar-slice";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const Profile = () => {
   const user = useSelector((state) => state.user.user);
-  console.log(user);
+  const matches = useMediaQuery("(max-width:600px)");
   const [review, setReview] = useState(false);
   const [edit, setEdit] = useState(false);
   const [name, setName] = useState("");
@@ -42,6 +50,7 @@ const Profile = () => {
   const [OldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [passwordIsValid, setPasswordIsValid] = useState("");
+  const [changePassword, setChangePassword] = useState(false);
   const { status, errorMessage } = useSelector((state) => state.user);
   const role = useSelector((state) => state.login.role);
   const userId = useSelector((state) => state.user.user._id);
@@ -58,12 +67,27 @@ const Profile = () => {
           message: status,
         })
       );
+      dispatch(userActions.setStatus({ status: "idle" }));
     }
   }, [status]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "error",
+          message: errorMessage,
+        })
+      );
+      dispatch(userActions.setErrorMessage({ errorMessage: "" }));
+    }
+  }, [errorMessage]);
 
   //Submit Handler
   const SubmitHandler = (event) => {
     event.preventDefault();
+    setChangePassword(false);
     const formData = new FormData();
     if (newAvatar) {
       formData.append("avatar", newAvatar);
@@ -81,7 +105,6 @@ const Profile = () => {
       formData.append("age", age);
     }
     if (passwordIsValid) {
-      console.log("valid");
       formData.append("password", OldPassword);
       formData.append("newpassword", newPassword);
     }
@@ -97,7 +120,10 @@ const Profile = () => {
       }
       formData.append("availability", availability);
     }
-    console.log(formData);
+    console.log(Object.keys(formData.values()).length);
+    for (var value of formData.values()) {
+      console.log(value);
+    }
     dispatch(editUser({ body: formData, role, userId }));
     setEdit(false);
   };
@@ -116,7 +142,6 @@ const Profile = () => {
     }
   };
   const changeAvailabilityHandler = (event, value) => {
-    console.log(value);
     setAvailability(event.target.value);
   };
 
@@ -128,18 +153,21 @@ const Profile = () => {
       setLocationIsValid(false);
     }
   };
-  console.log(user.availability);
+  const handlePasswordClose = () => {
+    setChangePassword(false);
+  };
 
   return (
     <>
       <Container>
         <Button
           onClick={() => {
-            setEdit(true);
+            setEdit(!edit);
           }}
         >
-          Edit Profile
+          {edit ? "Cancel" : "Edit Profile"}
         </Button>
+        {edit && <Button onClick={() => {}}>Discard Changes</Button>}
         <Box
           component="form"
           encType="multipart/form-data"
@@ -174,7 +202,7 @@ const Profile = () => {
                     >
                       <Avatar
                         src={
-                          newAvatar
+                          newAvatar && edit
                             ? window.URL.createObjectURL(newAvatar)
                             : `${process.env.REACT_APP_HOST}/${avatar}`
                         }
@@ -257,48 +285,6 @@ const Profile = () => {
                       defaultValue={`${user.age ? user.age : ""}`}
                     />
                   </Grid>
-                  {edit && (
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        disabled={!edit}
-                        name="Old Password"
-                        label="Old Password"
-                        type="password"
-                        id="Old Password"
-                        autoComplete="Old Password"
-                        onChange={(event) => setOldPassword(event.target.value)}
-                      />
-                    </Grid>
-                  )}
-                  {edit && (
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        name="New Password"
-                        label="New Password"
-                        type="password"
-                        id="New Password"
-                        autoComplete="New Password"
-                        onChange={(event) => setNewPassword(event.target.value)}
-                      />
-                    </Grid>
-                  )}
-                  {edit && (
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        name="Confirm Password"
-                        label="Confirm Password"
-                        type="password"
-                        id="Confirm Password"
-                        autoComplete="Confirm Password"
-                        onChange={(event) =>
-                          setPasswordIsValid(newPassword === event.target.value)
-                        }
-                      />
-                    </Grid>
-                  )}
                   {role === "worker" && (
                     <Grid item xs={12}>
                       <FormControl fullWidth>
@@ -386,7 +372,11 @@ const Profile = () => {
         {role === "worker" && (
           <Button onClick={() => setReview(true)}>Reviews</Button>
         )}
+        <Button onClick={() => setChangePassword(true)}>Change Password</Button>
+
         <Dialog
+          fullScreen
+          TransitionComponent={Transition}
           open={review}
           onClose={handleClose}
           scroll="paper"
@@ -399,9 +389,70 @@ const Profile = () => {
               <Review workerId={userId} />
             </DialogContentText>
           </DialogContent>
-          <DialogActions>
+          <DialogActions
+            sx={{ display: "flex", justifyContent: "center", marginBottom: 2 }}
+          >
             <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleClose}>Subscribe</Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          fullScreen={matches}
+          open={changePassword}
+          onClose={handlePasswordClose}
+          sx={{
+            "& .MuiDialog-container": {
+              // backgroundColor: "#808080",
+              color: "green",
+              "& .MuiPaper-root": {
+                // backgroundColor: "#808080",
+                borderRadius: "20px",
+                width: "100%",
+                maxWidth: "500px", // Set your width here
+              },
+            },
+          }}
+        >
+          <DialogTitle>Change Password</DialogTitle>
+
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Old Password"
+              type="text"
+              fullWidth
+              variant="standard"
+              onChange={(event) => setOldPassword(event.target.value)}
+            />
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="New Password"
+              type="text"
+              fullWidth
+              variant="standard"
+              onChange={(event) => setNewPassword(event.target.value)}
+            />
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Confirm Password"
+              type="text"
+              fullWidth
+              variant="standard"
+              onChange={(event) =>
+                setPasswordIsValid(newPassword === event.target.value)
+              }
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handlePasswordClose}>Cancel</Button>
+            <Button onClick={SubmitHandler} disabled={!passwordIsValid}>
+              Change
+            </Button>
           </DialogActions>
         </Dialog>
       </Container>

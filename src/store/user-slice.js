@@ -39,8 +39,11 @@ const userSlice = createSlice({
     setLoggedInUser(state, action) {
       state.user = action.payload.user;
     },
+    setErrorMessage(state, action) {
+      state.errorMessage = action.payload.errorMessage;
+    },
     setStatus(state, action) {
-      state.status = "idle";
+      state.status = action.payload.status;
     },
   },
   extraReducers: {

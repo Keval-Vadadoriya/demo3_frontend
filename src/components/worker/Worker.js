@@ -17,7 +17,7 @@ import {
   Box,
 } from "@mui/material";
 
-import {
+import workersAction, {
   getAllWorkers,
   filterWorkers,
 } from "../../store/actions/workers-action";
@@ -44,6 +44,7 @@ const Worker = () => {
           message: errorMessage,
         })
       );
+      dispatch(workersAction.setErrorMessage({ errorMessage: "" }));
     }
   }, [errorMessage]);
 

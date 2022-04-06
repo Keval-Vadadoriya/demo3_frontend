@@ -68,6 +68,12 @@ const loginSlice = createSlice({
     setRole(state, action) {
       state.role = action.payload.role;
     },
+    setErrorMessage(state, action) {
+      state.errorMessage = action.payload.errorMessage;
+    },
+    setStatus(state, action) {
+      state.status = action.payload.status;
+    },
   },
   extraReducers: {
     [loggedInUser.fulfilled]: (state, action) => {

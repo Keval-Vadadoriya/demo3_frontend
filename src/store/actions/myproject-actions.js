@@ -37,7 +37,14 @@ export const myprojectSlice = createSlice({
     errorMessage: "",
     project: null,
   },
-  reducers: {},
+  reducers: {
+    setErrorMessage(state, action) {
+      state.errorMessage = action.payload.errorMessage;
+    },
+    setStatus(state, action) {
+      state.status = action.payload.status;
+    },
+  },
   extraReducers: {
     [removeProject.fulfilled]: (state, action) => {
       state.status = "Project Deleted Successfully";
@@ -66,5 +73,5 @@ export const myprojectSlice = createSlice({
     },
   },
 });
-
+export const myprojectActions = myprojectSlice.actions;
 export default myprojectSlice.reducer;

@@ -7,8 +7,9 @@ import {
   loggedInUser,
   forgotPassword,
   verifyPassword,
+  loginActions,
 } from "../../store/login-slice";
-import { verifyUser } from "../../store/actions/signup-actions";
+import { signupActions, verifyUser } from "../../store/actions/signup-actions";
 
 import {
   Dialog,
@@ -61,8 +62,8 @@ const LoginForm = () => {
           message: errorMessage,
         })
       );
+      dispatch(loginActions.setErrorMessage({ errorMessage: "" }));
     }
-    console.log(status);
     if (
       status === "Login Successful" ||
       status === "Password Updated Successfully" ||
@@ -75,6 +76,7 @@ const LoginForm = () => {
           message: status,
         })
       );
+      dispatch(loginActions.setStatus({ status: "idle" }));
     }
     if (verifyStatus === "Verification Successful") {
       dispatch(
@@ -84,6 +86,7 @@ const LoginForm = () => {
           message: verifyStatus,
         })
       );
+      dispatch(signupActions.setStatus({ status: "idle" }));
     }
     if (status === "Sent") {
       setForgotDialog(false);
@@ -118,9 +121,7 @@ const LoginForm = () => {
     setConfirmPassword(event.target.value);
   };
   const verifyPasswordx = () => {
-    console.log(password === confirmPassword);
     if (password === confirmPassword) {
-      console.log(password);
       const body = {
         password,
       };
@@ -131,7 +132,6 @@ const LoginForm = () => {
     const body = {
       email: loginEmail,
     };
-    console.log(body);
     dispatch(forgotPassword({ body }));
   };
   //forgot password
@@ -272,7 +272,7 @@ const LoginForm = () => {
         <DialogTitle>Password Verification</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            We have sent otp to ypur registered email address
+            We have sent otp to your registered email address
           </DialogContentText>
           <TextField
             autoFocus

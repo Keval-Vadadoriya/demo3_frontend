@@ -41,7 +41,14 @@ export const reviewsSlice = createSlice({
     errorMessage: "",
     reviews: [],
   },
-  reducers: {},
+  reducers: {
+    setErrorMessage(state, action) {
+      state.errorMessage = action.payload.errorMessage;
+    },
+    setStatus(state, action) {
+      state.status = action.payload.status;
+    },
+  },
   extraReducers: {
     [getReviews.fulfilled]: (state, action) => {
       state.status = "succeeded";
@@ -71,4 +78,5 @@ export const reviewsSlice = createSlice({
   },
 });
 
+export const reviewActions = reviewsSlice.actions;
 export default reviewsSlice.reducer;

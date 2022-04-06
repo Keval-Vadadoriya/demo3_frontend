@@ -56,7 +56,11 @@ export const workersSlice = createSlice({
     worker: null,
     count: 0,
   },
-  reducers: {},
+  reducers: {
+    setErrorMessage(state, action) {
+      state.errorMessage = action.payload.errorMessage;
+    },
+  },
   extraReducers: {
     //getAllWorkers
     [getAllWorkers.fulfilled]: (state, action) => {
@@ -65,7 +69,7 @@ export const workersSlice = createSlice({
 
       state.workers = action.payload.workers;
       console.log(action.payload.count);
-      if (action.payload.count !== 0) {
+      if (action.payload.count !== 0 && !isNaN(action.payload.count)) {
         state.count = action.payload.count;
       }
     },
@@ -82,7 +86,7 @@ export const workersSlice = createSlice({
       state.errorMessage = "";
       state.status = "succeeded";
       state.workers = action.payload.workers;
-      if (action.payload.count !== null) {
+      if (action.payload.count !== 0 && !isNaN(action.payload.count)) {
         state.count = action.payload.count;
       }
     },
