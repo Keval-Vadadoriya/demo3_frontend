@@ -114,29 +114,81 @@ const Review = (props) => {
   }
   return (
     <>
-      <Container>
-        {reviews && reviewList}
-        {errorMessage && <p>{errorMessage}</p>}
-        {role === "user" && (
-          <Box component="form" onSubmit={addReviewHandler}>
-            <Typography variant="h4">Add Review</Typography>
+      <Container
+        sx={{
+          backgroundColor: "#808080",
+          height: "93vh",
+          width: "100%",
+          overflow: "scroll",
+          "&::-webkit-scrollbar": {
+            // width: "5px",
+            display: "none",
+          },
+          // "&::-webkit-scrollbar-track": {
+          //   boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+          //   webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+          // },
+          // "&::-webkit-scrollbar-thumb": {
+          //   backgroundColor: "rgba(0,0,0,.1)",
+          //   outline: "1px solid slategrey",
+          // },
+        }}
+      >
+        <Box
+          sx={{
+            backgroundColor: "rgb(255, 219, 172)",
+            padding: "5px",
+            boxSizing: "border-box",
+            overflow: "scroll",
+            height: "93vh",
+            "&::-webkit-scrollbar": {
+              // width: "5px",
+              display: "none",
+            },
+            // "&::-webkit-scrollbar-track": {
+            //   boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+            //   webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+            // },
+            // "&::-webkit-scrollbar-thumb": {
+            //   backgroundColor: "rgba(0,0,0,.1)",
+            //   outline: "1px solid slategrey",
+            // },
+          }}
+        >
+          {reviews && reviewList}
+          {errorMessage && <p>{errorMessage}</p>}
+          {role === "user" && (
+            <Box
+              component="form"
+              onSubmit={addReviewHandler}
+              sx={{
+                position: "sticky",
+                bottom: "10px",
+                margin: "10px",
+                backgroundColor: "rgb(250,250,250)",
+                padding: "10px",
+                borderRadius: "10px",
+              }}
+            >
+              <Typography variant="h4">Add Review</Typography>
 
-            <TextField
-              required
-              fullWidth
-              name="review-description"
-              label="review-description"
-              type="text"
-              id="review-description"
-              autoComplete="review-description"
-              value={description}
-              onChange={changeDescriptionHandler}
-            />
+              <TextField
+                required
+                fullWidth
+                name="review-description"
+                label="review-description"
+                type="text"
+                id="review-description"
+                autoComplete="review-description"
+                value={description}
+                onChange={changeDescriptionHandler}
+              />
 
-            <Rating value={initialRating} onChange={changeReviewHandler} />
-            <Button type="submit">Add Review</Button>
-          </Box>
-        )}
+              <Rating value={initialRating} onChange={changeReviewHandler} />
+              <Button type="submit">Add Review</Button>
+            </Box>
+          )}
+        </Box>
       </Container>
     </>
   );

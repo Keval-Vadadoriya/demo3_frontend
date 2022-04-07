@@ -36,6 +36,9 @@ const useStyles = makeStyles({
     padding: "10px 20px",
     backgroundColor: "green",
     margin: "10px",
+    "&:hover": {
+      backgroundColor: "orange",
+    },
   },
 });
 

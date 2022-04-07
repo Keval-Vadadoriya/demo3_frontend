@@ -32,8 +32,8 @@ function WorkerCard(props) {
         <Avatar
           src={`${process.env.REACT_APP_HOST}/${props.avatar}`}
           sx={{
-            minWidth: "250px",
-            minHeight: "250px",
+            minWidth: "200px",
+            minHeight: "200px",
             boxShadow: `0px 0px 10px ${
               props.availability === false ? "rgb(247, 130, 35)" : "green"
             }`,

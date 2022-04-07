@@ -288,12 +288,10 @@ const Profile = () => {
                   {role === "worker" && (
                     <Grid item xs={12}>
                       <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">
-                          Profession
-                        </InputLabel>
+                        <InputLabel id="profession">Profession</InputLabel>
                         <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
+                          labelId="profession"
+                          id="profession"
                           value={profession}
                           disabled={!edit}
                           label="Profession"
@@ -315,12 +313,10 @@ const Profile = () => {
                   {role === "worker" && (
                     <Grid item xs={12}>
                       <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">
-                          Location
-                        </InputLabel>
+                        <InputLabel id="location">Location</InputLabel>
                         <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
+                          labelId="location"
+                          id="location"
                           value={location}
                           disabled={!edit}
                           label="Location"
@@ -341,12 +337,10 @@ const Profile = () => {
                   {role === "worker" && (
                     <Grid item xs={12}>
                       <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">
-                          Availability
-                        </InputLabel>
+                        <InputLabel id="availability">Availability</InputLabel>
                         <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
+                          labelId="availability"
+                          id="availability"
                           value={location}
                           disabled={!edit}
                           label="Availability"

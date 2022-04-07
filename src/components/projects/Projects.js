@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
 import ProjectCard from "./ProjectCard";
 import { useDispatch, useSelector } from "react-redux";
+import ProjectFilter from "./ProjectFilter";
 import {
   Stack,
   Pagination,
   Grid,
-  TextField,
   InputLabel,
   Select,
   MenuItem,
@@ -25,8 +25,10 @@ import {
   filterProjects,
   getAllProjects,
 } from "../../store/actions/project-actions";
+import { useTheme } from "@mui/styles";
 
 const Projects = () => {
+  const theme = useTheme();
   const matches = useMediaQuery("(max-width:600px)");
   const [location, setLocation] = useState("none");
   const [profession, setProfession] = useState("none");
@@ -89,7 +91,7 @@ const Projects = () => {
     );
     setFiltered(false);
   };
-  const filterWorkersBy = async (event) => {
+  const filterProjectsBy = async (event) => {
     event.preventDefault();
     setFiltered(true);
     setFilter(false);
@@ -112,107 +114,57 @@ const Projects = () => {
         sx={{
           display: "flex",
           alignItems: "baseline",
+          backgroundColor: theme.palette.fifth.main,
           flexDirection: { xs: "column", md: "row" },
+          height: "92.5vh",
+          width: "100%",
         }}
       >
         <Box
           sx={{
             minWidth: 160,
             maxWidth: { xs: "100%", md: 200 },
-            margin: 2,
+            boxSizing: "border-box",
             display: "flex",
-            flexDirection: { xs: "row-reverse", md: "column" },
+            backgroundColor: {
+              xs: theme.palette.primary.main,
+              md: theme.palette.primary.main,
+            },
+            height: { xs: "80px", md: "100%" },
+            width: { xs: "100%", md: "auto" },
+            margin: { xs: 0, md: 0 },
+            padding: { xs: 0, md: 2 },
+            justifyContent: { xs: "center", md: "flex-start" },
+            alignItems: { xs: "center", md: "flex-start" },
+            flexDirection: { xs: "row", md: "column" },
           }}
         >
           <Button
+            variant="contained"
             onClick={() => {
               setFilter(true);
             }}
             sx={{
-              display: { xs: "inline", md: "none" },
+              width: "200px",
+              backgroundColor: "orange",
+
+              transform: { xs: "translateX(20%)", md: "translateX(0)" },
+              display: { xs: "auto", md: "none" },
             }}
           >
-            Filter data
+            Filter
           </Button>
           <Dialog fullScreen={matches} open={filter}>
-            <DialogTitle>Filter By</DialogTitle>
+            <DialogTitle backgroundColor="orange">Filter By</DialogTitle>
             <DialogContent>
-              <DialogContentText>
-                To subscribe to this website, please enter your email address
-                here. We will send updates occasionally.
-              </DialogContentText>
-              <Grid
-                container
-                spacing={2}
-                component="form"
-                noValidate
-                onSubmit={filterWorkersBy}
-              >
-                <Grid item xs={12}>
-                  <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">
-                      Profession
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={profession}
-                      label="Profession"
-                      onChange={changeProfessionHandler}
-                    >
-                      <MenuItem value={"none"} disabled hidden>
-                        {"Select Profession"}
-                      </MenuItem>
-                      <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
-                      <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
-                      <MenuItem value={"electrician"}>{"Electrician"}</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">
-                      Location
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={location}
-                      label="Location"
-                      onChange={changeLocationHandler}
-                    >
-                      <MenuItem value={"none"} disabled hidden>
-                        {"Select Location"}
-                      </MenuItem>
-                      <MenuItem value={"surat"}>{"Surat"}</MenuItem>
-                      <MenuItem value={"anand"}>{"Anand"}</MenuItem>
-                      <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
-                      <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                  >
-                    Apply
-                  </Button>
-                </Grid>
-                <Grid item xs={6}>
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                    onClick={clearFilter}
-                  >
-                    Clear
-                  </Button>
-                </Grid>
-              </Grid>
+              <ProjectFilter
+                profession={profession}
+                location={location}
+                clearFilter={clearFilter}
+                filterProjectsBy={filterProjectsBy}
+                changeLocationHandler={changeLocationHandler}
+                changeProfessionHandler={changeProfessionHandler}
+              />
             </DialogContent>
             <DialogActions>
               <Button
@@ -234,77 +186,16 @@ const Projects = () => {
             Filter By
           </Typography>
 
-          <Grid
-            container
-            spacing={2}
-            component="form"
-            noValidate
-            onSubmit={filterWorkersBy}
-            sx={{ display: { xs: "none", md: "flex" } }}
-          >
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
-                  Profession
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={profession}
-                  label="Profession"
-                  onChange={changeProfessionHandler}
-                >
-                  <MenuItem value={"none"} disabled hidden>
-                    {"Select Profession"}
-                  </MenuItem>
-                  <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
-                  <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
-                  <MenuItem value={"electrician"}>{"Electrician"}</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Location</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={location}
-                  label="Location"
-                  onChange={changeLocationHandler}
-                >
-                  <MenuItem value={"none"} disabled hidden>
-                    {"Select Location"}
-                  </MenuItem>
-                  <MenuItem value={"surat"}>{"Surat"}</MenuItem>
-                  <MenuItem value={"anand"}>{"Anand"}</MenuItem>
-                  <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
-                  <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={6}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Apply
-              </Button>
-            </Grid>
-            <Grid item xs={6}>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                onClick={clearFilter}
-              >
-                Clear
-              </Button>
-            </Grid>
-          </Grid>
+          {!matches && (
+            <ProjectFilter
+              profession={profession}
+              location={location}
+              clearFilter={clearFilter}
+              filterProjectsBy={filterProjectsBy}
+              changeLocationHandler={changeLocationHandler}
+              changeProfessionHandler={changeProfessionHandler}
+            />
+          )}
 
           <Typography
             variant="h4"
@@ -316,7 +207,14 @@ const Projects = () => {
             Sort By
           </Typography>
           <Grid container>
-            <Grid item xs={12}>
+            <Grid
+              item
+              xs={12}
+              md={12}
+              sx={{
+                transform: { xs: "translateX(-20%)", md: "translateX(0)" },
+              }}
+            >
               <FormControl fullWidth>
                 <InputLabel id="sortBy">Sort By</InputLabel>
                 <Select
@@ -343,13 +241,12 @@ const Projects = () => {
             // overflow: "scroll",
             display: "flex",
             width: "100%",
+
             flexDirection: "column",
             justifyContent: "center",
           }}
         >
-          {status === "loading" && <Typography>Loading</Typography>}
           {projectList}
-          {errorMessage && <p>{errorMessage}</p>}
 
           <Stack
             spacing={2}

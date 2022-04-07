@@ -20,31 +20,34 @@ import {
   MenuItem,
 } from "@mui/material";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     // background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
     // border: "1px solid black",
     fontSize: "30px",
     textAlign: "center",
     borderRadius: 3,
-    boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+    boxShadow: "0 3px 5px 2px rgba(255, 105, 135)",
     color: "white",
     height: 48,
     padding: "0 30px",
   },
   link: {
     margin: "5px",
-    backgroundColor: "rgb(44,44,44)",
-    color: "white",
+    backgroundColor: theme.palette.fifth.light,
+    color: "black",
     margin: 10,
-    padding: 5,
+    padding: 10,
     borderRadius: 5,
+    "&:hover": {
+      backgroundColor: theme.palette.primary.main,
+    },
   },
   appbar: (theme) => ({
-    backgroundColor: "rgb(255, 102, 0)",
+    backgroundColor: theme.palette.secondary.main,
     // backgroundColor: theme.palette.primary.main,
   }),
-});
+}));
 const Header = () => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -97,7 +100,11 @@ const Header = () => {
               variant="h6"
               noWrap
               component="div"
-              sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
+              fontFamily="Arvo,sans"
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+              }}
             >
               EasyWork
             </Typography>
@@ -179,7 +186,11 @@ const Header = () => {
               variant="h6"
               noWrap
               component="div"
-              sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
+              fontFamily="Arvo"
+              sx={{
+                flexGrow: 1,
+                display: { xs: "flex", md: "none" },
+              }}
             >
               EasyWork
             </Typography>
@@ -204,8 +215,8 @@ const Header = () => {
                   style={({ isActive }) =>
                     isActive
                       ? {
-                          backgroundColor: "grey",
-                          color: "orange",
+                          backgroundColor: theme.palette.third.main,
+                          color: theme.palette.secondary.main,
                           boxShadow: "2px 2px 2px  black",
                         }
                       : {}
@@ -223,8 +234,8 @@ const Header = () => {
                     style={({ isActive }) =>
                       isActive
                         ? {
-                            backgroundColor: "grey",
-                            color: "orange",
+                            backgroundColor: theme.palette.third.main,
+                            color: theme.palette.secondary.main,
                             boxShadow: "2px 2px 2px  black",
                           }
                         : {}
@@ -243,8 +254,8 @@ const Header = () => {
                     style={({ isActive }) =>
                       isActive
                         ? {
-                            backgroundColor: "grey",
-                            color: "orange",
+                            backgroundColor: theme.palette.third.main,
+                            color: theme.palette.secondary.main,
                             boxShadow: "2px 2px 2px  black",
                           }
                         : {}
@@ -263,8 +274,8 @@ const Header = () => {
                     style={({ isActive }) =>
                       isActive
                         ? {
-                            backgroundColor: "grey",
-                            color: "orange",
+                            backgroundColor: theme.palette.third.main,
+                            color: theme.palette.secondary.main,
                             boxShadow: "2px 2px 2px  black",
                           }
                         : {}
@@ -286,7 +297,8 @@ const Header = () => {
                       p: 0,
                       size: "small",
                       padding: { xs: "2", md: "7px" },
-                      backgroundColor: "rgb(85, 85, 72)",
+                      backgroundColor: theme.palette.fifth.light,
+                      "&:hover": { backgroundColor: theme.palette.third.main },
                       boxShadow: "5",
                     }}
                   >
@@ -328,8 +340,18 @@ const Header = () => {
               </Box>
             )}
             {!token && (
-              <Box sx={{ position: "fixed", right: "0" }}>
-                <Button onClick={loginHandler} sx={{ color: "black" }}>
+              <Box sx={{ position: "fixed", right: "20px" }}>
+                <Button
+                  variant="contained"
+                  onClick={loginHandler}
+                  sx={{
+                    color: "black",
+                    borderRadius: "10px",
+                    backgroundColor: theme.palette.fifth.light,
+                    width: "90px",
+                    padding: "10px",
+                  }}
+                >
                   Login
                 </Button>
               </Box>

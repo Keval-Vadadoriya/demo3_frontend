@@ -175,10 +175,10 @@ const SignupForm = (props) => {
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Role</InputLabel>
+                  <InputLabel id="role">Role</InputLabel>
                   <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId="role"
+                    id="role"
                     value={role}
                     label="Role"
                     onChange={changeRole}
@@ -242,12 +242,10 @@ const SignupForm = (props) => {
               {role === "worker" && (
                 <Grid item xs={12}>
                   <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">
-                      Profession
-                    </InputLabel>
+                    <InputLabel id="profession">Profession</InputLabel>
                     <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
+                      labelId="profession"
+                      id="profession"
                       value={profession}
                       label="Profession"
                       required
@@ -266,12 +264,10 @@ const SignupForm = (props) => {
               {role === "worker" && (
                 <Grid item xs={12}>
                   <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">
-                      Location
-                    </InputLabel>
+                    <InputLabel id="location">Location</InputLabel>
                     <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
+                      labelId="location"
+                      id="location"
                       value={location}
                       required
                       label="Location"

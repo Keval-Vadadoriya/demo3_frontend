@@ -163,8 +163,7 @@ const MyProjects = () => {
             <DialogTitle>Add Project</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                To subscribe to this website, please enter your email address
-                here. We will send updates occasionally.
+                Please enter following details to add new project.
               </DialogContentText>
               <Grid>
                 <Grid item xs={12}>
@@ -206,8 +205,8 @@ const MyProjects = () => {
                 <Grid item xs={12} marginTop={2} marginBottom={2}>
                   <FormControl fullWidth>
                     <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
+                      labelId="profession"
+                      id="profession"
                       value={profession}
                       label="Profession"
                       variant="standard"
@@ -225,8 +224,8 @@ const MyProjects = () => {
                 <Grid item xs={12} marginTop={2}>
                   <FormControl fullWidth>
                     <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
+                      labelId="location"
+                      id="location"
                       value={location}
                       label="Location"
                       onChange={changeLocationHandler}

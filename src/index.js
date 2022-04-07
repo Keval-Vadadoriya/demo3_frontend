@@ -12,37 +12,32 @@ const theme = createTheme({
   palette: {
     type: "light",
     primary: {
-      main: "#555555",
-      light: "#000000",
+      main: "#D4A59A",
+      light: "#F3E0DC",
+      dark: "#AAA0A0",
     },
     secondary: {
-      main: "#FFFFFF",
+      main: "#5C2018",
+
+      light: "#BC4639",
+      dark: "#FFCCBC",
     },
-    red: {
-      main: "#FF1744",
+    third: {
+      main: "#ffd7a3",
+      light: "#F7F9FB",
+      extra: "#ffe8ca",
+      dark: "#705839",
     },
-  },
-  typography: {
-    h1: {
-      fontSize: "4rem",
+    fourth: {
+      main: "#4285F4",
+      light: "#90CCF4",
+      dark: "#5DA2D5",
     },
-    h2: {
-      fontSize: "3rem",
-    },
-    h3: {
-      fontSize: "2rem",
-    },
-    h4: {
-      fontSize: "1.5rem",
-    },
-    h5: {
-      fontSize: "1.3rem",
-    },
-    h6: {
-      fontSize: "1rem",
-    },
-    button: {
-      textTransform: "none",
+
+    fifth: {
+      main: "#8FC1E3",
+      light: "#F7F9FB",
+      dark: "#5085A5",
     },
   },
 });

@@ -10,14 +10,14 @@ import {
   Avatar,
   ListItemText,
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-const useStyles = makeStyles({
+import { makeStyles, useTheme } from "@mui/styles";
+const useStyles = makeStyles((theme) => ({
   chat: {
     position: "sticky",
     top: 70,
     height: "100%",
 
-    backgroundColor: "rgb(255,205, 164)",
+    backgroundColor: theme.palette.primary.main,
   },
   chatList: {
     boxSizing: "border-box",
@@ -29,7 +29,7 @@ const useStyles = makeStyles({
     margin: 5,
     padding: 5,
     borderRadius: 5,
-    backgroundColor: "rgb(256, 256, 256)",
+    backgroundColor: theme.palette.primary.main,
     "&:hover": {
       backgroundColor: "rgb(87, 87, 87)",
       textColor: "white",
@@ -45,9 +45,10 @@ const useStyles = makeStyles({
     zIndex: "1",
     backgroundColor: "rgb(150,150,150)",
   },
-});
+}));
 const Chat = () => {
-  const classes = useStyles();
+  const theme = useTheme();
+  const classes = useStyles(theme);
   const userId = useSelector((state) => state.user.user._id);
   const user = useSelector((state) => state.user.user);
   const role = useSelector((state) => state.login.role);
@@ -104,13 +105,14 @@ const Chat = () => {
 
   return (
     <Fragment>
-      <Grid container sx={{ height: "92vh" }}>
+      <Grid container sx={{ height: { xs: "91vh", md: "92.5vh" } }}>
         <Grid
           item
           xs={12}
           md={3}
           sx={{
-            visibility: { xs: page ? "visible" : "hidden", md: "visible" },
+            display: { xs: page ? "auto" : "none", md: "block" },
+            // visibility:{ xs: page ? "visible" : "hidden", md: "visible" } ,
           }}
         >
           <Box className={classes.chat}>
@@ -120,7 +122,13 @@ const Chat = () => {
             </List>
           </Box>
         </Grid>
-        <Grid item xs={12} md={9}>
+
+        <Grid
+          item
+          xs={12}
+          md={9}
+          sx={{ backgroundColor: theme.palette.fifth.main }}
+        >
           <Outlet />
         </Grid>
       </Grid>

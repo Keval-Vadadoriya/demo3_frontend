@@ -14,13 +14,13 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { socketActions } from "../../store/socket-slice";
-import { makeStyles } from "@mui/styles";
+import { makeStyles, useTheme } from "@mui/styles";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { snackbarActions } from "../../store/snackbar-slice";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   chatOwner: {
-    backgroundColor: "grey",
+    backgroundColor: theme.palette.secondary.main,
     color: "white",
     fontSize: 20,
     padding: 5,
@@ -62,7 +62,7 @@ const useStyles = makeStyles({
     // },
   },
   chatList: {
-    backgroundColor: "rgb(200,200,200)",
+    backgroundColor: theme.palette.primary.main,
     // marginTop: 5,
     // marginBottom: 10,
     overflow: "hidden",
@@ -72,11 +72,12 @@ const useStyles = makeStyles({
     padding: 7,
     borderRadius: 15,
   },
-});
+}));
 
 function Chats() {
+  const theme = useTheme();
   const navigate = useNavigate();
-  const classes = useStyles();
+  const classes = useStyles(theme);
   const receiverId = useParams();
   let messageList;
   const messagesEndRef = useRef();
@@ -224,7 +225,6 @@ function Chats() {
             <Button
               onClick={() => {
                 dispatch(snackbarActions.setPage({ page: true }));
-                // socket.removeAllListeners();
                 navigate(-1);
               }}
             >
