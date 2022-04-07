@@ -2,7 +2,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { userActions } from "../user-slice";
 import { loginActions } from "../login-slice";
 import baseService from "../baseService";
-
+const initialState = {
+  status: "idle",
+  errorMessage: "",
+};
 export const signupUser = createAsyncThunk(
   "signup/signupUser",
   async ({ body, role }, getState) => {
@@ -40,16 +43,16 @@ export const verifyUser = createAsyncThunk(
 
 export const signupSlice = createSlice({
   name: "signup",
-  initialState: {
-    status: "idle",
-    errorMessage: "",
-  },
+  initialState,
   reducers: {
     setErrorMessage(state, action) {
       state.errorMessage = action.payload.errorMessage;
     },
     setStatus(state, action) {
       state.status = action.payload.status;
+    },
+    reset() {
+      return initialState;
     },
   },
   extraReducers: {

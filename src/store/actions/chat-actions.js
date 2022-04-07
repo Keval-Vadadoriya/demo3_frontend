@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+const initialState = {
+  chatList: [],
+  chats: {},
+  chatsOwner: "",
+};
 export const chatSlice = createSlice({
   name: "chat",
-  initialState: {
-    chatList: [],
-    chats: {},
-    chatsOwner: "",
-  },
+  initialState,
   reducers: {
     setChat(state, action) {
       if (state.chats[action.payload.receiverId]) {
@@ -31,6 +31,9 @@ export const chatSlice = createSlice({
     },
     setChatList(state, action) {
       state.chatList = action.payload.list;
+    },
+    reset() {
+      return initialState;
     },
   },
 });

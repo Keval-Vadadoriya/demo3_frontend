@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import baseService from "../baseService";
-
+const initialState = {
+  status: "idle",
+  errorMessage: "",
+  projects: [],
+  count: 0,
+};
 export const getAllProjects = createAsyncThunk(
   "project/getAllProjects",
   async ({ skip }, getState) => {
@@ -49,15 +54,13 @@ export const filterProjects = createAsyncThunk(
 
 export const projectSlice = createSlice({
   name: "project",
-  initialState: {
-    status: "idle",
-    errorMessage: "",
-    projects: [],
-    count: 0,
-  },
+  initialState,
   reducers: {
     setErrorMessage(state, action) {
       state.errorMessage = action.payload.errorMessage;
+    },
+    reset() {
+      return initialState;
     },
   },
   extraReducers: {

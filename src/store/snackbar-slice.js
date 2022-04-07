@@ -1,13 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+const initialState = {
+  open: false,
+  severity: "success",
+  message: "",
+  page: true,
+};
 const snackbarSlice = createSlice({
   name: "snackbar",
-  initialState: {
-    open: false,
-    severity: "success",
-    message: "",
-    page: true,
-  },
+  initialState,
 
   reducers: {
     setSnackbar(state, action) {
@@ -17,6 +17,9 @@ const snackbarSlice = createSlice({
     },
     setPage(state, action) {
       state.page = action.payload.page;
+    },
+    reset() {
+      return initialState;
     },
   },
 });

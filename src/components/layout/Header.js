@@ -5,7 +5,7 @@ import { makeStyles } from "@mui/styles";
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/styles";
-
+import logo from "../../logo.jpg";
 import {
   AppBar,
   Box,
@@ -19,16 +19,28 @@ import {
   Tooltip,
   MenuItem,
 } from "@mui/material";
+import { chatActions } from "../../store/actions/chat-actions";
+import { myprojectActions } from "../../store/actions/myproject-actions";
+import { projectActions } from "../../store/actions/project-actions";
+import { reviewActions } from "../../store/actions/review-actions";
+import { signupActions } from "../../store/actions/signup-actions";
+import { workersActions } from "../../store/actions/workers-action";
+import { snackbarActions } from "../../store/snackbar-slice";
+import { socketActions } from "../../store/socket-slice";
+import { userActions } from "../../store/user-slice";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    // background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
-    // border: "1px solid black",
+    background: theme.palette.third.extra,
+    border: "3px dashed black",
     fontSize: "30px",
+
     textAlign: "center",
-    borderRadius: 3,
-    boxShadow: "0 3px 5px 2px rgba(255, 105, 135)",
-    color: "white",
+    borderTopLeftRadius: "25px",
+    borderBottomRightRadius: "25px",
+    // borderRadius: 3,
+    // boxShadow: "0 3px 5px 2px rgba(255, 105, 135)",
+    color: "black",
     height: 48,
     padding: "0 30px",
   },
@@ -67,11 +79,16 @@ const Header = () => {
 
     if (window.confirm("Are You Sure?")) {
       localStorage.clear();
-      dispatch(
-        loginActions.setToken({
-          token: "",
-        })
-      );
+      dispatch(chatActions.reset());
+      dispatch(myprojectActions.reset());
+      dispatch(projectActions.reset());
+      dispatch(reviewActions.reset());
+      dispatch(signupActions.reset());
+      dispatch(workersActions.reset());
+      dispatch(loginActions.reset());
+      dispatch(snackbarActions.reset());
+      dispatch(socketActions.reset());
+      dispatch(userActions.reset());
       navigate("/");
     }
   };
@@ -95,6 +112,18 @@ const Header = () => {
       <AppBar position="sticky" className={classes.appbar}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
+            <Avatar
+              src={logo}
+              sx={{
+                mr: 2,
+                display: {
+                  xs: "none",
+                  md: "flex",
+                  height: "56px",
+                  width: "56px",
+                },
+              }}
+            />
             <Typography
               className={classes.root}
               variant="h6"

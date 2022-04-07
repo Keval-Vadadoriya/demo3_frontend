@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getMyProjects } from "./project-actions";
 import baseService from "../baseService";
+const initialState = {
+  status: "idle",
+  errorMessage: "",
+  project: null,
+};
 export const removeProject = createAsyncThunk(
   "myproject/removeProject",
   async ({ projectId }, getState) => {
@@ -32,17 +37,16 @@ export const postProject = createAsyncThunk(
 
 export const myprojectSlice = createSlice({
   name: "myproject",
-  initialState: {
-    status: "idle",
-    errorMessage: "",
-    project: null,
-  },
+  initialState,
   reducers: {
     setErrorMessage(state, action) {
       state.errorMessage = action.payload.errorMessage;
     },
     setStatus(state, action) {
       state.status = action.payload.status;
+    },
+    reset() {
+      return initialState;
     },
   },
   extraReducers: {

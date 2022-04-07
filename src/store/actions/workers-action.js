@@ -1,6 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import baseService from "../baseService";
-
+const initialState = {
+  status: "idle",
+  errorMessage: "",
+  workers: [],
+  worker: null,
+  count: 0,
+};
 export const getAllWorkers = createAsyncThunk(
   "workers/getAllWorkers",
   async ({ skip }, getState) => {
@@ -49,16 +55,13 @@ export const filterWorkers = createAsyncThunk(
 
 export const workersSlice = createSlice({
   name: "workers",
-  initialState: {
-    status: "idle",
-    errorMessage: "",
-    workers: [],
-    worker: null,
-    count: 0,
-  },
+  initialState,
   reducers: {
     setErrorMessage(state, action) {
       state.errorMessage = action.payload.errorMessage;
+    },
+    reset() {
+      return initialState;
     },
   },
   extraReducers: {

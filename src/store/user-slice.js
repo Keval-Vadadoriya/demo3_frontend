@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginActions } from "./login-slice";
 import baseService from "./baseService";
+const initialState = {
+  status: "loading data",
+  errorMessage: "",
+  user: {},
+};
 
 export const editUser = createAsyncThunk(
   "user/editUser",
@@ -29,11 +34,7 @@ export const getUser = createAsyncThunk("user/getUser", async (_, getState) => {
 });
 const userSlice = createSlice({
   name: "user",
-  initialState: {
-    status: "loading data",
-    errorMessage: "",
-    user: {},
-  },
+  initialState,
 
   reducers: {
     setLoggedInUser(state, action) {
@@ -44,6 +45,9 @@ const userSlice = createSlice({
     },
     setStatus(state, action) {
       state.status = action.payload.status;
+    },
+    reset() {
+      return initialState;
     },
   },
   extraReducers: {

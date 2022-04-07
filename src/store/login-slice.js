@@ -2,7 +2,12 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { socketActions } from "./socket-slice";
 import { userActions } from "./user-slice";
 import baseService from "./baseService";
-
+const initialState = {
+  status: "idle",
+  errorMessage: "",
+  token: localStorage.getItem("token"),
+  role: "",
+};
 export const loggedInUser = createAsyncThunk(
   "login/loggedInUser",
   async (obj, getState) => {
@@ -12,6 +17,8 @@ export const loggedInUser = createAsyncThunk(
     };
     try {
       const response = await baseService.post("/login", body);
+      baseService.defaults.headers.common["Authorization"] =
+        "Bearer " + response.data.token;
       getState.dispatch(
         userActions.setLoggedInUser({ user: response.data.user })
       );
@@ -19,8 +26,6 @@ export const loggedInUser = createAsyncThunk(
 
       getState.dispatch(socketActions.setSocket());
 
-      baseService.defaults.headers.common["Authorization"] =
-        "Bearer " + response.data.token;
       localStorage.setItem("token", "Bearer " + response.data.token);
       return response.data;
     } catch (e) {
@@ -55,12 +60,7 @@ export const forgotPassword = createAsyncThunk(
 
 const loginSlice = createSlice({
   name: "login",
-  initialState: {
-    status: "idle",
-    errorMessage: "",
-    token: localStorage.getItem("token"),
-    role: "",
-  },
+  initialState,
   reducers: {
     setToken(state, action) {
       state.token = action.payload.token;
@@ -73,6 +73,9 @@ const loginSlice = createSlice({
     },
     setStatus(state, action) {
       state.status = action.payload.status;
+    },
+    reset() {
+      return initialState;
     },
   },
   extraReducers: {
