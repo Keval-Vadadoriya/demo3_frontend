@@ -15,17 +15,18 @@ import {
   getReviews,
 } from "../../store/actions/review-actions";
 import { snackbarActions } from "../../store/snackbar-slice";
-import { makeStyles } from "@mui/styles";
-const useStyles = makeStyles({
+import { makeStyles, useTheme } from "@mui/styles";
+const useStyles = makeStyles((theme) => ({
   review: {
-    backgroundColor: "#808080",
+    backgroundColor: theme.palette.third.extra,
     margin: "10px",
     padding: "10px",
     borderRadius: "20px",
   },
-});
+}));
 
 const Review = (props) => {
+  const theme = useTheme();
   const classes = useStyles();
   const dispatch = useDispatch();
   const [description, setDescription] = useState("");
@@ -95,17 +96,12 @@ const Review = (props) => {
   if (reviews) {
     reviewList = reviews.map((review) => {
       return (
-        <Box
-          component="div"
-          key={review._id}
-          className={classes.review}
-          sx={{}}
-        >
-          <Typography variant="h5" color="white">
+        <Box key={review._id} className={classes.review}>
+          <Rating name="read-only" value={review.review} readOnly />
+          <Typography variant="body1" color="black">
             By {review.owner.name}
           </Typography>
-          <Rating name="read-only" value={review.review} readOnly />
-          <Typography variant="h6" color="white">
+          <Typography variant="body2" color="black">
             {review.description}
           </Typography>
         </Box>
@@ -114,33 +110,16 @@ const Review = (props) => {
   }
   return (
     <>
-      <Container
-        sx={{
-          backgroundColor: "#808080",
-          height: "93vh",
-          width: "100%",
-          overflow: "scroll",
-          "&::-webkit-scrollbar": {
-            // width: "5px",
-            display: "none",
-          },
-          // "&::-webkit-scrollbar-track": {
-          //   boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-          //   webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-          // },
-          // "&::-webkit-scrollbar-thumb": {
-          //   backgroundColor: "rgba(0,0,0,.1)",
-          //   outline: "1px solid slategrey",
-          // },
-        }}
-      >
-        <Box
+      <Box sx={{ backgroundColor: theme.palette.third.extra }}>
+        <Container
           sx={{
-            backgroundColor: "rgb(255, 219, 172)",
-            padding: "5px",
-            boxSizing: "border-box",
-            overflow: "scroll",
+            backgroundColor: {
+              xs: theme.palette.third.extra,
+              md: theme.palette.secondary.main,
+            },
             height: "93vh",
+            width: "100%",
+            overflow: "scroll",
             "&::-webkit-scrollbar": {
               // width: "5px",
               display: "none",
@@ -155,41 +134,96 @@ const Review = (props) => {
             // },
           }}
         >
-          {reviews && reviewList}
-          {errorMessage && <p>{errorMessage}</p>}
-          {role === "user" && (
-            <Box
-              component="form"
-              onSubmit={addReviewHandler}
-              sx={{
-                position: "sticky",
-                bottom: "10px",
-                margin: "10px",
-                backgroundColor: "rgb(250,250,250)",
-                padding: "10px",
-                borderRadius: "10px",
-              }}
-            >
-              <Typography variant="h4">Add Review</Typography>
+          <Box
+            sx={{
+              backgroundColor: {
+                md: theme.palette.third.light,
+                xs: theme.palette.primary.dark,
+              },
+              padding: "5px",
+              boxSizing: "border-box",
+              overflow: "scroll",
+              height: "93vh",
+              "&::-webkit-scrollbar": {
+                // width: "5px",
+                display: "none",
+              },
+              // "&::-webkit-scrollbar-track": {
+              //   boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+              //   webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+              // },
+              // "&::-webkit-scrollbar-thumb": {
+              //   backgroundColor: "rgba(0,0,0,.1)",
+              //   outline: "1px solid slategrey",
+              // },
+            }}
+          >
+            {reviews && reviewList}
+            {role === "user" && (
+              <Box
+                component="form"
+                onSubmit={addReviewHandler}
+                sx={{
+                  position: "sticky",
+                  bottom: "10px",
+                  margin: "10px",
+                  backgroundColor: {
+                    xs: theme.palette.third.light,
+                    md: theme.palette.primary.main,
+                  },
+                  padding: "10px",
+                  borderRadius: "10px",
+                }}
+              >
+                <Typography
+                  color={theme.palette.secondary.main}
+                  sx={{
+                    paddingBottom: "5px",
+                    marginBottom: "5px",
+                    fontSize: { xs: "20px", md: "30px" },
+                  }}
+                >
+                  Add Review
+                </Typography>
+                <Rating value={initialRating} onChange={changeReviewHandler} />
 
-              <TextField
-                required
-                fullWidth
-                name="review-description"
-                label="review-description"
-                type="text"
-                id="review-description"
-                autoComplete="review-description"
-                value={description}
-                onChange={changeDescriptionHandler}
-              />
+                <TextField
+                  required
+                  fullWidth
+                  multiline
+                  variant="filled"
+                  name="review-description"
+                  label="review-description"
+                  type="text"
+                  id="review-description"
+                  autoComplete="review-description"
+                  value={description}
+                  onChange={changeDescriptionHandler}
+                  sx={{
+                    backgroundColor: "white",
+                    borderRadius: "10px",
+                    "& label.Mui-focused": {
+                      color: theme.palette.secondary.main,
+                    },
+                  }}
+                />
 
-              <Rating value={initialRating} onChange={changeReviewHandler} />
-              <Button type="submit">Add Review</Button>
-            </Box>
-          )}
-        </Box>
-      </Container>
+                <Button
+                  type="submit"
+                  sx={{
+                    backgroundColor: "white",
+                    display: "block",
+                    marginTop: "5px",
+                    color: theme.palette.secondary.main,
+                  }}
+                >
+                  Submit
+                </Button>
+              </Box>
+            )}
+          </Box>
+        </Container>
+      </Box>
     </>
   );
 };

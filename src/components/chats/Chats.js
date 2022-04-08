@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import { chatActions } from "../../store/actions/chat-actions";
@@ -11,6 +11,7 @@ import {
   Typography,
   Avatar,
   Container,
+  FormControl,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { socketActions } from "../../store/socket-slice";
@@ -21,6 +22,7 @@ import { snackbarActions } from "../../store/snackbar-slice";
 const useStyles = makeStyles((theme) => ({
   chatOwner: {
     backgroundColor: theme.palette.secondary.main,
+    display: "flex",
     color: "white",
     fontSize: 20,
     padding: 5,
@@ -31,12 +33,15 @@ const useStyles = makeStyles((theme) => ({
   },
   sendMessage: {
     // position: "fixed",
+    backgroundColor: theme.palette.secondary.main,
     position: "-webkit-sticky",
     position: "sticky",
-    margin: 10,
+    margin: 0,
+    borderRadius: "5px",
+    padding: "5px",
     top: "calc(100vh-20px)",
     bottom: 0,
-    backgroundColor: "white",
+    // backgroundColor: "white",
   },
   chats: {
     top: 0,
@@ -201,10 +206,21 @@ function Chats() {
                 : "white",
           }}
         >
-          <Typography variant="h5" sx={{ wordBreak: "break-word" }}>
+          <Typography
+            variant="h5"
+            sx={{
+              wordBreak: "break-word",
+              fontSize: { xs: "20px", md: "25px" },
+              fontFamily: "Roboto",
+            }}
+          >
             {message.message}
             <Typography
-              sx={{ fontSize: "15px", fontStyle: "italic" }}
+              sx={{
+                fontSize: { xs: "10px", md: "15px" },
+                fontStyle: "italic",
+                fontFamily: "Arvo",
+              }}
             >{`${date.toLocaleString("en-US", {
               hour: "numeric",
               minute: "numeric",
@@ -228,15 +244,28 @@ function Chats() {
                 navigate(-1);
               }}
             >
-              <ArrowBackIosIcon />
+              <ArrowBackIosIcon sx={{ color: "white" }} />
+            </Button>
+            <Box
+              component={Link}
+              to={role === "user" ? `/home/workers/${receiverId.workerid}` : ""}
+              sx={{ display: "flex", textDecoration: "none" }}
+            >
               <Avatar
                 src={`${process.env.REACT_APP_HOST}/${chatsOwner?.avatar}`}
-                sx={{ marginLeft: 1 }}
+                sx={{ marginLeft: 0 }}
               />
-            </Button>
-            <Typography sx={{ display: "inline", marginLeft: 3, fontSize: 25 }}>
-              {chatsOwner && chatsOwner.name}
-            </Typography>
+              <Typography
+                sx={{
+                  display: "inline",
+                  marginLeft: 3,
+                  fontSize: 25,
+                  color: "white",
+                }}
+              >
+                {chatsOwner && chatsOwner.name}
+              </Typography>
+            </Box>
           </Grid>
           <Grid item xs={12}>
             <Box className={classes.chatList}>{messageList && messageList}</Box>
@@ -252,21 +281,33 @@ function Chats() {
           >
             <Grid container>
               <Grid item xs={10} md={11}>
-                <TextField
-                  autoComplete="message"
-                  name="Message"
-                  required
-                  fullWidth
-                  id="Message"
-                  label="Message"
-                  autoFocus
-                  value={message}
-                  onChange={changeMessageHandler}
-                />
+                <FormControl fullWidth>
+                  <TextField
+                    autoComplete="message"
+                    name="Message"
+                    required
+                    variant="filled"
+                    fullWidth
+                    id="Message"
+                    label="Message"
+                    autoFocus
+                    value={message}
+                    onChange={changeMessageHandler}
+                    sx={{
+                      // color: "black",
+                      backgroundColor: "white",
+                      borderRadius: "5px",
+                      color: "black",
+                      "& label.Mui-focused": {
+                        color: theme.palette.secondary.main,
+                      },
+                    }}
+                  />
+                </FormControl>
               </Grid>
               <Grid item xs={1}>
                 <Button type="submit">
-                  <SendIcon fontSize="large" />
+                  <SendIcon fontSize="large" sx={{ color: "white" }} />
                 </Button>
               </Grid>
             </Grid>

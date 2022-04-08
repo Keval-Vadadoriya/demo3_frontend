@@ -7,7 +7,7 @@ function Unauthorized() {
       <Box
         sx={{
           display: "flex",
-          height: "90vh",
+          height: "91.5vh",
           width: "100vw",
           justifyContent: "center",
           alignItems: "center",

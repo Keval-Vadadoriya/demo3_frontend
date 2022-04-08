@@ -27,8 +27,10 @@ import {
   removeProject,
 } from "../../store/actions/myproject-actions";
 import { getMyProjects } from "../../store/actions/project-actions";
+import { useTheme } from "@mui/styles";
 
 const MyProjects = () => {
+  const theme = useTheme();
   const matches = useMediaQuery("(max-width:600px)");
   const [location, setLocation] = useState("none");
   const [profession, setProfession] = useState("none");
@@ -137,26 +139,21 @@ const MyProjects = () => {
         <Box
           sx={{
             height: "100%",
-            backgroundColor: "rgb(255,205, 164)",
+            backgroundColor: theme.palette.primary.main,
             display: "flex",
             flexDirection: "column",
           }}
         >
           <Button onClick={addProjectHandler}>Add a New Project</Button>
           {projectList && projectList}
-          <Stack
-            spacing={2}
-            sx={{
-              position: "sticky",
-              bottom: 20,
-              backgroundColor: "gray",
-            }}
-            alignSelf="center"
-          >
+          <Stack spacing={2} alignSelf="center">
             <Pagination
               count={Math.ceil(count / 3)}
               page={page}
               onChange={handleChange}
+              variant="outlined"
+              color="secondary"
+              sx={{ backgroundColor: theme.palette.third.extra }}
             />
           </Stack>
           <Dialog fullScreen={matches} open={addProject}>

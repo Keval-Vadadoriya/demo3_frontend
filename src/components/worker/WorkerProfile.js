@@ -2,16 +2,28 @@ import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getWorker } from "../../store/actions/workers-action";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Box,
-  Card,
-  Typography,
-  CardActionArea,
-  Avatar,
-  CardContent,
-  Rating,
-} from "@mui/material";
+import { Box, Typography, Avatar, Rating } from "@mui/material";
+import { useTheme } from "@mui/styles";
+import { makeStyles } from "@mui/styles";
+const useStyles = makeStyles((theme) => ({
+  link: {
+    margin: "5px",
+    backgroundColor: theme.palette.fifth.light,
+    color: "black",
+    margin: 10,
+    padding: 10,
+    borderRadius: 5,
+    width: "100px",
+    textAlign: "center",
+    textDecoration: "none",
+    "&:hover": {
+      backgroundColor: theme.palette.primary.main,
+    },
+  },
+}));
 function WorkerProfile() {
+  const theme = useTheme();
+  const classes = useStyles();
   const dispatch = useDispatch();
   const { status, worker, errorMessage } = useSelector(
     (state) => state.workerslist
@@ -30,44 +42,168 @@ function WorkerProfile() {
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",
+        height: "91.5vh",
+        overflow: "scroll",
+        backgroundColor: theme.palette.primary.main,
       }}
     >
       {worker && (
-        <Card
+        <Box
           sx={{
-            minWidth: "410px",
-            minHeight: "410px",
             borderRadius: "20px",
-            margin: "15px",
+            minWidth: "300px",
+            maxWidth: "350px",
+            margin: "20px",
+            marginTop: "200px",
             padding: "5px",
             boxShadow: `5px 5px 10px grey`,
+            backgroundColor: theme.palette.third.light,
             // transition: "all 0.5s ease",
             // "&:hover": { transform: "scale(1.1)" },
           }}
         >
-          <CardActionArea
+          <Box
             sx={{
               display: "flex",
-              justifyContent: "center",
+              // justifyContent: "center",
+              alignItems: "center",
               flexDirection: "column",
             }}
           >
             <Avatar
               src={`${process.env.REACT_APP_HOST}/${worker.avatar}`}
               sx={{
-                minWidth: "250px",
-                minHeight: "250px",
+                minWidth: "200px",
+                minHeight: "200px",
+                height: "auto",
                 boxShadow: `0px 0px 10px ${
                   worker.availability === false ? "rgb(247, 130, 35)" : "green"
                 }`,
               }}
             />
-            <CardContent
+            <Box
               sx={{
                 alignSelf: "flex-start",
                 marginTop: "20px",
               }}
             >
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                fontFamily="Roboto"
+                fontSize="25px"
+              >
+                {worker.name}
+              </Typography>
               <Typography
                 gutterBottom
                 variant="h5"
@@ -136,14 +272,22 @@ function WorkerProfile() {
               >
                 {worker.description}
               </Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
+            </Box>
+          </Box>
+        </Box>
       )}
-      <Typography component={Link} to={`review/${workerid.workerid}`}>
+      <Typography
+        component={Link}
+        className={classes.link}
+        to={`review/${workerid.workerid}`}
+      >
         Reviews
       </Typography>
-      <Typography component={Link} to={`/home/chats/${workerid.workerid}`}>
+      <Typography
+        className={classes.link}
+        component={Link}
+        to={`/home/chats/${workerid.workerid}`}
+      >
         Chat
       </Typography>
     </Box>

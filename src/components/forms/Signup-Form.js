@@ -30,20 +30,26 @@ import {
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { snackbarActions } from "../../store/snackbar-slice";
+import { useTheme } from "@mui/styles";
 
-const SignupForm = (props) => {
+const SignupForm = () => {
+  const theme = useTheme();
   const matches = useMediaQuery("(max-width:600px)");
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+  const [nameIsValid, setNameIsValid] = useState(false);
   const [email, setEmail] = useState("");
+  const [emailIsValid, setEmailIsValid] = useState(false);
   const [password, setPassword] = useState("");
-  const [passwordIsValid, setPasswordIsValid] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordIsValid, setPasswordIsValid] = useState(false);
+  const [confirmPasswordIsValid, setConfirmPasswordIsValid] = useState(false);
   const [profession, setProfession] = useState("");
   const [professionIsValid, setProfessionIsValid] = useState(false);
   const [location, setLocation] = useState("");
   const [locationIsValid, setLocationIsValid] = useState(false);
   const role = useSelector((state) => state.login.role);
+  const [roleIsValid, setRoleIsValid] = useState(role !== "");
   const token = useSelector((state) => state.login.token);
   const [otp, setOtp] = useState();
   const dispatch = useDispatch();
@@ -75,7 +81,7 @@ const SignupForm = (props) => {
         snackbarActions.setSnackbar({
           open: true,
           severity: "success",
-          message: status,
+          message: "Otp Sent",
         })
       );
       dispatch(signupActions.setStatus({ status: "idle" }));
@@ -93,6 +99,7 @@ const SignupForm = (props) => {
   };
   //changing Role
   const changeRole = (event) => {
+    setRoleIsValid(true);
     dispatch(loginActions.setRole({ role: event.target.value }));
   };
 
@@ -108,7 +115,7 @@ const SignupForm = (props) => {
             password,
           }
         : { name, email, password, profession, location };
-    if (passwordIsValid) {
+    if (confirmPasswordIsValid) {
       dispatch(signupUser({ body, role }));
     }
   };
@@ -116,21 +123,42 @@ const SignupForm = (props) => {
   //Validations
   const changeNameHandler = (event) => {
     setName(event.target.value);
+    if (event.target.value.length > 0) {
+      setNameIsValid(true);
+    } else {
+      setNameIsValid(false);
+    }
   };
 
   const changeEmailHandler = (event) => {
     setEmail(event.target.value);
+    if (
+      event.target.value
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        )
+    ) {
+      setEmailIsValid(true);
+    } else {
+      setEmailIsValid(false);
+    }
   };
 
   const changePasswordHandler = (event) => {
     setPassword(event.target.value);
+    if (event.target.value.length >= 7) {
+      setPasswordIsValid(true);
+    } else {
+      setPasswordIsValid(false);
+    }
   };
   const changeConfirmPasswordHandler = (event) => {
     setConfirmPassword(event.target.value);
     if (password === event.target.value) {
-      setPasswordIsValid(true);
+      setConfirmPasswordIsValid(true);
     } else {
-      setPasswordIsValid(false);
+      setConfirmPasswordIsValid(false);
     }
   };
 
@@ -174,7 +202,7 @@ const SignupForm = (props) => {
           <Box component="form" onSubmit={SubmitHandler} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <FormControl fullWidth>
+                <FormControl fullWidth required error={!roleIsValid}>
                   <InputLabel id="role">Role</InputLabel>
                   <Select
                     labelId="role"
@@ -194,6 +222,7 @@ const SignupForm = (props) => {
               <Grid item xs={12}>
                 <TextField
                   autoComplete="given-name"
+                  error={!nameIsValid}
                   name="Name"
                   required
                   fullWidth
@@ -208,6 +237,7 @@ const SignupForm = (props) => {
                 <TextField
                   required
                   fullWidth
+                  error={!emailIsValid}
                   id="email"
                   label="Email Address"
                   name="email"
@@ -219,6 +249,7 @@ const SignupForm = (props) => {
                 <TextField
                   required
                   fullWidth
+                  error={!passwordIsValid}
                   name="password"
                   label="Password"
                   type="password"
@@ -231,6 +262,7 @@ const SignupForm = (props) => {
                 <TextField
                   required
                   fullWidth
+                  error={!confirmPasswordIsValid}
                   name="confirm password"
                   label="Confirm Password"
                   type="password"
@@ -241,7 +273,7 @@ const SignupForm = (props) => {
               </Grid>
               {role === "worker" && (
                 <Grid item xs={12}>
-                  <FormControl fullWidth>
+                  <FormControl fullWidth required error={!professionIsValid}>
                     <InputLabel id="profession">Profession</InputLabel>
                     <Select
                       labelId="profession"
@@ -263,7 +295,7 @@ const SignupForm = (props) => {
               )}
               {role === "worker" && (
                 <Grid item xs={12}>
-                  <FormControl fullWidth>
+                  <FormControl fullWidth required error={!locationIsValid}>
                     <InputLabel id="location">Location</InputLabel>
                     <Select
                       labelId="location"
@@ -289,7 +321,16 @@ const SignupForm = (props) => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                color: theme.palette.secondary.main,
+                backgroundColor: theme.palette.third.extra,
+                "&:hover": {
+                  backgroundColor: theme.palette.secondary.main,
+                  color: theme.palette.third.light,
+                },
+              }}
             >
               Sign Up
             </Button>

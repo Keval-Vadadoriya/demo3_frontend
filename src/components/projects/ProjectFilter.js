@@ -7,7 +7,9 @@ import {
   FormControl,
   Button,
 } from "@mui/material";
+import { useTheme } from "@mui/styles";
 const ProjectFilter = (props) => {
+  const theme = useTheme();
   return (
     <Grid
       container
@@ -61,7 +63,16 @@ const ProjectFilter = (props) => {
           type="submit"
           fullWidth
           variant="contained"
-          sx={{ mt: 3, mb: 2 }}
+          sx={{
+            mt: 3,
+            mb: 2,
+            color: theme.palette.secondary.main,
+            backgroundColor: theme.palette.third.light,
+            "&:hover": {
+              backgroundColor: theme.palette.secondary.main,
+              color: theme.palette.third.light,
+            },
+          }}
         >
           Apply
         </Button>
@@ -70,7 +81,16 @@ const ProjectFilter = (props) => {
         <Button
           fullWidth
           variant="contained"
-          sx={{ mt: 3, mb: 2 }}
+          sx={{
+            mt: 3,
+            mb: 2,
+            color: theme.palette.secondary.main,
+            backgroundColor: theme.palette.third.light,
+            "&:hover": {
+              backgroundColor: theme.palette.secondary.main,
+              color: theme.palette.third.light,
+            },
+          }}
           onClick={props.clearFilter}
         >
           Clear

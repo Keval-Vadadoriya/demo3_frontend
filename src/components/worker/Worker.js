@@ -17,6 +17,8 @@ import {
   DialogContent,
   Button,
   DialogActions,
+  Fade,
+  Slide,
 } from "@mui/material";
 
 import {
@@ -24,8 +26,10 @@ import {
   getAllWorkers,
   filterWorkers,
 } from "../../store/actions/workers-action";
+import { useTheme } from "@mui/styles";
 
 const Worker = () => {
+  const theme = useTheme();
   const matches = useMediaQuery("(max-width:600px)");
   const [location, setLocation] = useState("none");
   const [profession, setProfession] = useState("none");
@@ -102,50 +106,81 @@ const Worker = () => {
   let workerList;
   if (workers) {
     workerList = workers.map((worker) => (
-      <Grid item xs={12} md={4} key={worker._id}>
-        <Box
-          component={Link}
-          to={`${worker._id}`}
-          sx={{
-            textDecoration: "none",
-          }}
-        >
-          <WorkerCard
-            name={worker.name}
-            profession={worker.profession}
-            avatar={worker.avatar}
-            availability={worker.availability}
-            review={worker.review}
-          />
-        </Box>
-      </Grid>
+      // <Grid item xs={12} md={4} key={worker._id}>
+      <Box
+        component={Link}
+        to={`${worker._id}`}
+        sx={{
+          textDecoration: "none",
+        }}
+      >
+        <WorkerCard
+          name={worker.name}
+          profession={worker.profession}
+          avatar={worker.avatar}
+          availability={worker.availability}
+          review={worker.review}
+        />
+      </Box>
+      // </Grid>
     ));
   }
 
   return (
     <Fragment>
-      <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" } }}>
-        {!matches && (
-          <WorkerFilter
-            profession={profession}
-            location={location}
-            clearFilter={clearFilter}
-            filterWorkersBy={filterWorkersBy}
-            changeLocationHandler={changeLocationHandler}
-            changeProfessionHandler={changeProfessionHandler}
-            review={review}
-            changeReviewHandler={changeReviewHandler}
-            availability={availability}
-            changeAvailabilityHandler={changeAvailabilityHandler}
-          />
-        )}
-        {matches && (
-          <Button variant="contained" onClick={() => setFilter(true)}>
-            Filter
-          </Button>
-        )}
-        <Container fixed>
-          {status === "loading" && <CircularProgress />}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          backgroundColor: theme.palette.primary.main,
+        }}
+      >
+        <Box
+          sx={{
+            height: { xs: "auto", md: "91.5vh" },
+            display: "flex",
+
+            flexDirection: "column",
+            backgroundColor: {
+              xs: theme.palette.third.extra,
+            },
+          }}
+        >
+          {!matches && (
+            <WorkerFilter
+              profession={profession}
+              location={location}
+              clearFilter={clearFilter}
+              filterWorkersBy={filterWorkersBy}
+              changeLocationHandler={changeLocationHandler}
+              changeProfessionHandler={changeProfessionHandler}
+              review={review}
+              changeReviewHandler={changeReviewHandler}
+              availability={availability}
+              changeAvailabilityHandler={changeAvailabilityHandler}
+            />
+          )}
+          {matches && (
+            <Button
+              variant="contained"
+              onClick={() => setFilter(true)}
+              sx={{
+                color: theme.palette.secondary.main,
+                backgroundColor: theme.palette.third.extra,
+              }}
+            >
+              Filter
+            </Button>
+          )}
+        </Box>
+        <Container
+          fixed
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {/* <Grid container> */}
           <Box
             sx={{
               display: "flex",
@@ -154,20 +189,29 @@ const Worker = () => {
               flexWrap: "wrap",
             }}
           >
-            <Grid container>{workerList}</Grid>
+            {workerList}
           </Box>
+          {/* </Grid> */}
 
-          <Stack spacing={2}>
+          <Stack spacing={2} sx={{}} alignSelf="center">
             <Pagination
               count={Math.ceil(count / 3)}
               page={page}
               onChange={handleChange}
+              variant="outlined"
+              color="secondary"
+              sx={{ backgroundColor: theme.palette.third.extra }}
             />
           </Stack>
         </Container>
       </Box>
-      <Dialog fullScreen={matches} open={filter}>
-        <DialogTitle backgroundColor="orange">Filter By</DialogTitle>
+      <Dialog fullScreen={matches} open={filter} TransitionComponent={Slide}>
+        <DialogTitle
+          backgroundColor={theme.palette.secondary.main}
+          sx={{ color: "white", fontFamily: "Arvo" }}
+        >
+          Filter Workers
+        </DialogTitle>
         <DialogContent>
           <WorkerFilter
             profession={profession}

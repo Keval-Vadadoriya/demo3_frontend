@@ -114,7 +114,7 @@ const Projects = () => {
         sx={{
           display: "flex",
           alignItems: "baseline",
-          backgroundColor: theme.palette.fifth.main,
+          backgroundColor: theme.palette.primary.main,
           flexDirection: { xs: "column", md: "row" },
           height: "92.5vh",
           width: "100%",
@@ -122,13 +122,12 @@ const Projects = () => {
       >
         <Box
           sx={{
-            minWidth: 160,
+            minWidth: 300,
             maxWidth: { xs: "100%", md: 200 },
             boxSizing: "border-box",
             display: "flex",
             backgroundColor: {
-              xs: theme.palette.primary.main,
-              md: theme.palette.primary.main,
+              xs: theme.palette.third.extra,
             },
             height: { xs: "80px", md: "100%" },
             width: { xs: "100%", md: "auto" },
@@ -147,8 +146,7 @@ const Projects = () => {
             sx={{
               width: "200px",
               backgroundColor: "orange",
-
-              transform: { xs: "translateX(20%)", md: "translateX(0)" },
+              margin: "10px",
               display: { xs: "auto", md: "none" },
             }}
           >
@@ -179,8 +177,10 @@ const Projects = () => {
           <Typography
             variant="h4"
             sx={{
-              visibility: { xs: "hidden", md: "visible" },
+              display: { xs: "none", md: "block" },
               marginBottom: "10px",
+              color: theme.palette.secondary.main,
+              fontFamily: "Arvo",
             }}
           >
             Filter By
@@ -200,21 +200,16 @@ const Projects = () => {
           <Typography
             variant="h4"
             sx={{
-              visibility: { xs: "hidden", md: "visible" },
+              display: { xs: "none", md: "block" },
+              color: theme.palette.secondary.main,
               marginBottom: "10px",
+              fontFamily: "Arvo",
             }}
           >
             Sort By
           </Typography>
           <Grid container>
-            <Grid
-              item
-              xs={12}
-              md={12}
-              sx={{
-                transform: { xs: "translateX(-20%)", md: "translateX(0)" },
-              }}
-            >
+            <Grid item xs={12} md={12} sx={{ margin: "10px" }}>
               <FormControl fullWidth>
                 <InputLabel id="sortBy">Sort By</InputLabel>
                 <Select
@@ -248,14 +243,14 @@ const Projects = () => {
         >
           {projectList}
 
-          <Stack
-            spacing={2}
-            sx={{ alignSelf: "center", position: "sticky", bottom: 0 }}
-          >
+          <Stack spacing={2} sx={{ alignSelf: "center" }}>
             <Pagination
               count={Math.ceil(count / 3)}
               page={page}
               onChange={handleChange}
+              variant="outlined"
+              color="secondary"
+              sx={{ backgroundColor: theme.palette.third.extra }}
             />
           </Stack>
         </Box>

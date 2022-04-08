@@ -9,15 +9,27 @@ import {
   Box,
   Typography,
 } from "@mui/material";
+import { useTheme } from "@mui/styles";
 const WorkerFilter = (props) => {
+  const theme = useTheme();
   return (
     <Box
       component="form"
       noValidate
       onSubmit={props.filterWorkersBy}
-      sx={{ minWidth: 160, maxWidth: 200, margin: 2 }}
+      sx={{
+        minWidth: 160,
+        maxWidth: 200,
+        margin: 2,
+        position: "sticky",
+        top: "70px",
+      }}
     >
-      <Typography variant="h4" marginBottom="10px">
+      <Typography
+        variant="h4"
+        marginBottom="10px"
+        sx={{ color: theme.palette.secondary.main, fontFamily: "Arvo" }}
+      >
         Filter By
       </Typography>
       <Grid container spacing={2}>
@@ -104,7 +116,16 @@ const WorkerFilter = (props) => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{
+              mt: 3,
+              mb: 2,
+              color: theme.palette.secondary.main,
+              backgroundColor: theme.palette.third.light,
+              "&:hover": {
+                backgroundColor: theme.palette.secondary.main,
+                color: theme.palette.third.light,
+              },
+            }}
           >
             Apply
           </Button>
@@ -113,7 +134,16 @@ const WorkerFilter = (props) => {
           <Button
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{
+              mt: 3,
+              mb: 2,
+              color: theme.palette.secondary.main,
+              backgroundColor: theme.palette.third.light,
+              "&:hover": {
+                backgroundColor: theme.palette.secondary.main,
+                color: theme.palette.third.light,
+              },
+            }}
             onClick={props.clearFilter}
           >
             Clear

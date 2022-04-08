@@ -379,6 +379,9 @@ const Header = () => {
                     backgroundColor: theme.palette.fifth.light,
                     width: "90px",
                     padding: "10px",
+                    "&:hover": {
+                      backgroundColor: theme.palette.third.extra,
+                    },
                   }}
                 >
                   Login

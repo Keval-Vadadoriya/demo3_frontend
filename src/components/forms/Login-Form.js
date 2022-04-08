@@ -28,9 +28,13 @@ import {
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { snackbarActions } from "../../store/snackbar-slice";
+import { useTheme } from "@mui/styles";
 
 const LoginForm = () => {
+  const theme = useTheme();
   const [loginEmail, setLoginEmail] = useState("");
+  const [emailIsValid, setEmailIsValid] = useState(false);
+  const [passwordIsValid, setPasswordIsValid] = useState(false);
   const [loginPassword, setLoginPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -155,10 +159,26 @@ const LoginForm = () => {
   // validations
   const changeEmailHandler = (event) => {
     setLoginEmail(event.target.value);
+    if (
+      event.target.value
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        )
+    ) {
+      setEmailIsValid(true);
+    } else {
+      setEmailIsValid(false);
+    }
   };
 
   const changePasswordHandler = (event) => {
     setLoginPassword(event.target.value);
+    if (event.target.value.length >= 7) {
+      setPasswordIsValid(true);
+    } else {
+      setPasswordIsValid(false);
+    }
   };
   const matches = useMediaQuery("(max-width:600px)");
   return (
@@ -189,6 +209,7 @@ const LoginForm = () => {
               <Grid item xs={12}>
                 <TextField
                   required
+                  error={!emailIsValid}
                   fullWidth
                   id="email"
                   label="Email Address"
@@ -201,6 +222,7 @@ const LoginForm = () => {
                 <TextField
                   required
                   fullWidth
+                  error={!passwordIsValid}
                   name="password"
                   label="Password"
                   type="password"
@@ -214,7 +236,16 @@ const LoginForm = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                color: theme.palette.secondary.main,
+                backgroundColor: theme.palette.third.extra,
+                "&:hover": {
+                  backgroundColor: theme.palette.secondary.main,
+                  color: theme.palette.third.light,
+                },
+              }}
             >
               Sign In
             </Button>

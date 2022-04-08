@@ -1,7 +1,7 @@
 import { Fragment, useEffect } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { chatActions } from "../../store/actions/chat-actions";
 import {
   List,
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   chat: {
     position: "sticky",
     top: 70,
-    height: "100%",
+    height: "91.5vh",
 
     backgroundColor: theme.palette.primary.main,
   },
@@ -27,9 +27,9 @@ const useStyles = makeStyles((theme) => ({
   },
   chatListItem: {
     margin: 5,
-    padding: 5,
-    borderRadius: 5,
-    backgroundColor: theme.palette.primary.main,
+    padding: 10,
+    borderRadius: 20,
+    backgroundColor: theme.palette.fourth.light,
     "&:hover": {
       backgroundColor: "rgb(87, 87, 87)",
       textColor: "white",
@@ -37,13 +37,14 @@ const useStyles = makeStyles((theme) => ({
   },
   userName: {
     borderRadius: 10,
+    margin: "5px",
     padding: 5,
     fontSize: 40,
     marginLeft: 1,
     position: "sticky",
     top: "65px",
     zIndex: "1",
-    backgroundColor: "rgb(150,150,150)",
+    backgroundColor: theme.palette.fourth.light,
   },
 }));
 const Chat = () => {
@@ -88,7 +89,7 @@ const Chat = () => {
           to={`/home/chats/${worker.user._id}`}
           className={classes.chatListItem}
           style={({ isActive }) =>
-            isActive ? { backgroundColor: "#808080" } : {}
+            isActive ? { backgroundColor: theme.palette.third.dark } : {}
           }
         >
           <ListItemAvatar>
@@ -96,8 +97,21 @@ const Chat = () => {
               src={`${process.env.REACT_APP_HOST}/${worker.user.avatar}`}
             />
           </ListItemAvatar>
-          <ListItemText id={worker.user._id} primary={`${worker.user.name}`} />
-          <ListItemText id={worker.user._id} primary={`${worker.count}`} />
+          <ListItemText
+            id={worker.user._id}
+            primary={`${worker.user.name}`}
+            sx={{ color: "black", fontFamily: "Arvo" }}
+          />
+          {worker.count !== 0 && (
+            <ListItemText id={worker.user._id}>
+              <Typography
+                variant="body2"
+                sx={{ color: "green", fontSize: "20px" }}
+              >
+                {worker.count}
+              </Typography>
+            </ListItemText>
+          )}
         </ListItem>
       );
     });
@@ -105,7 +119,7 @@ const Chat = () => {
 
   return (
     <Fragment>
-      <Grid container sx={{ height: { xs: "91vh", md: "92.5vh" } }}>
+      <Grid container sx={{ height: { xs: "91vh", md: "91.5vh" } }}>
         <Grid
           item
           xs={12}
@@ -127,7 +141,7 @@ const Chat = () => {
           item
           xs={12}
           md={9}
-          sx={{ backgroundColor: theme.palette.fifth.main }}
+          sx={{ backgroundColor: theme.palette.fourth.light }}
         >
           <Outlet />
         </Grid>

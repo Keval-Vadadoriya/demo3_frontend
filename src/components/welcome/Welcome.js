@@ -1,29 +1,30 @@
 import React from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Slide, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { loginActions } from "../../store/login-slice";
 import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 import { Grid } from "@mui/material";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   container: {
     backgroundColor: "rgb(256, 256, 256)",
-    height: "92.8vh",
+    height: "92.5vh",
     width: "100vw",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     backgroundImage:
-      "url(https://engineering.tamu.edu/engineering-online/_files/_images/_content-images/engineering-online-mechanical-29Apr2019.jpg)",
+      "url(https://www.fulltimenomad.com/wp-content/uploads/2017/03/What-is-Upwork.jpg)",
     backgroundRepeat: "no-repeat",
-    objectFit: "contain",
-    backgroundSize: "cover",
+    // objectFit: "cover",
+    backgroundSize: "100% 100%",
+    // backgroundSize: "cover",
   },
   welcome: {
     textAlign: "center",
     width: "100%",
-    color: "white",
+    color: theme.palette.secondary.main,
     fontSize: "50px",
     wordBreak: "break-word",
   },
@@ -34,13 +35,14 @@ const useStyles = makeStyles({
   button: {
     color: "black",
     padding: "10px 20px",
-    backgroundColor: "green",
+    backgroundColor: theme.palette.third.extra,
     margin: "10px",
     "&:hover": {
-      backgroundColor: "orange",
+      backgroundColor: theme.palette.secondary.main,
+      color: "white",
     },
   },
-});
+}));
 
 function Welcome() {
   const classes = useStyles();
@@ -55,16 +57,18 @@ function Welcome() {
       <Box className={classes.container}>
         <Grid container>
           <Grid item xs={12}>
-            <Typography className={classes.welcome}>
-              Welcome To EasyWork
-            </Typography>
+            <Slide direction="up" in={true}>
+              <Typography className={classes.welcome}>
+                Welcome To EasyWork
+              </Typography>
+            </Slide>
           </Grid>
           <Grid item xs={12} className={classes.buttons}>
             <Button onClick={setRole} value="worker" className={classes.button}>
-              Starving To Work?Click Here
+              Want To Work?
             </Button>
             <Button onClick={setRole} value="user" className={classes.button}>
-              Looking For Worker?Click Here
+              Looking For Worker?
             </Button>
           </Grid>
         </Grid>
