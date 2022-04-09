@@ -12,14 +12,16 @@ function WorkerCard(props) {
   return (
     <Card
       sx={{
-        maxWidth: "410px",
-        maxHeight: "410px",
+        maxWidth: "500px",
+        maxHeight: "500px",
+        minWidth: "210px",
+        minHeight: "210px",
         borderRadius: "20px",
         margin: "15px",
         padding: "5px",
         boxShadow: `5px 5px 10px grey`,
         transition: "all 0.5s ease",
-        "&:hover": { transform: "scale(1.1)" },
+        "&:hover": { transform: "scale(1.05)" },
       }}
     >
       <CardActionArea
@@ -32,8 +34,8 @@ function WorkerCard(props) {
         <Avatar
           src={`${process.env.REACT_APP_HOST}/${props.avatar}`}
           sx={{
-            minWidth: "200px",
-            minHeight: "200px",
+            minWidth: "150px",
+            minHeight: "150px",
             boxShadow: `0px 0px 10px ${
               props.availability === false ? "rgb(247, 130, 35)" : "green"
             }`,

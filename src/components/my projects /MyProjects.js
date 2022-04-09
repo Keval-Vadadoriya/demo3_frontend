@@ -39,7 +39,6 @@ const MyProjects = () => {
   const [projectName, setProjectName] = useState(false);
   const [addProject, setAddProject] = useState(false);
   const [page, setPage] = useState(1);
-  const token = useSelector((state) => state.login.token);
 
   const dispatch = useDispatch();
   const { projects, count } = useSelector((state) => state.project);
@@ -156,7 +155,12 @@ const MyProjects = () => {
               sx={{ backgroundColor: theme.palette.third.extra }}
             />
           </Stack>
-          <Dialog fullScreen={matches} open={addProject}>
+          <Dialog
+            fullScreen={matches}
+            open={addProject}
+            component="form"
+            onSubmit={SubmitHandler}
+          >
             <DialogTitle>Add Project</DialogTitle>
             <DialogContent>
               <DialogContentText>
@@ -166,6 +170,7 @@ const MyProjects = () => {
                 <Grid item xs={12}>
                   <TextField
                     autoFocus
+                    required
                     margin="dense"
                     id="Project Name"
                     label="Project Name"
@@ -177,7 +182,7 @@ const MyProjects = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    autoFocus
+                    required
                     margin="dense"
                     id="description"
                     label="Description"
@@ -189,7 +194,7 @@ const MyProjects = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    autoFocus
+                    required
                     margin="dense"
                     id="Amount"
                     label="amount"
@@ -200,7 +205,7 @@ const MyProjects = () => {
                   />
                 </Grid>
                 <Grid item xs={12} marginTop={2} marginBottom={2}>
-                  <FormControl fullWidth>
+                  <FormControl fullWidth required>
                     <Select
                       labelId="profession"
                       id="profession"
@@ -219,7 +224,7 @@ const MyProjects = () => {
                   </FormControl>
                 </Grid>
                 <Grid item xs={12} marginTop={2}>
-                  <FormControl fullWidth>
+                  <FormControl fullWidth required>
                     <Select
                       labelId="location"
                       id="location"
@@ -228,7 +233,7 @@ const MyProjects = () => {
                       onChange={changeLocationHandler}
                       variant="standard"
                     >
-                      <MenuItem value={"none"} disabled hidden>
+                      <MenuItem value={"none"} disabled>
                         {"Select Location"}
                       </MenuItem>
                       <MenuItem value={"surat"}>{"Surat"}</MenuItem>
@@ -242,7 +247,7 @@ const MyProjects = () => {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={SubmitHandler}>Submit</Button>
+              <Button type="submit">Submit</Button>
             </DialogActions>
           </Dialog>
         </Box>

@@ -12,32 +12,50 @@ const theme = createTheme({
   palette: {
     type: "light",
     primary: {
-      main: "#D4A59A",
+      main: "#5c6364",
+      // main: "#687864",
       light: "#F3E0DC",
-      dark: "#AAA0A0",
+      dark: "#5085A5",
+      // main: "#D4A59A",
+      // light: "#F3E0DC",
+      // dark: "#AAA0A0",
     },
     secondary: {
-      main: "#5C2018",
+      main: "#31708E",
 
       light: "#BC4639",
       dark: "#FFCCBC",
+      // main: "#5C2018",
+
+      // light: "#BC4639",
+      // dark: "#FFCCBC",
     },
     third: {
-      main: "#ffd7a3",
+      main: "#5c6364",
       light: "#F7F9FB",
-      extra: "#ffe8ca",
-      dark: "#705839",
+      extra: "#F7F9FB",
+      dark: "#5085A5",
+      // main: "#ffd7a3",
+      // light: "#F7F9FB",
+      // extra: "#ffe8ca",
+      // dark: "#705839",
     },
     fourth: {
       main: "#4285F4",
       light: "#f0fffd",
       dark: "#5DA2D5",
+      // main: "#4285F4",
+      // light: "#f0fffd",
+      // dark: "#5DA2D5",
     },
 
     fifth: {
       main: "#8FC1E3",
-      light: "#F7F9FB",
+      light: "#caeeff",
       dark: "#5085A5",
+      // main: "#8FC1E3",
+      // light: "#caeeff",
+      // dark: "#5085A5",
     },
   },
 });

@@ -23,7 +23,7 @@ function MyProjectCard({ project, onClick }) {
           "&:hover": {
             transform: "scale(1.05)",
             borderRadius: "40px",
-            backgroundColor: theme.palette.third.main,
+            backgroundColor: theme.palette.third.light,
           },
         }}
       >
@@ -68,7 +68,7 @@ function MyProjectCard({ project, onClick }) {
           >
             <Typography variant="body2" display="inline" color="black">
               Description
-            </Typography>{" "}
+            </Typography>
             :- {project.description}
           </Typography>
           <Typography
@@ -78,7 +78,7 @@ function MyProjectCard({ project, onClick }) {
           >
             <Typography variant="body2" display="inline" color="black">
               Money
-            </Typography>{" "}
+            </Typography>
             :- {project.money}
           </Typography>
         </CardContent>

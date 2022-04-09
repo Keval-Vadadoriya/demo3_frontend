@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
   link: {
     margin: "5px",
-    backgroundColor: theme.palette.fifth.light,
+    backgroundColor: theme.palette.third.light,
     color: "black",
     margin: 10,
     padding: 10,
@@ -326,7 +326,7 @@ const Header = () => {
                       p: 0,
                       size: "small",
                       padding: { xs: "2", md: "7px" },
-                      backgroundColor: theme.palette.fifth.light,
+                      backgroundColor: theme.palette.third.light,
                       "&:hover": { backgroundColor: theme.palette.third.main },
                       boxShadow: "5",
                     }}
@@ -376,15 +376,17 @@ const Header = () => {
                   sx={{
                     color: "black",
                     borderRadius: "10px",
-                    backgroundColor: theme.palette.fifth.light,
+                    backgroundColor: theme.palette.third.light,
                     width: "90px",
                     padding: "10px",
+                    fontFamily: "Arvo",
+                    textTransform: "capitalize",
                     "&:hover": {
                       backgroundColor: theme.palette.third.extra,
                     },
                   }}
                 >
-                  Login
+                  Sign In
                 </Button>
               </Box>
             )}

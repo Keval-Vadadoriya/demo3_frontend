@@ -43,11 +43,11 @@ const Profile = () => {
   const [contact, setContact] = useState("");
   const [newAvatar, setNewAvatar] = useState("");
   const [description, setDescription] = useState("");
-  const [age, setAge] = useState("");
-  const [profession, setProfession] = useState(user.profession);
+  const [age, setAge] = useState(0);
+  const [profession, setProfession] = useState("none");
   const [professionIsValid, setProfessionIsValid] = useState(false);
-  const [location, setLocation] = useState(user.location);
-  const [availability, setAvailability] = useState(user.availability);
+  const [location, setLocation] = useState("none");
+  const [availability, setAvailability] = useState("");
   const [locationIsValid, setLocationIsValid] = useState(false);
   const [OldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -60,6 +60,18 @@ const Profile = () => {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (Object.keys(user) !== 0) {
+      setName(user.name);
+      setEmail(user.email);
+      setDescription(user?.description);
+      setContact(user.contact ? user.contact : "NA");
+      setLocation(user.location);
+      setProfession(user.profession);
+      setAge(user.age);
+      setAvailability(user.availability);
+    }
+  }, [user]);
   useEffect(() => {
     if (status === "Saved Changes Successfully") {
       dispatch(
@@ -120,12 +132,10 @@ const Profile = () => {
       if (description) {
         formData.append("description", description);
       }
-      formData.append("availability", availability);
+      if (availability === true || availability === false)
+        formData.append("availability", availability);
     }
-    console.log(Object.keys(formData.values()).length);
-    for (var value of formData.values()) {
-      console.log(value);
-    }
+
     dispatch(editUser({ body: formData, role, userId }));
     setEdit(false);
   };
@@ -163,317 +173,340 @@ const Profile = () => {
     <>
       <Box
         sx={{
-          backgroundColor: theme.palette.primary.light,
+          backgroundColor: theme.palette.third.light,
           height: "91.5vh",
+          width: "100vw",
           overflowY: "scroll",
         }}
       >
-        <Container>
-          <Button
-            onClick={() => {
-              setEdit(!edit);
+        <Container
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            width: { xs: "100%", md: "70%" },
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-around",
+              alignItems: "space-around",
+              width: "100%",
             }}
           >
-            {edit ? "Cancel" : "Edit Profile"}
-          </Button>
-          {edit && <Button onClick={() => {}}>Discard Changes</Button>}
-          <Box
-            component="form"
-            encType="multipart/form-data"
-            onSubmit={SubmitHandler}
-          >
-            {status === "loading" && <p>Loading</p>}
-            {status !== "loading" && (
-              <>
-                {Object.keys(user).length !== 0 && (
-                  <Grid container rowSpacing={2} marginTop={5}>
-                    <Grid
-                      item
-                      xs={12}
-                      sx={{ display: "flex", justifyContent: "center" }}
-                    >
-                      <Badge
-                        color="secondary"
-                        invisible={!edit}
-                        badgeContent={
-                          <label htmlFor="contained-button-file">
-                            <Input
-                              disabled
-                              accept="image/*"
-                              id="contained-button-file"
-                              type="file"
-                              sx={{ display: "none" }}
-                              onChange={(event) =>
-                                setNewAvatar(event.target.files[0])
-                              }
-                            />
-                            <EditIcon />
-                          </label>
-                        }
-                      >
-                        <Avatar
-                          src={
-                            newAvatar && edit
-                              ? window.URL.createObjectURL(newAvatar)
-                              : `${process.env.REACT_APP_HOST}/${avatar}`
-                          }
-                          sx={{
-                            width: 100,
-                            height: 100,
-                          }}
-                        />
-                      </Badge>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        disabled={!edit}
-                        name="Name"
-                        label="Name"
-                        type="text"
-                        id="name"
-                        autoComplete="name"
-                        onChange={(event) => setName(event.target.value)}
-                        defaultValue={`${user.name ? user.name : ""}`}
-                      />
-                    </Grid>
-                    {role === "worker" && (
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          disabled={!edit}
-                          name="About You"
-                          label="About You"
-                          type="text"
-                          id="About You"
-                          autoComplete="About You"
-                          onChange={(event) =>
-                            setDescription(event.target.value)
-                          }
-                          defaultValue={`${
-                            user.description ? user.description : ""
-                          }`}
-                        />
-                      </Grid>
-                    )}
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        disabled={true}
-                        name="Email"
-                        label="Email"
-                        type="email"
-                        id="Email"
-                        autoComplete="Email"
-                        onChange={(event) => setEmail(event.target.value)}
-                        defaultValue={`${user.email ? user.email : ""}`}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        disabled={!edit}
-                        name="Contact"
-                        label="Contact"
-                        type="tel"
-                        inputProps={{
-                          pattern: "[6-9]{1}[0-9]{9}",
-                        }}
-                        id="Contact"
-                        autoComplete="Contact"
-                        onChange={(event) => setContact(event.target.value)}
-                        defaultValue={`${user.contact ? user.contact : ""}`}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        disabled={!edit}
-                        name="Age"
-                        label="Age"
-                        type="number"
-                        id="Age"
-                        autoComplete="Age"
-                        onChange={(event) => setAge(event.target.value)}
-                        defaultValue={`${user.age ? user.age : ""}`}
-                      />
-                    </Grid>
-                    {role === "worker" && (
-                      <Grid item xs={12}>
-                        <FormControl fullWidth>
-                          <InputLabel id="profession">Profession</InputLabel>
-                          <Select
-                            labelId="profession"
-                            id="profession"
-                            value={profession}
-                            disabled={!edit}
-                            label="Profession"
-                            defaultValue={`${user.profession}`}
-                            onChange={changeProfessionHandler}
-                          >
-                            <MenuItem value={"none"} disabled hidden>
-                              {"Select Profession"}
-                            </MenuItem>
-                            <MenuItem value={"carpenter"}>
-                              {"Carpenter"}
-                            </MenuItem>
-                            <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
-                            <MenuItem value={"electrician"}>
-                              {"Electrician"}
-                            </MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    )}
-                    {role === "worker" && (
-                      <Grid item xs={12}>
-                        <FormControl fullWidth>
-                          <InputLabel id="location">Location</InputLabel>
-                          <Select
-                            labelId="location"
-                            id="location"
-                            value={location}
-                            disabled={!edit}
-                            label="Location"
-                            defaultValue={user.location}
-                            onChange={changeLocationHandler}
-                          >
-                            <MenuItem value={"none"} disabled hidden>
-                              {"Select Location"}
-                            </MenuItem>
-                            <MenuItem value="surat">Surat</MenuItem>
-                            <MenuItem value="anand">Anand</MenuItem>
-                            <MenuItem value="vadodara">Vadodara</MenuItem>
-                            <MenuItem value="ahmedabad">Ahmedabad</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    )}
-                    {role === "worker" && (
-                      <Grid item xs={12}>
-                        <FormControl fullWidth>
-                          <InputLabel id="availability">
-                            Availability
-                          </InputLabel>
-                          <Select
-                            labelId="availability"
-                            id="availability"
-                            value={availability}
-                            disabled={!edit}
-                            label="Availability"
-                            defaultValue={user.availability}
-                            onChange={changeAvailabilityHandler}
-                          >
-                            <MenuItem value={"none"} disabled>
-                              {"Select Availability"}
-                            </MenuItem>
-                            <MenuItem value={true}>{"Available"}</MenuItem>
-                            <MenuItem value={false}>{"Not Available"}</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    )}
-
-                    <Button type="submit">Save Changes</Button>
-                  </Grid>
-                )}
-              </>
-            )}
-          </Box>
-          {role === "worker" && (
-            <Button onClick={() => setReview(true)}>Reviews</Button>
-          )}
-          <Button onClick={() => setChangePassword(true)}>
-            Change Password
-          </Button>
-
-          <Dialog
-            fullScreen
-            TransitionComponent={Transition}
-            open={review}
-            onClose={handleClose}
-            scroll="paper"
-            aria-labelledby="scroll-dialog-title"
-            aria-describedby="scroll-dialog-description"
-          >
-            <DialogTitle id="scroll-dialog-title">Reviews</DialogTitle>
-            <DialogContent dividers={true}>
-              <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
-                <Review workerId={userId} />
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                marginBottom: 2,
+            <Button
+              onClick={() => {
+                setEdit(!edit);
               }}
             >
-              <Button onClick={handleClose}>Cancel</Button>
-            </DialogActions>
-          </Dialog>
-          <Dialog
-            fullScreen={matches}
-            open={changePassword}
-            onClose={handlePasswordClose}
-            sx={{
-              "& .MuiDialog-container": {
-                // backgroundColor: "#808080",
-                color: "green",
-                "& .MuiPaper-root": {
-                  // backgroundColor: "#808080",
-                  borderRadius: "20px",
-                  width: "100%",
-                  maxWidth: "500px", // Set your width here
-                },
-              },
-            }}
-          >
-            <DialogTitle>Change Password</DialogTitle>
+              {edit ? "Discard Changes" : "Edit Profile"}
+            </Button>
+            {role === "worker" && (
+              <Button onClick={() => setReview(true)}>Reviews</Button>
+            )}
+            <Button onClick={() => setChangePassword(true)}>
+              Change Password
+            </Button>
+          </Box>
+          {/* {edit && <Button onClick={() => {}}>Discard Changes</Button>} */}
+          {status !== "loading" && (
+            <Box
+              component="form"
+              encType="multipart/form-data"
+              onSubmit={SubmitHandler}
+            >
+              {user && Object.keys(user).length !== 0 && (
+                <Grid container rowSpacing={2} marginTop={5}>
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{ display: "flex", justifyContent: "center" }}
+                  >
+                    <Badge
+                      color="secondary"
+                      invisible={!edit}
+                      badgeContent={
+                        <label htmlFor="contained-button-file">
+                          <Input
+                            accept="image/*"
+                            id="contained-button-file"
+                            type="file"
+                            sx={{ display: "none" }}
+                            onChange={(event) =>
+                              setNewAvatar(event.target.files[0])
+                            }
+                          />
 
-            <DialogContent>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Old Password"
-                type="text"
-                fullWidth
-                variant="standard"
-                onChange={(event) => setOldPassword(event.target.value)}
-              />
-              <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="New Password"
-                type="text"
-                fullWidth
-                variant="standard"
-                onChange={(event) => setNewPassword(event.target.value)}
-              />
-              <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Confirm Password"
-                type="text"
-                fullWidth
-                variant="standard"
-                onChange={(event) =>
-                  setPasswordIsValid(newPassword === event.target.value)
-                }
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handlePasswordClose}>Cancel</Button>
-              <Button onClick={SubmitHandler} disabled={!passwordIsValid}>
-                Change
-              </Button>
-            </DialogActions>
-          </Dialog>
+                          <EditIcon sx={{ cursor: "pointer" }} />
+                        </label>
+                      }
+                    >
+                      <Avatar
+                        src={
+                          newAvatar && edit
+                            ? window.URL.createObjectURL(newAvatar)
+                            : `${process.env.REACT_APP_HOST}/${avatar}`
+                        }
+                        sx={{
+                          width: 100,
+                          height: 100,
+                        }}
+                      />
+                    </Badge>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      disabled={!edit}
+                      value={edit ? name : user.name}
+                      name="Name"
+                      label="Name"
+                      type="text"
+                      id="name"
+                      //             InputProps={{
+                      //   classes:{
+                      //     root: classes.inputRoot,
+                      //     disabled: classes.disabled
+                      //   }
+                      // }}
+                      autoComplete="name"
+                      onChange={(event) => setName(event.target.value)}
+                      // defaultValue={`${user.name ? user.name : ""}`}
+                    />
+                  </Grid>
+                  {role === "worker" && (
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        multiline
+                        disabled={!edit}
+                        value={edit ? description : user.description}
+                        name="About You"
+                        label="About You"
+                        type="text"
+                        id="About You"
+                        autoComplete="About You"
+                        onChange={(event) => setDescription(event.target.value)}
+                        // defaultValue={`${
+                        //   user.description ? user.description : ""
+                        // }`}
+                      />
+                    </Grid>
+                  )}
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      disabled={true}
+                      value={edit ? email : user.email}
+                      name="Email"
+                      label="Email"
+                      type="email"
+                      id="Email"
+                      autoComplete="Email"
+                      onChange={(event) => setEmail(event.target.value)}
+                      // defaultValue={`${user.email ? user.email : ""}`}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      disabled={!edit}
+                      name="Contact"
+                      value={
+                        edit ? contact : user.contact ? user.contact : "NA"
+                      }
+                      label="Contact"
+                      type="tel"
+                      inputProps={{
+                        pattern: "[6-9]{1}[0-9]{9}",
+                      }}
+                      id="Contact"
+                      autoComplete="Contact"
+                      onChange={(event) => setContact(event.target.value)}
+                      // defaultValue={`${user.contact ? user.contact : ""}`}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      disabled={!edit}
+                      value={edit ? age : user.age}
+                      name="Age"
+                      label="Age"
+                      type="number"
+                      id="Age"
+                      autoComplete="Age"
+                      onChange={(event) => setAge(event.target.value)}
+                      // defaultValue={`${user.age ? user.age : ""}`}
+                    />
+                  </Grid>
+                  {role === "worker" && (
+                    <Grid item xs={12}>
+                      <FormControl fullWidth>
+                        <InputLabel id="profession">Profession</InputLabel>
+                        <Select
+                          labelId="profession"
+                          id="profession"
+                          value={edit ? profession : user.profession}
+                          disabled={!edit}
+                          label="Profession"
+                          // defaultValue={`${user.profession}`}
+                          onChange={changeProfessionHandler}
+                        >
+                          <MenuItem value={"none"} disabled hidden>
+                            {"Select Profession"}
+                          </MenuItem>
+                          <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
+                          <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
+                          <MenuItem value={"electrician"}>
+                            {"Electrician"}
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  )}
+                  {role === "worker" && (
+                    <Grid item xs={12}>
+                      <FormControl fullWidth>
+                        <InputLabel id="location">Location</InputLabel>
+                        <Select
+                          labelId="location"
+                          id="location"
+                          value={edit ? location : user.location}
+                          disabled={!edit}
+                          label="Location"
+                          // defaultValue={user.location}
+                          onChange={changeLocationHandler}
+                        >
+                          <MenuItem value={"none"} disabled hidden>
+                            {"Select Location"}
+                          </MenuItem>
+                          <MenuItem value="surat">Surat</MenuItem>
+                          <MenuItem value="anand">Anand</MenuItem>
+                          <MenuItem value="vadodara">Vadodara</MenuItem>
+                          <MenuItem value="ahmedabad">Ahmedabad</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  )}
+                  {role === "worker" && (
+                    <Grid item xs={12}>
+                      <FormControl fullWidth>
+                        <InputLabel id="availability">Availability</InputLabel>
+                        <Select
+                          labelId="availability"
+                          id="availability"
+                          value={edit ? availability : user.availability}
+                          disabled={!edit}
+                          label="Availability"
+                          // defaultValue={user.availability}
+                          onChange={changeAvailabilityHandler}
+                        >
+                          <MenuItem value={"none"} disabled>
+                            {"Select Availability"}
+                          </MenuItem>
+                          <MenuItem value={true}>{"Available"}</MenuItem>
+                          <MenuItem value={false}>{"Not Available"}</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  )}
+
+                  <Button type="submit" sx={{ margin: "5px" }}>
+                    Save Changes
+                  </Button>
+                </Grid>
+              )}
+            </Box>
+          )}
         </Container>
       </Box>
+      <Dialog
+        fullScreen
+        TransitionComponent={Transition}
+        open={review}
+        onClose={handleClose}
+        scroll="paper"
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+      >
+        <DialogTitle id="scroll-dialog-title">Reviews</DialogTitle>
+        <DialogContent dividers={true}>
+          <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
+            <Review workerId={userId} />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: 2,
+          }}
+        >
+          <Button onClick={handleClose}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        fullScreen={matches}
+        open={changePassword}
+        onClose={handlePasswordClose}
+        sx={{
+          "& .MuiDialog-container": {
+            // backgroundColor: "#808080",
+            color: "green",
+            "& .MuiPaper-root": {
+              // backgroundColor: "#808080",
+              borderRadius: "20px",
+              width: "100%",
+              maxWidth: "500px", // Set your width here
+            },
+          },
+        }}
+      >
+        <DialogTitle>Change Password</DialogTitle>
+
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Old Password"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={(event) => setOldPassword(event.target.value)}
+          />
+          <TextField
+            margin="dense"
+            id="name"
+            label="New Password"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={(event) => setNewPassword(event.target.value)}
+          />
+          <TextField
+            margin="dense"
+            id="name"
+            label="Confirm Password"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={(event) =>
+              setPasswordIsValid(newPassword === event.target.value)
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handlePasswordClose}>Cancel</Button>
+          <Button onClick={SubmitHandler} disabled={!passwordIsValid}>
+            Change
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

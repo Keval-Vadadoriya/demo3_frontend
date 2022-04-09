@@ -183,91 +183,104 @@ const LoginForm = () => {
   const matches = useMediaQuery("(max-width:600px)");
   return (
     <>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
+      <Box
+        sx={{
+          // marginTop: 8,
+          height: "92.5vh",
+          width: "100vw",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundImage: "url(https://wallpaperaccess.com/full/2581470.jpg)",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "100% 100%",
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign In
+        </Typography>
         <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
+          component="form"
+          noValidate
+          onSubmit={onSubmitHandler}
+          sx={{ mt: 3, width: { xs: "80%", md: "auto" } }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign In
-          </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={onSubmitHandler}
-            sx={{ mt: 3 }}
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                required
+                error={!emailIsValid}
+                color="success"
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                onChange={changeEmailHandler}
+                sx={{ backgroundColor: theme.palette.third.light }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                error={!passwordIsValid}
+                color="success"
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="new-password"
+                onChange={changePasswordHandler}
+                sx={{ backgroundColor: theme.palette.third.light }}
+              />
+            </Grid>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{
+              mt: 3,
+              mb: 2,
+              color: theme.palette.secondary.main,
+              backgroundColor: theme.palette.third.extra,
+              "&:hover": {
+                backgroundColor: theme.palette.secondary.main,
+                color: theme.palette.third.light,
+              },
+            }}
           >
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  error={!emailIsValid}
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  onChange={changeEmailHandler}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  error={!passwordIsValid}
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                  onChange={changePasswordHandler}
-                />
-              </Grid>
+            Sign In
+          </Button>
+          <Grid container justifyContent="space-around">
+            <Grid item>
+              <Typography
+                variant="body2"
+                onClick={forgotPasswordHandler}
+                color="blue"
+                sx={{
+                  "&:hover": {
+                    color: theme.palette.secondary.main,
+                    cursor: "pointer",
+                  },
+                }}
+              >
+                forgot password
+              </Typography>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{
-                mt: 3,
-                mb: 2,
-                color: theme.palette.secondary.main,
-                backgroundColor: theme.palette.third.extra,
-                "&:hover": {
-                  backgroundColor: theme.palette.secondary.main,
-                  color: theme.palette.third.light,
-                },
-              }}
-            >
-              Sign In
-            </Button>
-            <Grid container justifyContent="space-around">
-              <Grid item>
-                <Typography
-                  variant="body2"
-                  onClick={forgotPasswordHandler}
-                  color="blue"
-                >
-                  forgot password
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="body2" component={Link} to={"/signup"}>
-                  don't have an account? Sign up
-                </Typography>
-              </Grid>
+            <Grid item>
+              <Typography variant="body2" component={Link} to={"/signup"}>
+                don't have an account? Sign up
+              </Typography>
             </Grid>
-          </Box>
+          </Grid>
         </Box>
-      </Container>
+      </Box>
 
       {/* Verify User Dialog */}
       <Dialog fullscreen={matches} open={open} onClose={handleVerifyUserClose}>
@@ -279,6 +292,7 @@ const LoginForm = () => {
           </DialogContentText>
           <TextField
             autoFocus
+            required
             margin="dense"
             id="name"
             label="Email Address"
@@ -307,6 +321,7 @@ const LoginForm = () => {
           </DialogContentText>
           <TextField
             autoFocus
+            required
             margin="dense"
             id="Otp"
             label="Otp"
@@ -316,7 +331,7 @@ const LoginForm = () => {
             onChange={changeOtpHandler}
           />
           <TextField
-            autoFocus
+            required
             margin="dense"
             id="name"
             label="New Password"
@@ -326,7 +341,7 @@ const LoginForm = () => {
             onChange={changeForgotPasswordHandler}
           />
           <TextField
-            autoFocus
+            required
             margin="dense"
             id="name"
             label="Confirm Password"
@@ -351,10 +366,10 @@ const LoginForm = () => {
         <DialogTitle>Forgot Password</DialogTitle>
         <DialogContent>
           <DialogContentText>Please Enter Your Email Address</DialogContentText>
-          <DialogContentText>{errorMessage}</DialogContentText>
 
           <TextField
             autoFocus
+            required
             margin="dense"
             id="Email"
             label="Email"

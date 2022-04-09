@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       transform: "scale(1.03)",
       borderRadius: "30px",
-      backgroundColor: theme.palette.third.main,
+      backgroundColor: theme.palette.third.light,
     },
   },
 }));

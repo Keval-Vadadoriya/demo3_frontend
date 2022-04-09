@@ -2,14 +2,15 @@ import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getWorker } from "../../store/actions/workers-action";
 import { useDispatch, useSelector } from "react-redux";
-import { Box, Typography, Avatar, Rating } from "@mui/material";
+import { Box, Typography, Avatar, Rating, Grid } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import { makeStyles } from "@mui/styles";
+import { textAlign } from "@mui/system";
 const useStyles = makeStyles((theme) => ({
   link: {
     margin: "5px",
-    backgroundColor: theme.palette.fifth.light,
-    color: "black",
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.third.light,
     margin: 10,
     padding: 10,
     borderRadius: 5,
@@ -17,8 +18,21 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     textDecoration: "none",
     "&:hover": {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: theme.palette.third.light,
+      color: theme.palette.secondary.main,
     },
+  },
+  grid: {
+    minWidth: { xs: 300, md: 500 },
+
+    margin: "5px",
+    borderRadius: "10px",
+    backgroundColor: theme.palette.third.extra,
+  },
+  gridItem: {
+    display: "flex",
+    // alignItems: "center",
+    justifyContent: "center",
   },
 }));
 function WorkerProfile() {
@@ -39,27 +53,48 @@ function WorkerProfile() {
     <Box
       sx={{
         display: "flex",
+        justifyContent: "flex-start",
         alignItems: "center",
-        justifyContent: "center",
         flexDirection: "column",
         height: "91.5vh",
-        overflow: "scroll",
-        backgroundColor: theme.palette.primary.main,
+        overflowY: "scroll",
+        backgroundColor: theme.palette.third.extra,
       }}
     >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          backgroundColor: theme.palette.third.extra,
+        }}
+      >
+        <Typography
+          component={Link}
+          className={classes.link}
+          to={`review/${workerid.workerid}`}
+        >
+          Reviews
+        </Typography>
+        <Typography
+          className={classes.link}
+          component={Link}
+          to={`/home/chats/${workerid.workerid}`}
+        >
+          Chat
+        </Typography>
+      </Box>
       {worker && (
         <Box
           sx={{
             borderRadius: "20px",
-            minWidth: "300px",
-            maxWidth: "350px",
-            margin: "20px",
-            marginTop: "200px",
+            marginTop: "20px",
+            minWidth: { xs: "330px", md: "500px" },
+            maxWidth: { xs: "370px", md: "900px" },
+            // maxHeight: "700px",
             padding: "5px",
             boxShadow: `5px 5px 10px grey`,
             backgroundColor: theme.palette.third.light,
-            // transition: "all 0.5s ease",
-            // "&:hover": { transform: "scale(1.1)" },
           }}
         >
           <Box
@@ -73,9 +108,10 @@ function WorkerProfile() {
             <Avatar
               src={`${process.env.REACT_APP_HOST}/${worker.avatar}`}
               sx={{
-                minWidth: "200px",
-                minHeight: "200px",
-                height: "auto",
+                minWidth: "150px",
+                minHeight: "150px",
+                maxWidth: "200px",
+                maxHeight: "200px",
                 boxShadow: `0px 0px 10px ${
                   worker.availability === false ? "rgb(247, 130, 35)" : "green"
                 }`,
@@ -85,211 +121,236 @@ function WorkerProfile() {
               sx={{
                 alignSelf: "flex-start",
                 marginTop: "20px",
+                minWidth: { xs: "300px", md: "450px" },
+                maxWidth: { xs: "300px", md: "900px" },
               }}
             >
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
+              <Grid
+                container
+                className={classes.grid}
+                // sx={{ width: { xs: "300px", md: "450px" } }}
               >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                fontFamily="Roboto"
-                fontSize="25px"
-              >
-                {worker.name}
-              </Typography>
-              <Rating value={worker.review} readOnly />
+                <Grid item xs={4} className={classes.gridItem}>
+                  <Typography
+                    variant="body1"
+                    display="inline"
+                    color={theme.palette.secondary.main}
+                  >
+                    Name
+                  </Typography>
+                </Grid>
+                <Grid item xs={1} className={classes.gridItem}>
+                  :-
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    fontFamily="Roboto"
+                    fontSize="20px"
+                  >
+                    {worker.name}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid container className={classes.grid}>
+                <Grid item xs={4} className={classes.gridItem}>
+                  <Typography
+                    variant="body1"
+                    display="inline"
+                    color={theme.palette.secondary.main}
+                  >
+                    Rating
+                  </Typography>
+                </Grid>
+                <Grid item xs={1} className={classes.gridItem}>
+                  :-
+                </Grid>
+                <Grid item xs={7}>
+                  <Rating value={worker.review} readOnly />
+                </Grid>
+              </Grid>
 
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontFamily="Roboto"
-                fontSize="20px"
-              >
-                {worker.profession}
-              </Typography>
-              <Typography
-                variant="body2"
-                fontFamily="Roboto"
-                fontSize="20px"
-                color={worker.availability === true ? "green" : "red"}
-              >
-                {worker.availability === true ? "Available" : "Not Available"}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontFamily="Roboto"
-                fontSize="20px"
-              >
-                {worker.location}
-              </Typography>
+              <Grid container className={classes.grid}>
+                <Grid item xs={4} className={classes.gridItem}>
+                  <Typography
+                    variant="body1"
+                    display="inline"
+                    color={theme.palette.secondary.main}
+                  >
+                    Profession
+                  </Typography>
+                </Grid>
+                <Grid item xs={1} className={classes.gridItem}>
+                  :-
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    fontFamily="Roboto"
+                    fontSize="20px"
+                  >
+                    {worker.profession}
+                  </Typography>
+                </Grid>
+              </Grid>
 
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontFamily="Roboto"
-                fontSize="20px"
-              >
-                {worker.contact}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontFamily="Roboto"
-                fontSize="20px"
-              >
-                {worker.email}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontFamily="Roboto"
-                fontSize="20px"
-              >
-                {worker.age}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontFamily="Roboto"
-                fontSize="20px"
-              >
-                {worker.description}
-              </Typography>
+              <Grid container className={classes.grid}>
+                <Grid item xs={4} className={classes.gridItem}>
+                  <Typography
+                    variant="body1"
+                    display="inline"
+                    color={theme.palette.secondary.main}
+                  >
+                    Status
+                  </Typography>
+                </Grid>
+                <Grid item xs={1} className={classes.gridItem}>
+                  :-
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography
+                    variant="body1"
+                    fontFamily="Roboto"
+                    fontSize="20px"
+                    color={worker.availability === true ? "green" : "red"}
+                  >
+                    {worker.availability === true
+                      ? "Available"
+                      : "Not Available"}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <Grid container className={classes.grid}>
+                <Grid item xs={4} className={classes.gridItem}>
+                  <Typography
+                    variant="body1"
+                    display="inline"
+                    color={theme.palette.secondary.main}
+                  >
+                    Location
+                  </Typography>
+                </Grid>
+                <Grid item xs={1} className={classes.gridItem}>
+                  :-
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    fontFamily="Roboto"
+                    fontSize="20px"
+                  >
+                    {worker.location}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <Grid container className={classes.grid}>
+                <Grid item xs={4} className={classes.gridItem}>
+                  <Typography
+                    variant="body1"
+                    display="inline"
+                    color={theme.palette.secondary.main}
+                  >
+                    Contact
+                  </Typography>
+                </Grid>
+                <Grid item xs={1} className={classes.gridItem}>
+                  :-
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    fontFamily="Roboto"
+                    fontSize="20px"
+                  >
+                    {worker.contact}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <Grid container className={classes.grid}>
+                <Grid item xs={4} className={classes.gridItem}>
+                  <Typography
+                    variant="body1"
+                    display="inline"
+                    color={theme.palette.secondary.main}
+                  >
+                    Email
+                  </Typography>
+                </Grid>
+                <Grid item xs={1} className={classes.gridItem}>
+                  :-
+                </Grid>
+                <Grid item xs={7}>
+                  {" "}
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    fontFamily="Roboto"
+                    fontSize="20px"
+                  >
+                    {worker.email}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <Grid container className={classes.grid}>
+                <Grid item xs={4} className={classes.gridItem}>
+                  <Typography
+                    variant="body1"
+                    display="inline"
+                    color={theme.palette.secondary.main}
+                  >
+                    Age
+                  </Typography>
+                </Grid>
+                <Grid item xs={1} className={classes.gridItem}>
+                  :-
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    fontFamily="Roboto"
+                    fontSize="20px"
+                  >
+                    {worker.age}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid container className={classes.grid}>
+                <Grid item xs={4} className={classes.gridItem}>
+                  <Typography
+                    variant="body1"
+                    display="inline"
+                    color={theme.palette.secondary.main}
+                  >
+                    About
+                  </Typography>
+                </Grid>
+                <Grid item xs={1} className={classes.gridItem}>
+                  :-
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    fontFamily="Roboto"
+                    fontSize="20px"
+                  >
+                    {worker.description}
+                  </Typography>
+                </Grid>
+              </Grid>
             </Box>
           </Box>
         </Box>
       )}
-      <Typography
-        component={Link}
-        className={classes.link}
-        to={`review/${workerid.workerid}`}
-      >
-        Reviews
-      </Typography>
-      <Typography
-        className={classes.link}
-        component={Link}
-        to={`/home/chats/${workerid.workerid}`}
-      >
-        Chat
-      </Typography>
     </Box>
   );
 }

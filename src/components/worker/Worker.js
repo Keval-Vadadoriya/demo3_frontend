@@ -132,7 +132,7 @@ const Worker = () => {
         sx={{
           display: "flex",
           flexDirection: { xs: "column", sm: "row" },
-          backgroundColor: theme.palette.primary.main,
+          backgroundColor: theme.palette.fifth.light,
         }}
       >
         <Box
@@ -186,7 +186,6 @@ const Worker = () => {
               display: "flex",
               flexWrap: "wrap",
               flexDirection: { xs: "column", md: "row" },
-              flexWrap: "wrap",
             }}
           >
             {workerList}

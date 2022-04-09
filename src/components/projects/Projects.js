@@ -129,7 +129,7 @@ const Projects = () => {
             backgroundColor: {
               xs: theme.palette.third.extra,
             },
-            height: { xs: "80px", md: "100%" },
+            height: { xs: "80px", md: "98%" },
             width: { xs: "100%", md: "auto" },
             margin: { xs: 0, md: 0 },
             padding: { xs: 0, md: 2 },

@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     margin: 5,
     padding: 10,
     borderRadius: 20,
-    backgroundColor: theme.palette.fourth.light,
+    backgroundColor: theme.palette.third.extra,
     "&:hover": {
       backgroundColor: "rgb(87, 87, 87)",
       textColor: "white",
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     position: "sticky",
     top: "65px",
     zIndex: "1",
-    backgroundColor: theme.palette.fourth.light,
+    backgroundColor: theme.palette.third.extra,
   },
 }));
 const Chat = () => {
@@ -141,7 +141,7 @@ const Chat = () => {
           item
           xs={12}
           md={9}
-          sx={{ backgroundColor: theme.palette.fourth.light }}
+          sx={{ backgroundColor: theme.palette.third.extra }}
         >
           <Outlet />
         </Grid>

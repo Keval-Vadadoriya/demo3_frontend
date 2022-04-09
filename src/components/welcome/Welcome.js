@@ -14,8 +14,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundImage:
-      "url(https://www.fulltimenomad.com/wp-content/uploads/2017/03/What-is-Upwork.jpg)",
+    backgroundImage: "url(https://wallpaperaccess.com/full/2581470.jpg)",
+    // backgroundImage:
+    //   "url(https://www.fulltimenomad.com/wp-content/uploads/2017/03/What-is-Upwork.jpg)",
     backgroundRepeat: "no-repeat",
     // objectFit: "cover",
     backgroundSize: "100% 100%",
@@ -57,19 +58,36 @@ function Welcome() {
       <Box className={classes.container}>
         <Grid container>
           <Grid item xs={12}>
-            <Slide direction="up" in={true}>
-              <Typography className={classes.welcome}>
+            <Slide direction="down" in={true} timeout={3000}>
+              <Typography
+                className={classes.welcome}
+                sx={{ fontFamily: "Arvo" }}
+              >
                 Welcome To EasyWork
               </Typography>
             </Slide>
           </Grid>
           <Grid item xs={12} className={classes.buttons}>
-            <Button onClick={setRole} value="worker" className={classes.button}>
-              Want To Work?
-            </Button>
-            <Button onClick={setRole} value="user" className={classes.button}>
-              Looking For Worker?
-            </Button>
+            <Slide direction="up" in={true} timeout={3000}>
+              <Button
+                onClick={setRole}
+                value="worker"
+                className={classes.button}
+                sx={{ fontFamily: "Arvo", textTransform: "capitalize" }}
+              >
+                Want To Work?
+              </Button>
+            </Slide>
+            <Slide direction="up" in={true} timeout={3000}>
+              <Button
+                onClick={setRole}
+                value="user"
+                className={classes.button}
+                sx={{ fontFamily: "Arvo", textTransform: "capitalize" }}
+              >
+                Looking For Worker?
+              </Button>
+            </Slide>
           </Grid>
         </Grid>
       </Box>
