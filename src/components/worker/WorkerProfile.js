@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
     margin: "5px",
     borderRadius: "10px",
-    backgroundColor: theme.palette.third.extra,
+    backgroundColor: theme.palette.fifth.light,
   },
   gridItem: {
     display: "flex",

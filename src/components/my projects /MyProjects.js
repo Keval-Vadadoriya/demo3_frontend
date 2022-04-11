@@ -81,7 +81,7 @@ const MyProjects = () => {
   };
   const handleChange = (event, value) => {
     setPage(value);
-    dispatch(getMyProjects({ skip: (value - 1) * 3 }));
+    dispatch(getMyProjects({ skip: (value - 1) * 10 }));
   };
   const SubmitHandler = (event) => {
     event.preventDefault();
@@ -112,7 +112,7 @@ const MyProjects = () => {
     setDescription(event.target.value);
   };
   const removeProjectHandler = (projectId) => {
-    if (window.confirm("Are You Sure?")) {
+    if (window.confirm("Are You Sure You Want to Remove Project?")) {
       dispatch(removeProject({ projectId }));
       dispatch(getMyProjects({ skip: 0 }));
     }
@@ -143,11 +143,24 @@ const MyProjects = () => {
             flexDirection: "column",
           }}
         >
-          <Button onClick={addProjectHandler}>Add a New Project</Button>
+          <Button
+            onClick={addProjectHandler}
+            sx={{
+              color: "white",
+              backgroundColor: theme.palette.secondary.main,
+              width: "150px",
+              alignSelf: "center",
+              margin: "5px",
+              padding: "10px",
+              fontSize: "15px",
+            }}
+          >
+            Post Project
+          </Button>
           {projectList && projectList}
           <Stack spacing={2} alignSelf="center">
             <Pagination
-              count={Math.ceil(count / 3)}
+              count={Math.ceil(count / 10)}
               page={page}
               onChange={handleChange}
               variant="outlined"
@@ -161,7 +174,15 @@ const MyProjects = () => {
             component="form"
             onSubmit={SubmitHandler}
           >
-            <DialogTitle>Add Project</DialogTitle>
+            <DialogTitle
+              sx={{
+                backgroundColor: theme.palette.secondary.main,
+                color: theme.palette.third.light,
+                fontFamily: "Arvo",
+              }}
+            >
+              Add Project
+            </DialogTitle>
             <DialogContent>
               <DialogContentText>
                 Please enter following details to add new project.
@@ -183,6 +204,7 @@ const MyProjects = () => {
                 <Grid item xs={12}>
                   <TextField
                     required
+                    multiline
                     margin="dense"
                     id="description"
                     label="Description"

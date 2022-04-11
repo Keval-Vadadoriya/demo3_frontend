@@ -14,8 +14,8 @@ function WorkerCard(props) {
       sx={{
         maxWidth: "500px",
         maxHeight: "500px",
-        minWidth: "210px",
-        minHeight: "210px",
+        minWidth: "240px",
+        minHeight: "240px",
         borderRadius: "20px",
         margin: "15px",
         padding: "5px",

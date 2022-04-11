@@ -9,6 +9,7 @@ import { Grid } from "@mui/material";
 const useStyles = makeStyles((theme) => ({
   container: {
     backgroundColor: "rgb(256, 256, 256)",
+    overflow: "hidden",
     height: "92.5vh",
     width: "100vw",
     display: "flex",

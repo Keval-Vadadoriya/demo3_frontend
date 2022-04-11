@@ -43,46 +43,55 @@ function ProjectCard({ project }) {
         >
           {project.project_name}
         </Typography>
+
+        <Typography variant="body2" display="inline" color="black">
+          Requirement
+        </Typography>
         <Typography
+          display="inline"
           variant="body2"
           color="text.secondary"
           sx={{ fontFamily: "Arvo", margin: "5px" }}
         >
-          <Typography variant="body2" display="inline" color="black">
-            Requirement
-          </Typography>
           :-
           {project.profession}
         </Typography>
+        <br />
+        <Typography variant="body2" display="inline" color="black">
+          Location
+        </Typography>
         <Typography
+          display="inline"
           variant="body2"
           color="text.secondary"
           sx={{ fontFamily: "Arvo", margin: "5px" }}
         >
-          <Typography variant="body2" display="inline" color="black">
-            Location
-          </Typography>
           :- {project.location}
         </Typography>
+        <br />
+        <Typography variant="body2" display="inline" color="black">
+          Description
+        </Typography>
         <Typography
+          display="inline"
           variant="body2"
           color="text.secondary"
           sx={{ wordBreak: "break-all", fontFamily: "Arvo", margin: "5px" }}
         >
-          <Typography variant="body2" display="inline" color="black">
-            Description
-          </Typography>{" "}
           :- {project.description}
         </Typography>
+        <br />
+        <Typography variant="body2" display="inline" color="black">
+          Pay
+        </Typography>
+
         <Typography
+          display="inline"
           variant="body2"
           color="text.secondary"
           sx={{ fontFamily: "Arvo", margin: "5px" }}
         >
-          <Typography variant="body2" display="inline" color="black">
-            Money
-          </Typography>{" "}
-          :- {project.money}
+          :- {project.money}$
         </Typography>
       </CardContent>
       <CardActions>

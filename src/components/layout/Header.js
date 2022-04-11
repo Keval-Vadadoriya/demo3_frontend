@@ -77,7 +77,7 @@ const Header = () => {
   const logoutHandler = () => {
     setAnchorElUser(null);
 
-    if (window.confirm("Are You Sure?")) {
+    if (window.confirm("Are You Sure,You Want to Logout?")) {
       localStorage.clear();
       dispatch(chatActions.reset());
       dispatch(myprojectActions.reset());
@@ -245,7 +245,7 @@ const Header = () => {
                     isActive
                       ? {
                           backgroundColor: theme.palette.third.main,
-                          color: theme.palette.secondary.main,
+                          color: theme.palette.third.light,
                           boxShadow: "2px 2px 2px  black",
                         }
                       : {}
@@ -264,7 +264,7 @@ const Header = () => {
                       isActive
                         ? {
                             backgroundColor: theme.palette.third.main,
-                            color: theme.palette.secondary.main,
+                            color: theme.palette.third.light,
                             boxShadow: "2px 2px 2px  black",
                           }
                         : {}
@@ -284,7 +284,7 @@ const Header = () => {
                       isActive
                         ? {
                             backgroundColor: theme.palette.third.main,
-                            color: theme.palette.secondary.main,
+                            color: theme.palette.third.light,
                             boxShadow: "2px 2px 2px  black",
                           }
                         : {}
@@ -304,7 +304,7 @@ const Header = () => {
                       isActive
                         ? {
                             backgroundColor: theme.palette.third.main,
-                            color: theme.palette.secondary.main,
+                            color: theme.palette.third.light,
                             boxShadow: "2px 2px 2px  black",
                           }
                         : {}

@@ -32,16 +32,13 @@ const useStyles = makeStyles((theme) => ({
     top: 0,
   },
   sendMessage: {
-    // position: "fixed",
     backgroundColor: theme.palette.secondary.main,
     position: "-webkit-sticky",
     position: "sticky",
     margin: 0,
     borderRadius: "5px",
     padding: "5px",
-    top: "calc(100vh-20px)",
     bottom: 0,
-    // backgroundColor: "white",
   },
   chats: {
     top: 0,
@@ -52,9 +49,7 @@ const useStyles = makeStyles((theme) => ({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     marginTop: 10,
-    // margin: "5px",
     "&::-webkit-scrollbar": {
-      // width: "5px",
       display: "none",
     },
     // "&::-webkit-scrollbar-track": {
@@ -67,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
     // },
   },
   chatList: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.extra,
     // marginTop: 5,
     // marginBottom: 10,
     overflow: "hidden",

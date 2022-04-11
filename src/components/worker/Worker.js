@@ -7,8 +7,6 @@ import WorkerFilter from "./WorkerFilter";
 import {
   Stack,
   Pagination,
-  CircularProgress,
-  Grid,
   Container,
   Box,
   useMediaQuery,
@@ -17,7 +15,6 @@ import {
   DialogContent,
   Button,
   DialogActions,
-  Fade,
   Slide,
 } from "@mui/material";
 
@@ -66,11 +63,11 @@ const Worker = () => {
           profession,
           review,
           availability,
-          skip: (value - 1) * 3,
+          skip: (value - 1) * 10,
         })
       );
     } else {
-      dispatch(getAllWorkers({ skip: (value - 1) * 3 }));
+      dispatch(getAllWorkers({ skip: (value - 1) * 10 }));
     }
   };
   const changeLocationHandler = (event) => {
@@ -97,7 +94,9 @@ const Worker = () => {
     event.preventDefault();
     setFiltered(true);
     setFilter(false);
-    dispatch(filterWorkers({ location, profession, review, availability }));
+    dispatch(
+      filterWorkers({ location, profession, review, availability, skip: 0 })
+    );
   };
 
   useEffect(async () => {
@@ -106,8 +105,8 @@ const Worker = () => {
   let workerList;
   if (workers) {
     workerList = workers.map((worker) => (
-      // <Grid item xs={12} md={4} key={worker._id}>
       <Box
+        key={worker._id}
         component={Link}
         to={`${worker._id}`}
         sx={{
@@ -122,7 +121,6 @@ const Worker = () => {
           review={worker.review}
         />
       </Box>
-      // </Grid>
     ));
   }
 
@@ -139,10 +137,11 @@ const Worker = () => {
           sx={{
             height: { xs: "auto", md: "91.5vh" },
             display: "flex",
-
+            position: { xs: "auto", md: "sticky" },
+            top: { xs: "60px", md: "70px" },
             flexDirection: "column",
             backgroundColor: {
-              xs: theme.palette.third.extra,
+              xs: theme.palette.third.light,
             },
           }}
         >
@@ -180,7 +179,6 @@ const Worker = () => {
             flexDirection: "column",
           }}
         >
-          {/* <Grid container> */}
           <Box
             sx={{
               display: "flex",
@@ -190,11 +188,10 @@ const Worker = () => {
           >
             {workerList}
           </Box>
-          {/* </Grid> */}
 
           <Stack spacing={2} sx={{}} alignSelf="center">
             <Pagination
-              count={Math.ceil(count / 3)}
+              count={Math.ceil(count / 10)}
               page={page}
               onChange={handleChange}
               variant="outlined"
@@ -206,8 +203,11 @@ const Worker = () => {
       </Box>
       <Dialog fullScreen={matches} open={filter} TransitionComponent={Slide}>
         <DialogTitle
-          backgroundColor={theme.palette.secondary.main}
-          sx={{ color: "white", fontFamily: "Arvo" }}
+          sx={{
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.third.light,
+            fontFamily: "Arvo",
+          }}
         >
           Filter Workers
         </DialogTitle>

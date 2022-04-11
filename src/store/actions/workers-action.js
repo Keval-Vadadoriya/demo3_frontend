@@ -12,7 +12,7 @@ export const getAllWorkers = createAsyncThunk(
   async ({ skip }, getState) => {
     try {
       const response = await baseService.get(
-        `/getallworkers?limit=9&&skip=${skip}`
+        `/getallworkers?limit=10&&skip=${skip}`
       );
 
       return response.data;
@@ -43,7 +43,7 @@ export const filterWorkers = createAsyncThunk(
           profession !== "none" ? `profession=${profession}&&` : ""
         }${review !== "none" ? `review=${review}&&` : ""}${
           availability !== "none" ? `availability=${availability}&&` : ""
-        }limit=3&&${skip ? `skip=${skip}` : ""}`
+        }limit=3&&skip=${skip}`
       );
 
       return response.data;

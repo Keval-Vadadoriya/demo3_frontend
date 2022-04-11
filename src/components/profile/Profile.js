@@ -65,7 +65,7 @@ const Profile = () => {
       setName(user.name);
       setEmail(user.email);
       setDescription(user?.description);
-      setContact(user.contact ? user.contact : "NA");
+      setContact(user.contact ? user.contact : "");
       setLocation(user.location);
       setProfession(user.profession);
       setAge(user.age);
@@ -315,9 +315,7 @@ const Profile = () => {
                       fullWidth
                       disabled={!edit}
                       name="Contact"
-                      value={
-                        edit ? contact : user.contact ? user.contact : "NA"
-                      }
+                      value={edit ? contact : user.contact ? user.contact : ""}
                       label="Contact"
                       type="tel"
                       inputProps={{
@@ -433,7 +431,15 @@ const Profile = () => {
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
       >
-        <DialogTitle id="scroll-dialog-title">Reviews</DialogTitle>
+        <DialogTitle
+          sx={{
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.third.light,
+            fontFamily: "Arvo",
+          }}
+        >
+          Reviews
+        </DialogTitle>
         <DialogContent dividers={true}>
           <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
             <Review workerId={userId} />
@@ -466,7 +472,15 @@ const Profile = () => {
           },
         }}
       >
-        <DialogTitle>Change Password</DialogTitle>
+        <DialogTitle
+          sx={{
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.third.light,
+            fontFamily: "Arvo",
+          }}
+        >
+          Change Password
+        </DialogTitle>
 
         <DialogContent>
           <TextField
@@ -474,7 +488,7 @@ const Profile = () => {
             margin="dense"
             id="name"
             label="Old Password"
-            type="text"
+            type="password"
             fullWidth
             variant="standard"
             onChange={(event) => setOldPassword(event.target.value)}
@@ -483,7 +497,7 @@ const Profile = () => {
             margin="dense"
             id="name"
             label="New Password"
-            type="text"
+            type="password"
             fullWidth
             variant="standard"
             onChange={(event) => setNewPassword(event.target.value)}
@@ -492,7 +506,7 @@ const Profile = () => {
             margin="dense"
             id="name"
             label="Confirm Password"
-            type="text"
+            type="password"
             fullWidth
             variant="standard"
             onChange={(event) =>

@@ -284,7 +284,15 @@ const LoginForm = () => {
 
       {/* Verify User Dialog */}
       <Dialog fullscreen={matches} open={open} onClose={handleVerifyUserClose}>
-        <DialogTitle>Verify Email</DialogTitle>
+        <DialogTitle
+          sx={{
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.third.light,
+            fontFamily: "Arvo",
+          }}
+        >
+          Verify Email
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
             To Verify email, please enter otp we have sent to your email address
@@ -314,7 +322,15 @@ const LoginForm = () => {
         open={verifyDialog}
         onClose={handleVerifyPasswordClose}
       >
-        <DialogTitle>Password Verification</DialogTitle>
+        <DialogTitle
+          sx={{
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.third.light,
+            fontFamily: "Arvo",
+          }}
+        >
+          Password Verification
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
             We have sent otp to your registered email address
@@ -363,7 +379,15 @@ const LoginForm = () => {
         open={forgotDialog}
         onClose={handleForgotClose}
       >
-        <DialogTitle>Forgot Password</DialogTitle>
+        <DialogTitle
+          sx={{
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.third.light,
+            fontFamily: "Arvo",
+          }}
+        >
+          Forgot Password
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>Please Enter Your Email Address</DialogContentText>
 

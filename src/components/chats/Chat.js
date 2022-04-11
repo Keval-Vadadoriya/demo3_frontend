@@ -17,21 +17,26 @@ const useStyles = makeStyles((theme) => ({
     top: 70,
     height: "91.5vh",
 
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.extra,
   },
   chatList: {
     boxSizing: "border-box",
     width: "100%",
+    height: "80vh",
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
     // maxWidth: 360,
+    overflow: "scroll",
     padding: 10,
   },
   chatListItem: {
     margin: 5,
     padding: 10,
     borderRadius: 20,
-    backgroundColor: theme.palette.third.extra,
+    backgroundColor: theme.palette.third.light,
     "&:hover": {
-      backgroundColor: "rgb(87, 87, 87)",
+      backgroundColor: theme.palette.third.extra,
       textColor: "white",
     },
   },
@@ -39,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 10,
     margin: "5px",
     padding: 5,
-    fontSize: 40,
+    fontSize: 30,
     marginLeft: 1,
     position: "sticky",
     top: "65px",
@@ -89,7 +94,7 @@ const Chat = () => {
           to={`/home/chats/${worker.user._id}`}
           className={classes.chatListItem}
           style={({ isActive }) =>
-            isActive ? { backgroundColor: theme.palette.third.dark } : {}
+            isActive ? { backgroundColor: theme.palette.fifth.light } : {}
           }
         >
           <ListItemAvatar>
@@ -126,7 +131,6 @@ const Chat = () => {
           md={3}
           sx={{
             display: { xs: page ? "auto" : "none", md: "block" },
-            // visibility:{ xs: page ? "visible" : "hidden", md: "visible" } ,
           }}
         >
           <Box className={classes.chat}>

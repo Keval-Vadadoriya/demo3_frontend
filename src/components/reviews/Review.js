@@ -169,15 +169,18 @@ const Review = (props) => {
                   margin: "10px",
                   backgroundColor: {
                     xs: theme.palette.third.light,
-                    md: theme.palette.primary.main,
+                    md: theme.palette.secondary.main,
                   },
                   padding: "10px",
                   borderRadius: "10px",
                 }}
               >
                 <Typography
-                  color={theme.palette.secondary.main}
                   sx={{
+                    color: {
+                      xs: theme.palette.secondary.main,
+                      md: theme.palette.third.light,
+                    },
                     paddingBottom: "5px",
                     marginBottom: "5px",
                     fontSize: { xs: "20px", md: "30px" },
@@ -215,6 +218,10 @@ const Review = (props) => {
                     display: "block",
                     marginTop: "5px",
                     color: theme.palette.secondary.main,
+                    "&:hover": {
+                      backgroundColor: theme.palette.fifth.light,
+                      color: theme.palette.secondary.main,
+                    },
                   }}
                 >
                   Submit

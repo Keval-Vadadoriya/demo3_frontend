@@ -374,7 +374,15 @@ const SignupForm = () => {
         </Box>
       </Box>
       <Dialog fullScreen={matches} open={open} onClose={handleClose}>
-        <DialogTitle>Email Verification</DialogTitle>
+        <DialogTitle
+          sx={{
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.third.light,
+            fontFamily: "Arvo",
+          }}
+        >
+          Email Verification
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
             To verify, please enter otp we have sent to your email address here.
@@ -383,8 +391,8 @@ const SignupForm = () => {
             required
             margin="dense"
             id="name"
-            label="Email Address"
-            type="email"
+            label="OTP"
+            type="text"
             fullWidth
             variant="standard"
             onChange={changeOtpHandler}

@@ -16,7 +16,7 @@ const ProjectFilter = (props) => {
       spacing={2}
       component="form"
       marginTop="1px"
-      onSubmit={props.filterWorkersBy}
+      onSubmit={props.filterProjectsBy}
     >
       <Grid item xs={12}>
         <FormControl fullWidth>

@@ -77,9 +77,9 @@ function MyProjectCard({ project, onClick }) {
             sx={{ fontFamily: "Arvo", margin: "5px" }}
           >
             <Typography variant="body2" display="inline" color="black">
-              Money
+              Pay
             </Typography>
-            :- {project.money}
+            :- {project.money}$
           </Typography>
         </CardContent>
         <CardActions>

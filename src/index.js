@@ -13,7 +13,8 @@ const theme = createTheme({
     type: "light",
     primary: {
       main: "#5c6364",
-      // main: "#687864",
+      extra: "#abc2a6",
+      // extra: "#687864",
       light: "#F3E0DC",
       dark: "#5085A5",
       // main: "#D4A59A",
@@ -33,7 +34,7 @@ const theme = createTheme({
     third: {
       main: "#5c6364",
       light: "#F7F9FB",
-      extra: "#F7F9FB",
+      extra: "#e1faff",
       dark: "#5085A5",
       // main: "#ffd7a3",
       // light: "#F7F9FB",

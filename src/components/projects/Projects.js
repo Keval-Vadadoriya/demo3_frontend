@@ -38,7 +38,6 @@ const Projects = () => {
   const [filter, setFilter] = useState(false);
 
   const dispatch = useDispatch();
-  const { status, errorMessage } = useSelector((state) => state.workerslist);
   const { projects, count } = useSelector((state) => state.project);
 
   const changeSortHandler = (event) => {
@@ -61,11 +60,11 @@ const Projects = () => {
           location,
           profession,
           sort,
-          skip: (value - 1) * 3,
+          skip: (value - 1) * 10,
         })
       );
     } else {
-      dispatch(getAllProjects({ skip: (value - 1) * 3 }));
+      dispatch(getAllProjects({ skip: (value - 1) * 10 }));
     }
   };
   const changeLocationHandler = (event) => {
@@ -91,11 +90,13 @@ const Projects = () => {
     );
     setFiltered(false);
   };
-  const filterProjectsBy = async (event) => {
+  const filterProjectsBy = (event) => {
+    console.log("first");
     event.preventDefault();
     setFiltered(true);
     setFilter(false);
     dispatch(filterProjects({ location, profession, sort, skip: 0 }));
+    console.log("second");
   };
 
   useEffect(async () => {
@@ -113,29 +114,27 @@ const Projects = () => {
       <Box
         sx={{
           display: "flex",
-          alignItems: "baseline",
-          backgroundColor: theme.palette.primary.main,
           flexDirection: { xs: "column", md: "row" },
-          height: "92.5vh",
-          width: "100%",
+          backgroundColor: theme.palette.primary.main,
+          width: { xs: "100%", md: "99%" },
         }}
       >
         <Box
           sx={{
-            minWidth: 300,
-            maxWidth: { xs: "100%", md: 200 },
-            boxSizing: "border-box",
+            height: { xs: "80px", md: "90vh" },
             display: "flex",
-            backgroundColor: {
-              xs: theme.palette.third.extra,
-            },
-            height: { xs: "80px", md: "98%" },
-            width: { xs: "100%", md: "auto" },
-            margin: { xs: 0, md: 0 },
-            padding: { xs: 0, md: 2 },
             justifyContent: { xs: "center", md: "flex-start" },
             alignItems: { xs: "center", md: "flex-start" },
             flexDirection: { xs: "row", md: "column" },
+            position: { xs: "auto", md: "sticky" },
+            top: { xs: "0", md: "79px" },
+            minWidth: 300,
+            maxWidth: { xs: "100%", md: 200 },
+            boxSizing: "border-box",
+            backgroundColor: {
+              xs: theme.palette.third.extra,
+            },
+            padding: { xs: 0, md: 2 },
           }}
         >
           <Button
@@ -153,7 +152,15 @@ const Projects = () => {
             Filter
           </Button>
           <Dialog fullScreen={matches} open={filter}>
-            <DialogTitle backgroundColor="orange">Filter By</DialogTitle>
+            <DialogTitle
+              sx={{
+                backgroundColor: theme.palette.secondary.main,
+                color: theme.palette.third.light,
+                fontFamily: "Arvo",
+              }}
+            >
+              Filter By
+            </DialogTitle>
             <DialogContent>
               <ProjectFilter
                 profession={profession}
@@ -233,19 +240,18 @@ const Projects = () => {
         </Box>
         <Box
           sx={{
-            // overflow: "scroll",
             display: "flex",
             width: "100%",
-
             flexDirection: "column",
-            justifyContent: "center",
+            justifyContent: "flex-start",
+            paddingTop: { xs: "10px", md: "0" },
           }}
         >
           {projectList}
 
           <Stack spacing={2} sx={{ alignSelf: "center" }}>
             <Pagination
-              count={Math.ceil(count / 3)}
+              count={Math.ceil(count / 10)}
               page={page}
               onChange={handleChange}
               variant="outlined"
