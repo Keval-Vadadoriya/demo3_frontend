@@ -9,10 +9,10 @@ const initialState = {
 };
 export const getAllWorkers = createAsyncThunk(
   "workers/getAllWorkers",
-  async ({ skip }, getState) => {
+  async ({ search, skip }, getState) => {
     try {
       const response = await baseService.get(
-        `/getallworkers?limit=10&&skip=${skip}`
+        `/getallworkers/${search}?limit=10&&skip=${skip}`
       );
 
       return response.data;

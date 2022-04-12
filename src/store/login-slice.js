@@ -75,7 +75,12 @@ const loginSlice = createSlice({
       state.status = action.payload.status;
     },
     reset() {
-      return initialState;
+      return {
+        status: "idle",
+        errorMessage: "",
+        token: "",
+        role: "",
+      };
     },
   },
   extraReducers: {

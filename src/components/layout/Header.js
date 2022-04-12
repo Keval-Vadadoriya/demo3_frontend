@@ -6,6 +6,9 @@ import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/styles";
 import logo from "../../logo.jpg";
+import ChatSharpIcon from "@mui/icons-material/ChatSharp";
+import EngineeringIcon from "@mui/icons-material/Engineering";
+import AssignmentRoundedIcon from "@mui/icons-material/AssignmentRounded";
 import {
   AppBar,
   Box,
@@ -38,8 +41,6 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     borderTopLeftRadius: "25px",
     borderBottomRightRadius: "25px",
-    // borderRadius: 3,
-    // boxShadow: "0 3px 5px 2px rgba(255, 105, 135)",
     color: "black",
     height: 48,
     padding: "0 30px",
@@ -57,8 +58,21 @@ const useStyles = makeStyles((theme) => ({
   },
   appbar: (theme) => ({
     backgroundColor: theme.palette.secondary.main,
-    // backgroundColor: theme.palette.primary.main,
+    display: "flex",
   }),
+  icon: {
+    backgroundColor: theme.palette.third.light,
+
+    margin: "5px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "50px",
+    width: "50px",
+    borderRadius: "25px",
+    transition: "all 0.5s ease",
+    "&:hover": { transform: "scale(1.1)" },
+  },
 }));
 const Header = () => {
   const theme = useTheme();
@@ -172,7 +186,7 @@ const Header = () => {
                     <MenuItem
                       key={"chats"}
                       component={Link}
-                      to={`/home/chats`}
+                      to={`/chats`}
                       onClick={handleCloseNavMenu}
                     >
                       Chats
@@ -181,7 +195,7 @@ const Header = () => {
                       <MenuItem
                         key={"workers"}
                         component={Link}
-                        to={`/home/workers`}
+                        to={`/workers`}
                         onClick={handleCloseNavMenu}
                       >
                         Workers
@@ -191,7 +205,7 @@ const Header = () => {
                       <MenuItem
                         key={"projects"}
                         component={Link}
-                        to={`/home/projects`}
+                        to={`/projects`}
                         onClick={handleCloseNavMenu}
                       >
                         Projects
@@ -201,7 +215,7 @@ const Header = () => {
                       <MenuItem
                         key={"myprojects"}
                         component={Link}
-                        to={`/home/myprojects`}
+                        to={`/myprojects`}
                         onClick={handleCloseNavMenu}
                       >
                         MyProjects
@@ -233,37 +247,20 @@ const Header = () => {
                     borderBottom: 1,
                     borderColor: "divider",
                   },
+                  justifyContent: "flex-end",
+                  paddingRight: "100px",
                   textDecoration: "none",
                 }}
               >
-                <Typography
-                  variant="h5"
-                  component={NavLink}
-                  to={"/home/chats"}
-                  className={classes.link}
-                  style={({ isActive }) =>
-                    isActive
-                      ? {
-                          backgroundColor: theme.palette.third.main,
-                          color: theme.palette.third.light,
-                          boxShadow: "2px 2px 2px  black",
-                        }
-                      : {}
-                  }
-                  sx={{ textDecoration: "none" }}
-                >
-                  Chats
-                </Typography>
-                {role === "user" && (
-                  <Typography
-                    variant="h5"
+                <Tooltip title="Chats">
+                  <Box
                     component={NavLink}
-                    className={classes.link}
-                    to={"/home/workers"}
+                    to={"/chats"}
+                    className={classes.icon}
                     style={({ isActive }) =>
                       isActive
                         ? {
-                            backgroundColor: theme.palette.third.main,
+                            backgroundColor: theme.palette.secondary.dark,
                             color: theme.palette.third.light,
                             boxShadow: "2px 2px 2px  black",
                           }
@@ -271,48 +268,79 @@ const Header = () => {
                     }
                     sx={{ textDecoration: "none" }}
                   >
-                    Workers
-                  </Typography>
+                    <ChatSharpIcon
+                      sx={{ color: theme.palette.secondary.main }}
+                    />
+                  </Box>
+                </Tooltip>
+                {role === "user" && (
+                  <Tooltip title="Workers">
+                    <Box
+                      component={NavLink}
+                      to={"/workers"}
+                      className={classes.icon}
+                      style={({ isActive }) =>
+                        isActive
+                          ? {
+                              backgroundColor: theme.palette.secondary.dark,
+                              color: theme.palette.third.light,
+                              boxShadow: "2px 2px 2px  black",
+                            }
+                          : {}
+                      }
+                      sx={{ textDecoration: "none" }}
+                    >
+                      <EngineeringIcon
+                        sx={{ color: theme.palette.secondary.main }}
+                      />
+                    </Box>
+                  </Tooltip>
                 )}
                 {role === "user" && (
-                  <Typography
-                    variant="h5"
-                    component={NavLink}
-                    className={classes.link}
-                    to={"/home/myprojects"}
-                    style={({ isActive }) =>
-                      isActive
-                        ? {
-                            backgroundColor: theme.palette.third.main,
-                            color: theme.palette.third.light,
-                            boxShadow: "2px 2px 2px  black",
-                          }
-                        : {}
-                    }
-                    sx={{ textDecoration: "none" }}
-                  >
-                    MyProjects
-                  </Typography>
+                  <Tooltip title="My Projects">
+                    <Box
+                      component={NavLink}
+                      to={"/myprojects"}
+                      className={classes.icon}
+                      style={({ isActive }) =>
+                        isActive
+                          ? {
+                              backgroundColor: theme.palette.secondary.dark,
+                              color: theme.palette.third.light,
+                              boxShadow: "2px 2px 2px  black",
+                            }
+                          : {}
+                      }
+                      sx={{ textDecoration: "none" }}
+                    >
+                      <AssignmentRoundedIcon
+                        sx={{ color: theme.palette.secondary.main }}
+                      />
+                    </Box>
+                  </Tooltip>
                 )}
                 {role === "worker" && (
-                  <Typography
-                    variant="h5"
-                    component={NavLink}
-                    className={classes.link}
-                    to={"/home/projects"}
-                    style={({ isActive }) =>
-                      isActive
-                        ? {
-                            backgroundColor: theme.palette.third.main,
-                            color: theme.palette.third.light,
-                            boxShadow: "2px 2px 2px  black",
-                          }
-                        : {}
-                    }
-                    sx={{ textDecoration: "none" }}
-                  >
-                    Projects
-                  </Typography>
+                  <Tooltip title="Projects">
+                    <Box
+                      component={NavLink}
+                      to={"/projects"}
+                      className={classes.icon}
+                      style={({ isActive }) =>
+                        isActive
+                          ? {
+                              backgroundColor: theme.palette.secondary.dark,
+                              color: theme.palette.third.light,
+                              boxShadow: "2px 2px 2px  black",
+                            }
+                          : {}
+                      }
+                      sx={{ textDecoration: "none" }}
+                    >
+                      <AssignmentRoundedIcon
+                        sx={{ color: theme.palette.secondary.main }}
+                      />
+                    </Box>
+                  </Tooltip>
                 )}
               </Box>
             )}
@@ -359,7 +387,7 @@ const Header = () => {
                 >
                   <MenuItem
                     component={Link}
-                    to={"/home/profile"}
+                    to={"/profile"}
                     onClick={handleCloseUserMenu}
                   >
                     Profile

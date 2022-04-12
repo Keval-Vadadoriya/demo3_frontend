@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     color: "white",
     fontSize: 20,
     padding: 5,
-    borderRadius: 10,
+    // borderRadius: 10,
     position: "-webkit-sticky",
     position: "sticky",
     top: 0,
@@ -42,12 +42,10 @@ const useStyles = makeStyles((theme) => ({
   },
   chats: {
     top: 0,
+    marginLeft: "20px",
+    marginRight: "20px",
     height: "90vh",
     overflowY: "scroll",
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
     marginTop: 10,
     "&::-webkit-scrollbar": {
       display: "none",
@@ -63,9 +61,11 @@ const useStyles = makeStyles((theme) => ({
   },
   chatList: {
     backgroundColor: theme.palette.primary.extra,
-    // marginTop: 5,
-    // marginBottom: 10,
-    overflow: "hidden",
+    height: "77vh",
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+    overflowY: "scroll",
   },
   message: {
     margin: 10,
@@ -230,85 +230,90 @@ function Chats() {
   }
   return (
     <Box className={classes.chats}>
-      <Container>
-        <Grid container>
-          <Grid item xs={12} className={classes.chatOwner}>
-            <Button
-              onClick={() => {
-                dispatch(snackbarActions.setPage({ page: true }));
-                navigate(-1);
+      {/* <Container
+        sx={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      > */}
+      <Grid container>
+        <Grid item xs={12} className={classes.chatOwner}>
+          <Button
+            onClick={() => {
+              dispatch(snackbarActions.setPage({ page: true }));
+              navigate("/chats");
+            }}
+          >
+            <ArrowBackIosIcon sx={{ color: "white" }} />
+          </Button>
+          <Box
+            component={Link}
+            to={role === "user" ? `/workers/${receiverId.workerid}` : ""}
+            sx={{ display: "flex", textDecoration: "none" }}
+          >
+            <Avatar
+              src={`${process.env.REACT_APP_HOST}/${chatsOwner?.avatar}`}
+              sx={{ marginLeft: 0 }}
+            />
+            <Typography
+              sx={{
+                display: "inline",
+                marginLeft: 3,
+                fontSize: 25,
+                color: "white",
               }}
             >
-              <ArrowBackIosIcon sx={{ color: "white" }} />
-            </Button>
-            <Box
-              component={Link}
-              to={role === "user" ? `/home/workers/${receiverId.workerid}` : ""}
-              sx={{ display: "flex", textDecoration: "none" }}
-            >
-              <Avatar
-                src={`${process.env.REACT_APP_HOST}/${chatsOwner?.avatar}`}
-                sx={{ marginLeft: 0 }}
-              />
-              <Typography
-                sx={{
-                  display: "inline",
-                  marginLeft: 3,
-                  fontSize: 25,
-                  color: "white",
-                }}
-              >
-                {chatsOwner && chatsOwner.name}
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12}>
-            <Box className={classes.chatList}>{messageList && messageList}</Box>
-            <Box ref={messagesEndRef} />
-          </Grid>
-
-          <Grid
-            item
-            xs={12}
-            component="form"
-            onSubmit={sendMessageHandler}
-            className={classes.sendMessage}
-          >
-            <Grid container>
-              <Grid item xs={10} md={11}>
-                <FormControl fullWidth>
-                  <TextField
-                    autoComplete="message"
-                    name="Message"
-                    required
-                    variant="filled"
-                    fullWidth
-                    id="Message"
-                    label="Message"
-                    autoFocus
-                    value={message}
-                    onChange={changeMessageHandler}
-                    sx={{
-                      // color: "black",
-                      backgroundColor: "white",
-                      borderRadius: "5px",
-                      color: "black",
-                      "& label.Mui-focused": {
-                        color: theme.palette.secondary.main,
-                      },
-                    }}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={1}>
-                <Button type="submit">
-                  <SendIcon fontSize="large" sx={{ color: "white" }} />
-                </Button>
-              </Grid>
-            </Grid>
-          </Grid>
+              {chatsOwner && chatsOwner.name}
+            </Typography>
+          </Box>
         </Grid>
-      </Container>
+        <Grid item xs={12} sx={{ height: { xs: "77vh", md: "77vh" } }}>
+          <Box className={classes.chatList}>
+            {messageList && messageList}
+            <Box ref={messagesEndRef} />
+          </Box>
+        </Grid>
+      </Grid>
+      <Grid
+        container
+        xs={12}
+        component="form"
+        onSubmit={sendMessageHandler}
+        className={classes.sendMessage}
+      >
+        <Grid item xs={10} md={11}>
+          <FormControl fullWidth>
+            <TextField
+              autoComplete="message"
+              name="Message"
+              required
+              variant="filled"
+              fullWidth
+              id="Message"
+              label="Message"
+              autoFocus
+              value={message}
+              onChange={changeMessageHandler}
+              sx={{
+                // color: "black",
+                backgroundColor: "white",
+                borderRadius: "5px",
+                color: "black",
+                "& label.Mui-focused": {
+                  color: theme.palette.secondary.main,
+                },
+              }}
+            />
+          </FormControl>
+        </Grid>
+        <Grid item xs={1}>
+          <Button type="submit">
+            <SendIcon fontSize="large" sx={{ color: "white" }} />
+          </Button>
+        </Grid>
+      </Grid>
+      {/* </Container> */}
     </Box>
   );
 }

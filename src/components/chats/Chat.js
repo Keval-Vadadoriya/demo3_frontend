@@ -14,8 +14,8 @@ import { makeStyles, useTheme } from "@mui/styles";
 const useStyles = makeStyles((theme) => ({
   chat: {
     position: "sticky",
-    top: 70,
-    height: "91.5vh",
+    top: 60,
+    height: "92.5vh",
 
     backgroundColor: theme.palette.primary.extra,
   },
@@ -41,15 +41,16 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   userName: {
-    borderRadius: 10,
-    margin: "5px",
+    // borderRadius: 10,
+    // margin: "5px",
     padding: 5,
     fontSize: 30,
-    marginLeft: 1,
+    // marginLeft: 1,
     position: "sticky",
     top: "65px",
     zIndex: "1",
-    backgroundColor: theme.palette.third.extra,
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.third.light,
   },
 }));
 const Chat = () => {
@@ -91,7 +92,7 @@ const Chat = () => {
         <ListItem
           key={worker._id}
           component={NavLink}
-          to={`/home/chats/${worker.user._id}`}
+          to={`/chats/${worker.user._id}`}
           className={classes.chatListItem}
           style={({ isActive }) =>
             isActive ? { backgroundColor: theme.palette.fifth.light } : {}
@@ -124,32 +125,36 @@ const Chat = () => {
 
   return (
     <Fragment>
-      <Grid container sx={{ height: { xs: "91vh", md: "91.5vh" } }}>
-        <Grid
-          item
-          xs={12}
-          md={3}
-          sx={{
-            display: { xs: page ? "auto" : "none", md: "block" },
-          }}
-        >
-          <Box className={classes.chat}>
-            <Box className={classes.userName}>{user.name}</Box>
-            <List dense className={classes.chatList}>
-              {chatListUi && chatListUi}
-            </List>
-          </Box>
-        </Grid>
+      <Box sx={{ height: { xs: "91vh", md: "92.5vh" } }}>
+        <Grid container>
+          <Grid
+            item
+            xs={12}
+            md={3}
+            sx={{
+              display: { xs: page ? "auto" : "none", md: "block" },
+            }}
+          >
+            <Box className={classes.chat}>
+              <Box className={classes.userName}>{user.name}</Box>
+              <List dense className={classes.chatList}>
+                {chatListUi && chatListUi}
+              </List>
+            </Box>
+          </Grid>
 
-        <Grid
-          item
-          xs={12}
-          md={9}
-          sx={{ backgroundColor: theme.palette.third.extra }}
-        >
-          <Outlet />
+          <Grid
+            item
+            xs={12}
+            md={9}
+            sx={{
+              backgroundColor: "gray",
+            }}
+          >
+            <Outlet />
+          </Grid>
         </Grid>
-      </Grid>
+      </Box>
     </Fragment>
   );
 };

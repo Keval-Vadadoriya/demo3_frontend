@@ -209,6 +209,9 @@ const Review = (props) => {
                       color: theme.palette.secondary.main,
                     },
                   }}
+                  InputProps={{
+                    disableUnderline: true,
+                  }}
                 />
 
                 <Button

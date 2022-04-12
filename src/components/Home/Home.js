@@ -1,10 +1,11 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { loginActions } from "../../store/login-slice";
 import { Box } from "@mui/system";
 
 const Home = () => {
+  const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const socket = useSelector((state) => state.socket.socket);
@@ -14,12 +15,22 @@ const Home = () => {
     socket.emit("setId", userId);
   }
   useEffect(() => {
-    if (role === "user") {
-      navigate("/home/workers");
+    if (location.pathname === "/") {
+      if (role === "user") {
+        navigate("/workers");
+      }
+      if (role === "worker") {
+        navigate("/projects");
+      }
     }
-    if (role === "worker") {
-      navigate("/home/projects");
-    }
+  }, [location]);
+  useEffect(() => {
+    // if (role === "user") {
+    //   navigate("/workers");
+    // }
+    // if (role === "worker") {
+    //   navigate("/projects");
+    // }
     return () => {
       localStorage.clear();
       socket.disconnect(userId);

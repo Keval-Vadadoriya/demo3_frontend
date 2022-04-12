@@ -7,8 +7,8 @@ const initialState = {
   user: {},
 };
 
-export const editUser = createAsyncThunk(
-  "user/editUser",
+export const editProfile = createAsyncThunk(
+  "user/editProfile",
   async ({ body, role, userId }, getState) => {
     try {
       const response = await baseService.patch(
@@ -51,16 +51,16 @@ const userSlice = createSlice({
     },
   },
   extraReducers: {
-    [editUser.fulfilled]: (state, action) => {
+    [editProfile.fulfilled]: (state, action) => {
       state.status = "Saved Changes Successfully";
       state.errorMessage = "";
       state.user = action.payload;
     },
-    [editUser.pending]: (state, action) => {
+    [editProfile.pending]: (state, action) => {
       state.errorMessage = "";
       state.status = "loading";
     },
-    [editUser.rejected]: (state, action) => {
+    [editProfile.rejected]: (state, action) => {
       state.status = "failed";
       state.errorMessage = action.error.message;
     },

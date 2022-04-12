@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import EditIcon from "@mui/icons-material/Edit";
-import { editUser, userActions } from "../../store/user-slice";
+import { editProfile, userActions } from "../../store/user-slice";
 import Review from "../reviews/Review";
 import React from "react";
 import {
@@ -98,10 +98,22 @@ const Profile = () => {
     }
   }, [errorMessage]);
 
+  //change password
+  const updatePassword = () => {
+    setChangePassword(false);
+    const formData = new FormData();
+    if (passwordIsValid) {
+      formData.append("password", OldPassword);
+      formData.append("newpassword", newPassword);
+    }
+    dispatch(editProfile({ body: formData, role, userId }));
+    setEdit(false);
+  };
+
   //Submit Handler
   const SubmitHandler = (event) => {
     event.preventDefault();
-    setChangePassword(false);
+    // setChangePassword(false);
     const formData = new FormData();
     if (newAvatar) {
       formData.append("avatar", newAvatar);
@@ -118,10 +130,6 @@ const Profile = () => {
     if (age) {
       formData.append("age", age);
     }
-    if (passwordIsValid) {
-      formData.append("password", OldPassword);
-      formData.append("newpassword", newPassword);
-    }
     if (role === "worker") {
       if (profession) {
         formData.append("profession", profession);
@@ -136,7 +144,7 @@ const Profile = () => {
         formData.append("availability", availability);
     }
 
-    dispatch(editUser({ body: formData, role, userId }));
+    dispatch(editProfile({ body: formData, role, userId }));
     setEdit(false);
   };
 
@@ -195,23 +203,41 @@ const Profile = () => {
               justifyContent: "space-around",
               alignItems: "space-around",
               width: "100%",
+              marginTop: { xs: "10px", md: "20px" },
             }}
           >
             <Button
               onClick={() => {
                 setEdit(!edit);
               }}
+              sx={{
+                fontSize: "18px",
+                textTransform: "capitalize",
+              }}
             >
               {edit ? "Discard Changes" : "Edit Profile"}
             </Button>
             {role === "worker" && (
-              <Button onClick={() => setReview(true)}>Reviews</Button>
+              <Button
+                onClick={() => setReview(true)}
+                sx={{
+                  fontSize: "18px",
+                  textTransform: "capitalize",
+                }}
+              >
+                Reviews
+              </Button>
             )}
-            <Button onClick={() => setChangePassword(true)}>
+            <Button
+              onClick={() => setChangePassword(true)}
+              sx={{
+                fontSize: "18px",
+                textTransform: "capitalize",
+              }}
+            >
               Change Password
             </Button>
           </Box>
-          {/* {edit && <Button onClick={() => {}}>Discard Changes</Button>} */}
           {status !== "loading" && (
             <Box
               component="form"
@@ -219,11 +245,14 @@ const Profile = () => {
               onSubmit={SubmitHandler}
             >
               {user && Object.keys(user).length !== 0 && (
-                <Grid container rowSpacing={2} marginTop={5}>
+                <Grid container rowSpacing={2} marginTop={{ xs: 0, md: 3 }}>
                   <Grid
                     item
                     xs={12}
-                    sx={{ display: "flex", justifyContent: "center" }}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
                   >
                     <Badge
                       color="secondary"
@@ -257,6 +286,11 @@ const Profile = () => {
                       />
                     </Badge>
                   </Grid>
+                  {edit && (
+                    <Grid item xs={12} textAlign="center" color="gray">
+                      Maximum Size Allowed 1Mb
+                    </Grid>
+                  )}
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
@@ -266,15 +300,8 @@ const Profile = () => {
                       label="Name"
                       type="text"
                       id="name"
-                      //             InputProps={{
-                      //   classes:{
-                      //     root: classes.inputRoot,
-                      //     disabled: classes.disabled
-                      //   }
-                      // }}
                       autoComplete="name"
                       onChange={(event) => setName(event.target.value)}
-                      // defaultValue={`${user.name ? user.name : ""}`}
                     />
                   </Grid>
                   {role === "worker" && (
@@ -290,9 +317,6 @@ const Profile = () => {
                         id="About You"
                         autoComplete="About You"
                         onChange={(event) => setDescription(event.target.value)}
-                        // defaultValue={`${
-                        //   user.description ? user.description : ""
-                        // }`}
                       />
                     </Grid>
                   )}
@@ -307,7 +331,6 @@ const Profile = () => {
                       id="Email"
                       autoComplete="Email"
                       onChange={(event) => setEmail(event.target.value)}
-                      // defaultValue={`${user.email ? user.email : ""}`}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -321,10 +344,14 @@ const Profile = () => {
                       inputProps={{
                         pattern: "[6-9]{1}[0-9]{9}",
                       }}
+                      helperText={
+                        edit
+                          ? "contact should start with number 6-9 and contain 10 digits"
+                          : ""
+                      }
                       id="Contact"
                       autoComplete="Contact"
                       onChange={(event) => setContact(event.target.value)}
-                      // defaultValue={`${user.contact ? user.contact : ""}`}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -516,7 +543,7 @@ const Profile = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handlePasswordClose}>Cancel</Button>
-          <Button onClick={SubmitHandler} disabled={!passwordIsValid}>
+          <Button onClick={updatePassword} disabled={!passwordIsValid}>
             Change
           </Button>
         </DialogActions>

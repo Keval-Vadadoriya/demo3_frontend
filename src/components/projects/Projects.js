@@ -19,16 +19,33 @@ import {
   DialogContentText,
   DialogTitle,
   useMediaQuery,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
+import { SearchTwoTone } from "@mui/icons-material";
 
 import {
   filterProjects,
   getAllProjects,
 } from "../../store/actions/project-actions";
 import { useTheme } from "@mui/styles";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles((theme) => ({
+  searchBar: {
+    width: "95%",
+    marginTop: "10px",
+    marginLeft: "10px",
+    padding: "10px",
+    borderRadius: "20px",
+    outline: "none",
+    backgroundColor: theme.palette.third.light,
+  },
+}));
 
 const Projects = () => {
   const theme = useTheme();
+  const classes = useStyles();
   const matches = useMediaQuery("(max-width:600px)");
   const [location, setLocation] = useState("none");
   const [profession, setProfession] = useState("none");
@@ -64,7 +81,7 @@ const Projects = () => {
         })
       );
     } else {
-      dispatch(getAllProjects({ skip: (value - 1) * 10 }));
+      dispatch(getAllProjects({ search: "null", skip: (value - 1) * 10 }));
     }
   };
   const changeLocationHandler = (event) => {
@@ -91,16 +108,14 @@ const Projects = () => {
     setFiltered(false);
   };
   const filterProjectsBy = (event) => {
-    console.log("first");
     event.preventDefault();
     setFiltered(true);
     setFilter(false);
     dispatch(filterProjects({ location, profession, sort, skip: 0 }));
-    console.log("second");
   };
 
-  useEffect(async () => {
-    dispatch(getAllProjects({ skip: 0 }));
+  useEffect(() => {
+    dispatch(getAllProjects({ search: "null", skip: 0 }));
   }, []);
   let projectList;
   if (projects) {
@@ -108,6 +123,15 @@ const Projects = () => {
       <ProjectCard project={project} key={project._id} />
     ));
   }
+
+  //search
+  const searchHandler = (event) => {
+    if (event.target.value === "") {
+      dispatch(getAllProjects({ search: "null", skip: 0 }));
+    } else {
+      dispatch(getAllProjects({ search: event.target.value, skip: 0 }));
+    }
+  };
 
   return (
     <Fragment>
@@ -247,6 +271,20 @@ const Projects = () => {
             paddingTop: { xs: "10px", md: "0" },
           }}
         >
+          <TextField
+            placeholder="Search Project"
+            className={classes.searchBar}
+            variant="standard"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchTwoTone />
+                </InputAdornment>
+              ),
+              disableUnderline: true,
+            }}
+            onChange={searchHandler}
+          />
           {projectList}
 
           <Stack spacing={2} sx={{ alignSelf: "center" }}>

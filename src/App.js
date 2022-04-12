@@ -37,12 +37,11 @@ function App() {
         <Header />
         <Routes>
           {!token && <Route path="/" element={<Welcome />} />}
-          {token && <Route path="/" element={<Navigate to="home" />} />}
 
           <Route path="/signup" element={<SignupForm />} />
           <Route path="/login" element={<LoginForm />} />
           {token && (
-            <Route path="/home" element={<Home />}>
+            <Route path="/" element={<Home />}>
               <Route path="profile" element={<Profile />} />
               <Route path="chats" element={<Chat />}>
                 <Route path=":workerid" element={<Chats />} />
@@ -72,9 +71,7 @@ function App() {
               </Route>
             </Route>
           )}
-          {!token && (
-            <Route path="/home/*" element={<Navigate to="/login" />} />
-          )}
+          {!token && <Route path="/*" element={<Navigate to="/login" />} />}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Box>

@@ -146,7 +146,7 @@ const LoginForm = () => {
       (status === "Login Successful" ||
         verifyStatus === "Verification Successful")
     ) {
-      navigate("/home");
+      navigate("/");
     }
   }, [token, status, verifyStatus]);
 
@@ -195,6 +195,7 @@ const LoginForm = () => {
           backgroundImage: "url(https://wallpaperaccess.com/full/2581470.jpg)",
           backgroundRepeat: "no-repeat",
           backgroundSize: "100% 100%",
+          backdropFilter: "brightness(50%)",
         }}
       >
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
@@ -214,7 +215,9 @@ const LoginForm = () => {
               <TextField
                 required
                 error={!emailIsValid}
+                helperText={!emailIsValid ? "Please Enter Valid Email" : ""}
                 color="success"
+                helperText=""
                 fullWidth
                 id="email"
                 label="Email Address"
@@ -232,6 +235,9 @@ const LoginForm = () => {
                 color="success"
                 name="password"
                 label="Password"
+                helperText={
+                  !passwordIsValid ? "Minimum 7 characters required" : ""
+                }
                 type="password"
                 id="password"
                 autoComplete="new-password"

@@ -40,46 +40,52 @@ function MyProjectCard({ project, onClick }) {
           >
             {project.project_name}
           </Typography>
+          <Typography variant="body2" display="inline" color="black">
+            Requirement :-
+          </Typography>
           <Typography
             variant="body2"
+            display="inline"
             color="text.secondary"
             sx={{ fontFamily: "Arvo", margin: "5px" }}
           >
-            <Typography variant="body2" display="inline" color="black">
-              Requirement
-            </Typography>
-            :-
             {project.profession}
           </Typography>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ fontFamily: "Arvo", margin: "5px" }}
-          >
-            <Typography variant="body2" display="inline" color="black">
-              Location
-            </Typography>
-            :- {project.location}
+          <br />
+          <Typography variant="body2" display="inline" color="black">
+            Location :-
           </Typography>
           <Typography
             variant="body2"
+            display="inline"
+            color="text.secondary"
+            sx={{ fontFamily: "Arvo", margin: "5px" }}
+          >
+            {project.location}
+          </Typography>
+          <br />
+          <Typography variant="body2" display="inline" color="black">
+            Description :-
+          </Typography>
+          <Typography
+            variant="body2"
+            display="inline"
             color="text.secondary"
             sx={{ wordBreak: "break-all", fontFamily: "Arvo", margin: "5px" }}
           >
-            <Typography variant="body2" display="inline" color="black">
-              Description
-            </Typography>
-            :- {project.description}
+            {project.description}
+          </Typography>
+          <br />
+          <Typography variant="body2" display="inline" color="black">
+            Pay :-
           </Typography>
           <Typography
             variant="body2"
+            display="inline"
             color="text.secondary"
             sx={{ fontFamily: "Arvo", margin: "5px" }}
           >
-            <Typography variant="body2" display="inline" color="black">
-              Pay
-            </Typography>
-            :- {project.money}$
+            {project.money}$
           </Typography>
         </CardContent>
         <CardActions>

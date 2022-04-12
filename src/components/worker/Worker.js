@@ -16,6 +16,8 @@ import {
   Button,
   DialogActions,
   Slide,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 
 import {
@@ -24,9 +26,21 @@ import {
   filterWorkers,
 } from "../../store/actions/workers-action";
 import { useTheme } from "@mui/styles";
+import { makeStyles } from "@mui/styles";
+import { SearchTwoTone } from "@mui/icons-material";
+const useStyles = makeStyles((theme) => ({
+  searchBar: {
+    marginTop: "10px",
+    padding: "10px",
+    borderRadius: "20px",
+    outline: "none",
+    backgroundColor: theme.palette.third.light,
+  },
+}));
 
 const Worker = () => {
   const theme = useTheme();
+  const classes = useStyles();
   const matches = useMediaQuery("(max-width:600px)");
   const [location, setLocation] = useState("none");
   const [profession, setProfession] = useState("none");
@@ -35,6 +49,7 @@ const Worker = () => {
   const [filtered, setFiltered] = useState(false);
   const [filter, setFilter] = useState(false);
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
   const dispatch = useDispatch();
   const { status, workers, count, errorMessage } = useSelector(
@@ -67,7 +82,7 @@ const Worker = () => {
         })
       );
     } else {
-      dispatch(getAllWorkers({ skip: (value - 1) * 10 }));
+      dispatch(getAllWorkers({ search: "null", skip: (value - 1) * 10 }));
     }
   };
   const changeLocationHandler = (event) => {
@@ -89,6 +104,7 @@ const Worker = () => {
     setAvailability("none");
 
     setFiltered(false);
+    dispatch(getAllWorkers({ search: "null", skip: 0 }));
   };
   const filterWorkersBy = async (event) => {
     event.preventDefault();
@@ -99,9 +115,19 @@ const Worker = () => {
     );
   };
 
-  useEffect(async () => {
-    dispatch(getAllWorkers({ skip: 0 }));
+  useEffect(() => {
+    dispatch(getAllWorkers({ search: "null", skip: 0 }));
   }, []);
+
+  //search
+  const searchHandler = (event) => {
+    if (event.target.value === "") {
+      dispatch(getAllWorkers({ search: "null", skip: 0 }));
+    } else {
+      dispatch(getAllWorkers({ search: event.target.value, skip: 0 }));
+    }
+  };
+
   let workerList;
   if (workers) {
     workerList = workers.map((worker) => (
@@ -179,6 +205,20 @@ const Worker = () => {
             flexDirection: "column",
           }}
         >
+          <TextField
+            placeholder="Search Worker"
+            className={classes.searchBar}
+            variant="standard"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchTwoTone />
+                </InputAdornment>
+              ),
+              disableUnderline: true,
+            }}
+            onChange={searchHandler}
+          />
           <Box
             sx={{
               display: "flex",

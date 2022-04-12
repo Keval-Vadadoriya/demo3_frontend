@@ -97,7 +97,7 @@ function ProjectCard({ project }) {
       <CardActions>
         <Typography
           component={Link}
-          to={`/home/chats/${project.owner}`}
+          to={`/chats/${project.owner}`}
           sx={{
             marginLeft: "15px",
             textDecoration: "none",

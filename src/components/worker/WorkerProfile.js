@@ -27,11 +27,9 @@ const useStyles = makeStyles((theme) => ({
 
     margin: "5px",
     borderRadius: "10px",
-    backgroundColor: theme.palette.fifth.light,
   },
   gridItem: {
     display: "flex",
-    // alignItems: "center",
     justifyContent: "center",
   },
 }));
@@ -79,7 +77,7 @@ function WorkerProfile() {
         <Typography
           className={classes.link}
           component={Link}
-          to={`/home/chats/${workerid.workerid}`}
+          to={`/chats/${workerid.workerid}`}
         >
           Chat
         </Typography>
@@ -91,7 +89,6 @@ function WorkerProfile() {
             marginTop: "20px",
             minWidth: { xs: "330px", md: "500px" },
             maxWidth: { xs: "370px", md: "900px" },
-            // maxHeight: "700px",
             padding: "5px",
             boxShadow: `5px 5px 10px grey`,
             backgroundColor: theme.palette.third.light,
@@ -100,7 +97,6 @@ function WorkerProfile() {
           <Box
             sx={{
               display: "flex",
-              // justifyContent: "center",
               alignItems: "center",
               flexDirection: "column",
             }}
@@ -125,11 +121,7 @@ function WorkerProfile() {
                 maxWidth: { xs: "300px", md: "900px" },
               }}
             >
-              <Grid
-                container
-                className={classes.grid}
-                // sx={{ width: { xs: "300px", md: "450px" } }}
-              >
+              <Grid container className={classes.grid}>
                 <Grid item xs={4} className={classes.gridItem}>
                   <Typography
                     variant="body1"

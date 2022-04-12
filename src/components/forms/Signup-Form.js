@@ -58,7 +58,7 @@ const SignupForm = () => {
   const navigate = useNavigate();
   const { status, errorMessage } = useSelector((state) => state.signup);
   if (token) {
-    navigate("/home");
+    navigate("/");
   }
   useEffect(() => {
     if (status === "Signup Successful") {
@@ -236,6 +236,7 @@ const SignupForm = () => {
                 error={touched && !nameIsValid}
                 color="success"
                 name="Name"
+                helperText={!nameIsValid ? "Name is required" : ""}
                 required
                 fullWidth
                 id="Name"
@@ -251,6 +252,7 @@ const SignupForm = () => {
                 fullWidth
                 error={touched && !emailIsValid}
                 color="success"
+                helperText={!emailIsValid ? "Please Enter Valid Email" : ""}
                 id="email"
                 label="Email Address"
                 name="email"
@@ -265,6 +267,9 @@ const SignupForm = () => {
                 fullWidth
                 error={touched && !passwordIsValid}
                 color="success"
+                helperText={
+                  !passwordIsValid ? "Minimum 7 characters required" : ""
+                }
                 name="password"
                 label="Password"
                 type="password"
@@ -280,6 +285,11 @@ const SignupForm = () => {
                 fullWidth
                 error={touched && !confirmPasswordIsValid}
                 color="success"
+                helperText={
+                  !confirmPasswordIsValid
+                    ? "Confirm Password Should be same as Password"
+                    : ""
+                }
                 name="confirm password"
                 label="Confirm Password"
                 type="password"
@@ -300,6 +310,9 @@ const SignupForm = () => {
                   <Select
                     labelId="profession"
                     id="profession"
+                    helperText={
+                      !professionIsValid ? "profession is required" : ""
+                    }
                     value={profession}
                     label="Profession"
                     color="success"
@@ -328,6 +341,7 @@ const SignupForm = () => {
                   <Select
                     labelId="location"
                     id="location"
+                    helperText={!locationIsValid ? "location is required" : ""}
                     value={location}
                     color="success"
                     required

@@ -8,10 +8,10 @@ const initialState = {
 };
 export const getAllProjects = createAsyncThunk(
   "project/getAllProjects",
-  async ({ skip }, getState) => {
+  async ({ search, skip }, getState) => {
     try {
       const response = await baseService.get(
-        `/getallprojects?limit=10&&skip=${skip}`
+        `/getallprojects/${search}?limit=10&&skip=${skip}`
       );
 
       return response.data;
@@ -44,7 +44,6 @@ export const filterProjects = createAsyncThunk(
           profession !== "none" ? `&&profession=${profession}` : ""
         }${sort !== "none" ? `&&sort=${sort}` : ""}&&limit=10&&skip=${skip}`
       );
-      console.log(response.data);
       return response.data;
     } catch (e) {
       throw new Error(e.response.data.Error);

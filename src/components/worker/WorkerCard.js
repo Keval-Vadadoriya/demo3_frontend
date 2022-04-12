@@ -7,8 +7,10 @@ import {
   Avatar,
   Rating,
 } from "@mui/material";
+import { useTheme } from "@mui/styles";
 
 function WorkerCard(props) {
+  const theme = useTheme();
   return (
     <Card
       sx={{
@@ -53,6 +55,7 @@ function WorkerCard(props) {
             component="div"
             fontFamily="Roboto"
             fontSize="25px"
+            color={theme.palette.secondary.main}
           >
             {props.name}
           </Typography>
