@@ -1,73 +1,57 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getMyProjects } from "./project-actions";
+import baseService from "../baseService";
+const initialState = {
+  status: "idle",
+  errorMessage: "",
+  project: null,
+};
 export const removeProject = createAsyncThunk(
   "myproject/removeProject",
   async ({ projectId }, getState) => {
-    const states = getState.getState();
+    try {
+      const response = await baseService.delete(`/removeproject/${projectId}`);
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/removeproject/${projectId}`,
-      {
-        method: "DELETE",
+      getState.dispatch(getMyProjects({ skip: 0 }));
 
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
   }
 );
 
 export const postProject = createAsyncThunk(
   "myproject/postProject",
-  async (
-    { project_name, description, profession, location, money },
-    getState
-  ) => {
-    const states = getState.getState();
-    console.log(states);
-    const response = await fetch(`http://192.168.200.175:3001/project`, {
-      method: "POST",
-      body: JSON.stringify({
-        project_name,
-        description,
-        profession,
-        location,
-        money,
-      }),
-      headers: {
-        Authorization: states.login.token,
-        "Content-Type": "application/json",
-      },
-    });
+  async (body, getState) => {
+    try {
+      const response = await baseService.post(`/project`, body);
 
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
-    } else {
       getState.dispatch(getMyProjects({ skip: 0 }));
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
   }
 );
 
 export const myprojectSlice = createSlice({
   name: "myproject",
-  initialState: {
-    status: "idle",
-    errorMessage: "",
-    project: null,
+  initialState,
+  reducers: {
+    setErrorMessage(state, action) {
+      state.errorMessage = action.payload.errorMessage;
+    },
+    setStatus(state, action) {
+      state.status = action.payload.status;
+    },
+    reset() {
+      return initialState;
+    },
   },
-  reducers: {},
   extraReducers: {
     [removeProject.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.status = "Project Deleted Successfully";
       state.errorMessage = "";
       state.reviews = action.payload;
     },
@@ -80,7 +64,7 @@ export const myprojectSlice = createSlice({
       state.errorMessage = action.error.message;
     },
     [postProject.fulfilled]: (state, action) => {
-      state.status = "review added";
+      state.status = "Project Posted Successfully";
       state.errorMessage = "";
     },
     [postProject.pending]: (state, action) => {
@@ -93,5 +77,5 @@ export const myprojectSlice = createSlice({
     },
   },
 });
-
+export const myprojectActions = myprojectSlice.actions;
 export default myprojectSlice.reducer;

@@ -1,23 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import baseService from "../baseService";
+const initialState = {
+  status: "idle",
+  errorMessage: "",
+  reviews: [],
+};
 export const getReviews = createAsyncThunk(
   "reviews/getReviews",
   async ({ workerId }, getState) => {
-    const states = getState.getState();
+    try {
+      const response = await baseService.get(`/getreview/${workerId}`);
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/getreview/${workerId}`,
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
   }
 );
 
@@ -26,41 +23,35 @@ export const addReview = createAsyncThunk(
   async ({ description, review, workerId }, getState) => {
     const states = getState.getState();
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/review/${workerId}`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          description,
-          review,
-          owner: states.user.user._id,
-        }),
-        headers: {
-          Authorization: states.login.token,
+    try {
+      const response = await baseService.post(`/review/${workerId}`, {
+        description,
+        review,
+        owner: states.user.user._id,
+      });
 
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
-    } else {
       getState.dispatch(getReviews({ workerId }));
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
   }
 );
 
 export const reviewsSlice = createSlice({
   name: "reviews",
-  initialState: {
-    status: "idle",
-    errorMessage: "",
-    reviews: [],
+  initialState,
+  reducers: {
+    setErrorMessage(state, action) {
+      state.errorMessage = action.payload.errorMessage;
+    },
+    setStatus(state, action) {
+      state.status = action.payload.status;
+    },
+    reset() {
+      return initialState;
+    },
   },
-  reducers: {},
   extraReducers: {
     [getReviews.fulfilled]: (state, action) => {
       state.status = "succeeded";
@@ -76,7 +67,7 @@ export const reviewsSlice = createSlice({
       state.errorMessage = action.error.message;
     },
     [addReview.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.status = "Review Added Successfully";
       state.errorMessage = "";
     },
     [addReview.pending]: (state, action) => {
@@ -90,4 +81,5 @@ export const reviewsSlice = createSlice({
   },
 });
 
+export const reviewActions = reviewsSlice.actions;
 export default reviewsSlice.reducer;

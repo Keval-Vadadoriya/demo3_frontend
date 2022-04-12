@@ -1,86 +1,69 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import baseService from "../baseService";
+const initialState = {
+  status: "idle",
+  errorMessage: "",
+  workers: [],
+  worker: null,
+  count: 0,
+};
 export const getAllWorkers = createAsyncThunk(
   "workers/getAllWorkers",
-  async ({ skip }, getState) => {
-    const states = getState.getState();
+  async ({ search, skip }, getState) => {
+    try {
+      const response = await baseService.get(
+        `/getallworkers/${search}?limit=10&&skip=${skip}`
+      );
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/getallworkers?limit=3&&skip=${skip}`,
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
   }
 );
 export const getWorker = createAsyncThunk(
   "workers/getWorker",
   async ({ workerId }, getState) => {
-    const states = getState.getState();
+    try {
+      const response = await baseService.get(`/getworker/${workerId}`);
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/getworker/${workerId}`,
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
   }
 );
 
 export const filterWorkers = createAsyncThunk(
   "workers/filterWorkers",
   async ({ location, profession, review, availability, skip }, getState) => {
-    const states = getState.getState();
+    try {
+      const response = await baseService.get(
+        `/filterworkers?${location !== "none" ? `location=${location}&&` : ""}${
+          profession !== "none" ? `profession=${profession}&&` : ""
+        }${review !== "none" ? `review=${review}&&` : ""}${
+          availability !== "none" ? `availability=${availability}&&` : ""
+        }limit=3&&skip=${skip}`
+      );
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/filterworkers?${
-        location !== "none" ? `location=${location}&&` : ""
-      }${profession !== "none" ? `profession=${profession}&&` : ""}${
-        review !== "none" ? `review=${review}&&` : ""
-      }${
-        availability !== "none" ? `availability=${availability}&&` : ""
-      }limit=3&&${skip ? `skip=${skip}` : ""}`,
-
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
   }
 );
 
 export const workersSlice = createSlice({
   name: "workers",
-  initialState: {
-    status: "idle",
-    errorMessage: "",
-    workers: null,
-    worker: null,
-    count: null,
+  initialState,
+  reducers: {
+    setErrorMessage(state, action) {
+      state.errorMessage = action.payload.errorMessage;
+    },
+    reset() {
+      return initialState;
+    },
   },
-  reducers: {},
   extraReducers: {
     //getAllWorkers
     [getAllWorkers.fulfilled]: (state, action) => {
@@ -89,7 +72,7 @@ export const workersSlice = createSlice({
 
       state.workers = action.payload.workers;
       console.log(action.payload.count);
-      if (action.payload.count !== null) {
+      if (action.payload.count !== 0 && !isNaN(action.payload.count)) {
         state.count = action.payload.count;
       }
     },
@@ -106,7 +89,7 @@ export const workersSlice = createSlice({
       state.errorMessage = "";
       state.status = "succeeded";
       state.workers = action.payload.workers;
-      if (action.payload.count !== null) {
+      if (action.payload.count !== 0 && !isNaN(action.payload.count)) {
         state.count = action.payload.count;
       }
     },

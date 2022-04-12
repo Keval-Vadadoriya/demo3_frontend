@@ -1,87 +1,77 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginActions } from "./login-slice";
+import baseService from "./baseService";
+const initialState = {
+  status: "loading data",
+  errorMessage: "",
+  user: {},
+};
 
-// let data = localStorage.getItem("userInfo");
-// data = JSON.parse(data);
-
-export const editUser = createAsyncThunk(
-  "user/editUser",
+export const editProfile = createAsyncThunk(
+  "user/editProfile",
   async ({ body, role, userId }, getState) => {
-    const states = getState.getState();
+    try {
+      const response = await baseService.patch(
+        `/editprofile/${userId}?role=${role}`,
+        body
+      );
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/editprofile/${userId}?role=${role}`,
-      {
-        method: "POST",
-        body: body,
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    // localStorage.setItem("userInfo", JSON.stringify(data));
-    // console.log(data);
-    return data;
   }
 );
 export const getUser = createAsyncThunk("user/getUser", async (_, getState) => {
-  const states = getState.getState();
+  try {
+    const response = await baseService.get(`/getprofile`);
 
-  const response = await fetch(`http://192.168.200.175:3001/getprofile`, {
-    method: "GET",
-    headers: {
-      Authorization: states.login.token,
-    },
-  });
-
-  const data = await response.json();
-  if (response.ok === false) {
-    throw new Error(data.Error);
-  } else {
-    getState.dispatch(loginActions.setRole({ role: data.role }));
+    getState.dispatch(loginActions.setRole({ role: response.data.role }));
+    return response.data;
+  } catch (e) {
+    throw new Error(e.response.data.Error);
   }
-  console.log(data);
-  return data;
 });
 const userSlice = createSlice({
   name: "user",
-  initialState: {
-    status: "idle",
-    errorMessage: "",
-    user: {},
-  },
+  initialState,
 
   reducers: {
     setLoggedInUser(state, action) {
       state.user = action.payload.user;
     },
+    setErrorMessage(state, action) {
+      state.errorMessage = action.payload.errorMessage;
+    },
     setStatus(state, action) {
-      state.status = "idle";
+      state.status = action.payload.status;
+    },
+    reset() {
+      return initialState;
     },
   },
   extraReducers: {
-    [editUser.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+    [editProfile.fulfilled]: (state, action) => {
+      state.status = "Saved Changes Successfully";
+      state.errorMessage = "";
       state.user = action.payload;
     },
-    [editUser.pending]: (state, action) => {
+    [editProfile.pending]: (state, action) => {
+      state.errorMessage = "";
       state.status = "loading";
     },
-    [editUser.rejected]: (state, action) => {
+    [editProfile.rejected]: (state, action) => {
       state.status = "failed";
       state.errorMessage = action.error.message;
     },
     [getUser.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.status = "user data";
+      state.errorMessage = "";
       state.user = action.payload.user;
     },
     [getUser.pending]: (state, action) => {
-      state.status = "loading";
+      state.errorMessage = "";
+      state.status = "loading data";
     },
     [getUser.rejected]: (state, action) => {
       state.status = "failed";

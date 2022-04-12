@@ -1,51 +1,82 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { userActions } from "../user-slice";
 import { loginActions } from "../login-slice";
+import baseService from "../baseService";
+const initialState = {
+  status: "idle",
+  errorMessage: "",
+};
 export const signupUser = createAsyncThunk(
   "signup/signupUser",
   async ({ body, role }, getState) => {
-    const response = await fetch(
-      `http://192.168.200.175:3001/signup?role=${role}`,
-      {
-        method: "POST",
-        body: JSON.stringify(body),
+    try {
+      const response = await baseService.post(`/signup?role=${role}`, body);
 
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
-    } else {
-      getState.dispatch(userActions.setLoggedInUser({ user: data.user }));
-      getState.dispatch(
-        loginActions.setToken({ token: "Bearer " + data.token })
-      );
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
+  }
+);
+export const verifyUser = createAsyncThunk(
+  "signup/verifyUser",
+  async ({ otp }, getState) => {
+    try {
+      const response = await baseService.post(`/verify/${otp}`);
+
+      baseService.defaults.headers.common["Authorization"] =
+        "Bearer " + response.data.token;
+      getState.dispatch(
+        userActions.setLoggedInUser({ user: response.data.user })
+      );
+      getState.dispatch(
+        loginActions.setToken({ token: "Bearer " + response.data.token })
+      );
+      getState.dispatch(loginActions.setRole({ role: response.data.role }));
+      localStorage.setItem("token", "Bearer " + response.data.token);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
+    }
   }
 );
 
 export const signupSlice = createSlice({
   name: "signup",
-  initialState: {
-    status: "idle",
-    errorMessage: "",
+  initialState,
+  reducers: {
+    setErrorMessage(state, action) {
+      state.errorMessage = action.payload.errorMessage;
+    },
+    setStatus(state, action) {
+      state.status = action.payload.status;
+    },
+    reset() {
+      return initialState;
+    },
   },
-  reducers: {},
   extraReducers: {
     [signupUser.fulfilled]: (state, action) => {
       state.errorMessage = "";
-      state.status = "succeeded";
+      state.status = "Signup Successful";
     },
     [signupUser.pending]: (state, action) => {
       state.errorMessage = "";
       state.status = "loading";
     },
     [signupUser.rejected]: (state, action) => {
+      state.status = "failed";
+      state.errorMessage = action.error.message;
+    },
+    [verifyUser.fulfilled]: (state, action) => {
+      state.errorMessage = "";
+      state.status = "Verification Successful";
+    },
+    [verifyUser.pending]: (state, action) => {
+      state.errorMessage = "";
+      state.status = "loading";
+    },
+    [verifyUser.rejected]: (state, action) => {
       state.status = "failed";
       state.errorMessage = action.error.message;
     },

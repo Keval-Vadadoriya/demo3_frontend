@@ -1,47 +1,113 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { loginActions } from "../../store/login-slice";
-import { signupUser } from "../../store/actions/signup-actions";
+import {
+  signupActions,
+  signupUser,
+  verifyUser,
+} from "../../store/actions/signup-actions";
 
-import Input from "../UI/Input";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  TextField,
+  DialogActions,
+  Button,
+  Container,
+  CssBaseline,
+  Box,
+  Avatar,
+  Typography,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  useMediaQuery,
+} from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { snackbarActions } from "../../store/snackbar-slice";
+import { useTheme } from "@mui/styles";
 
-import classes from "./Form.module.css";
-import Header from "../layout/Header";
-
-const SignupForm = (props) => {
+const SignupForm = () => {
+  const theme = useTheme();
+  const matches = useMediaQuery("(max-width:600px)");
+  const [touched, setTouched] = useState(false);
+  const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+  const [nameIsValid, setNameIsValid] = useState(false);
   const [email, setEmail] = useState("");
+  const [emailIsValid, setEmailIsValid] = useState(false);
   const [password, setPassword] = useState("");
-  const [passwordIsValid, setPasswordIsValid] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordIsValid, setPasswordIsValid] = useState(false);
+  const [confirmPasswordIsValid, setConfirmPasswordIsValid] = useState(false);
   const [profession, setProfession] = useState("");
   const [professionIsValid, setProfessionIsValid] = useState(false);
   const [location, setLocation] = useState("");
   const [locationIsValid, setLocationIsValid] = useState(false);
   const role = useSelector((state) => state.login.role);
+  const [roleIsValid, setRoleIsValid] = useState(role !== "");
   const token = useSelector((state) => state.login.token);
+  const [otp, setOtp] = useState();
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
   const { status, errorMessage } = useSelector((state) => state.signup);
   if (token) {
-    navigate("/home");
+    navigate("/");
   }
+  useEffect(() => {
+    if (status === "Signup Successful") {
+      setOpen(true);
+    }
+    if (errorMessage) {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "error",
+          message: errorMessage,
+        })
+      );
+      dispatch(signupActions.setErrorMessage({ errorMessage: "" }));
+    }
+    if (
+      status === "Signup Successful" ||
+      status === "Verification Successful"
+    ) {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "success",
+          message: "Otp Sent",
+        })
+      );
+      dispatch(signupActions.setStatus({ status: "idle" }));
+    }
+  }, [status, errorMessage]);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const verify = () => {
+    dispatch(verifyUser({ otp }));
+  };
+  const changeOtpHandler = (event) => {
+    setOtp(event.target.value);
+  };
   //changing Role
-  const changeRole = () => {
-    console.log("here");
-    if (role === "user" || role === "") {
-      dispatch(loginActions.setRole({ role: "worker" }));
-    }
-    if (role === "worker") {
-      dispatch(loginActions.setRole({ role: "user" }));
-    }
+  const changeRole = (event) => {
+    setRoleIsValid(true);
+    dispatch(loginActions.setRole({ role: event.target.value }));
   };
 
   //Submit Handler
   const SubmitHandler = (event) => {
     event.preventDefault();
+
     let body =
       role === "user"
         ? {
@@ -50,7 +116,7 @@ const SignupForm = (props) => {
             password,
           }
         : { name, email, password, profession, location };
-    if (passwordIsValid) {
+    if (confirmPasswordIsValid) {
       dispatch(signupUser({ body, role }));
     }
   };
@@ -58,21 +124,42 @@ const SignupForm = (props) => {
   //Validations
   const changeNameHandler = (event) => {
     setName(event.target.value);
+    if (event.target.value.length > 0) {
+      setNameIsValid(true);
+    } else {
+      setNameIsValid(false);
+    }
   };
 
   const changeEmailHandler = (event) => {
     setEmail(event.target.value);
+    if (
+      event.target.value
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        )
+    ) {
+      setEmailIsValid(true);
+    } else {
+      setEmailIsValid(false);
+    }
   };
 
   const changePasswordHandler = (event) => {
     setPassword(event.target.value);
+    if (event.target.value.length >= 7) {
+      setPasswordIsValid(true);
+    } else {
+      setPasswordIsValid(false);
+    }
   };
   const changeConfirmPasswordHandler = (event) => {
     setConfirmPassword(event.target.value);
     if (password === event.target.value) {
-      setPasswordIsValid(true);
+      setConfirmPasswordIsValid(true);
     } else {
-      setPasswordIsValid(false);
+      setConfirmPasswordIsValid(false);
     }
   };
 
@@ -97,116 +184,239 @@ const SignupForm = (props) => {
   //return
   return (
     <>
-      <div className={classes["form-container"]}>
-        {status === "loading" && <p>Loading</p>}
-        {status !== "loading" && (
-          <form
-            action="/signup"
-            method="post"
-            encType="multipart/form-data"
-            onSubmit={SubmitHandler}
-            className={classes.form}
-          >
-            <h1>Signup Form</h1>
-            <Input
-              label="Name"
-              input={{
-                placeholder: "name",
-                required: true,
-                id: "name",
-                name: "name",
-                onChange: changeNameHandler,
-                type: "text",
-              }}
-            />
-            <Input
-              label="Email"
-              input={{
-                placeholder: "Enter an Email",
-                id: "email",
-                name: "email",
-                onChange: changeEmailHandler,
-                type: "email",
-              }}
-            />
-            <Input
-              label="Password"
-              input={{
-                placeholder: "Enter a Password",
-                id: "password",
-                name: "password",
-                onChange: changePasswordHandler,
-                type: "password",
-                autoComplete: "on",
-                minLength: 7,
-              }}
-            />
-            <Input
-              label="Confirm Password"
-              input={{
-                placeholder: "Enter a Password Again",
-                id: "confirm password",
-                name: "confirm password",
-                onChange: changeConfirmPasswordHandler,
-                type: "password",
-                autoComplete: "on",
-                minLength: 7,
-              }}
-              className={passwordIsValid ? "valid" : "invalid"}
-            />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "92.5vh",
+          width: "100vw",
+          backgroundImage: "url(https://wallpaperaccess.com/full/2581470.jpg)",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "100% 100%",
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign up
+        </Typography>
+        <Box
+          component="form"
+          onSubmit={SubmitHandler}
+          sx={{ mt: 3, width: { xs: "80%", md: "40%" } }}
+          onClick={() => setTouched(true)}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormControl fullWidth required error={touched && !roleIsValid}>
+                <InputLabel id="role">Role</InputLabel>
+                <Select
+                  labelId="role"
+                  id="role"
+                  value={role}
+                  label="Role"
+                  color="success"
+                  onChange={changeRole}
+                  sx={{ backgroundColor: theme.palette.third.light }}
+                >
+                  <MenuItem value={""} disabled hidden>
+                    {"Select Role"}
+                  </MenuItem>
+                  <MenuItem value={"user"}>{"User"}</MenuItem>
+                  <MenuItem value={"worker"}>{"Worker"}</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="given-name"
+                error={touched && !nameIsValid}
+                color="success"
+                name="Name"
+                helperText={!nameIsValid ? "Name is required" : ""}
+                required
+                fullWidth
+                id="Name"
+                label="Name"
+                onChange={changeNameHandler}
+                sx={{ backgroundColor: theme.palette.third.light }}
+              />
+            </Grid>
 
-            {role !== "user" && (
-              <div className={classes.select}>
-                <label htmlFor="profession">Profession</label>
-                <select
-                  name="profession"
-                  id="profession"
-                  onChange={changeProfessionHandler}
-                  defaultValue="none"
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                error={touched && !emailIsValid}
+                color="success"
+                helperText={!emailIsValid ? "Please Enter Valid Email" : ""}
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                onChange={changeEmailHandler}
+                sx={{ backgroundColor: theme.palette.third.light }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                error={touched && !passwordIsValid}
+                color="success"
+                helperText={
+                  !passwordIsValid ? "Minimum 7 characters required" : ""
+                }
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="new-password"
+                onChange={changePasswordHandler}
+                sx={{ backgroundColor: theme.palette.third.light }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                error={touched && !confirmPasswordIsValid}
+                color="success"
+                helperText={
+                  !confirmPasswordIsValid
+                    ? "Confirm Password Should be same as Password"
+                    : ""
+                }
+                name="confirm password"
+                label="Confirm Password"
+                type="password"
+                id="confirm password"
+                autoComplete="new-password"
+                onChange={changeConfirmPasswordHandler}
+                sx={{ backgroundColor: theme.palette.third.light }}
+              />
+            </Grid>
+            {role === "worker" && (
+              <Grid item xs={12}>
+                <FormControl
+                  fullWidth
                   required
+                  error={touched && !professionIsValid}
                 >
-                  <option value="none" disabled hidden>
-                    select your profession
-                  </option>
-                  <option value="carpenter">Carpenter</option>
-                  <option value="plumber">Plumber</option>
-                  <option value="electrician">Electrician</option>
-                </select>
-              </div>
+                  <InputLabel id="profession">Profession</InputLabel>
+                  <Select
+                    labelId="profession"
+                    id="profession"
+                    helperText={
+                      !professionIsValid ? "profession is required" : ""
+                    }
+                    value={profession}
+                    label="Profession"
+                    color="success"
+                    required
+                    sx={{ backgroundColor: theme.palette.third.light }}
+                    onChange={changeProfessionHandler}
+                  >
+                    <MenuItem value={"none"} disabled hidden>
+                      {"Select Profession"}
+                    </MenuItem>
+                    <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
+                    <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
+                    <MenuItem value={"electrician"}>{"Electrician"}</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
             )}
-            {role !== "user" && (
-              <div className={classes.select}>
-                <label htmlFor="location">Location</label>
-                <select
-                  name="location"
-                  id="location"
-                  onChange={changeLocationHandler}
-                  defaultValue="none"
-                  required={true}
+            {role === "worker" && (
+              <Grid item xs={12}>
+                <FormControl
+                  fullWidth
+                  required
+                  error={touched && !locationIsValid}
                 >
-                  <option value="none" disabled hidden>
-                    select your location
-                  </option>
-                  <option value="surat">Surat</option>
-                  <option value="ahmedabad">Ahmedabad</option>
-                  <option value="anand">Anand</option>
-                  <option value="vadodara">vadodara</option>
-                </select>
-              </div>
+                  <InputLabel id="location">Location</InputLabel>
+                  <Select
+                    labelId="location"
+                    id="location"
+                    helperText={!locationIsValid ? "location is required" : ""}
+                    value={location}
+                    color="success"
+                    required
+                    label="Location"
+                    onChange={changeLocationHandler}
+                    sx={{ backgroundColor: theme.palette.third.light }}
+                  >
+                    <MenuItem value={"none"} disabled hidden>
+                      {"Select Location"}
+                    </MenuItem>
+                    <MenuItem value={"surat"}>{"Surat"}</MenuItem>
+                    <MenuItem value={"anand"}>{"Anand"}</MenuItem>
+                    <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
+                    <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
             )}
-
-            <div></div>
-            <input type="submit" value="Signup"></input>
-            <button type="button" onClick={changeRole}>
-              {role === "user" ? "Want to work?" : "Want to hire?"}
-            </button>
-            <p>
-              Already Have Account? <Link to="/login">login</Link>
-            </p>
-            {status !== "loading" && errorMessage && <p>{errorMessage}</p>}
-          </form>
-        )}
-      </div>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{
+              mt: 3,
+              mb: 2,
+              color: theme.palette.secondary.main,
+              backgroundColor: theme.palette.third.extra,
+              "&:hover": {
+                backgroundColor: theme.palette.secondary.main,
+                color: theme.palette.third.light,
+              },
+            }}
+          >
+            Sign Up
+          </Button>
+          <Grid container justifyContent="flex-end">
+            <Grid item>
+              <Typography variant="body2" component={Link} to={"/login"}>
+                Already have an account? Sign in
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
+      <Dialog fullScreen={matches} open={open} onClose={handleClose}>
+        <DialogTitle
+          sx={{
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.third.light,
+            fontFamily: "Arvo",
+          }}
+        >
+          Email Verification
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To verify, please enter otp we have sent to your email address here.
+          </DialogContentText>
+          <TextField
+            required
+            margin="dense"
+            id="name"
+            label="OTP"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={changeOtpHandler}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={verify}>Submit</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

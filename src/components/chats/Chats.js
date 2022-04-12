@@ -1,12 +1,83 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import Input from "../UI/Input";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import classes from "./Chats.module.css";
 
 import { chatActions } from "../../store/actions/chat-actions";
+import {
+  Button,
+  Grid,
+  TextField,
+  Box,
+  Typography,
+  Avatar,
+  Container,
+  FormControl,
+} from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+import { socketActions } from "../../store/socket-slice";
+import { makeStyles, useTheme } from "@mui/styles";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { snackbarActions } from "../../store/snackbar-slice";
+
+const useStyles = makeStyles((theme) => ({
+  chatOwner: {
+    backgroundColor: theme.palette.secondary.main,
+    display: "flex",
+    color: "white",
+    fontSize: 20,
+    padding: 5,
+    // borderRadius: 10,
+    position: "-webkit-sticky",
+    position: "sticky",
+    top: 0,
+  },
+  sendMessage: {
+    backgroundColor: theme.palette.secondary.main,
+    position: "-webkit-sticky",
+    position: "sticky",
+    margin: 0,
+    borderRadius: "5px",
+    padding: "5px",
+    bottom: 0,
+  },
+  chats: {
+    top: 0,
+    marginLeft: "20px",
+    marginRight: "20px",
+    height: "90vh",
+    overflowY: "scroll",
+    marginTop: 10,
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+    // "&::-webkit-scrollbar-track": {
+    //   boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+    //   webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+    // },
+    // "&::-webkit-scrollbar-thumb": {
+    //   backgroundColor: "rgba(0,0,0,.1)",
+    //   outline: "1px solid slategrey",
+    // },
+  },
+  chatList: {
+    backgroundColor: theme.palette.primary.extra,
+    height: "77vh",
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+    overflowY: "scroll",
+  },
+  message: {
+    margin: 10,
+    padding: 7,
+    borderRadius: 15,
+  },
+}));
 
 function Chats() {
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const classes = useStyles(theme);
   const receiverId = useParams();
   let messageList;
   const messagesEndRef = useRef();
@@ -16,19 +87,43 @@ function Chats() {
   const socket = useSelector((state) => state.socket.socket);
   const [message, setMessage] = useState("");
   const { chats, chatsOwner } = useSelector((state) => state.chat);
+  const data = useSelector((state) => state.socket.data);
 
   //scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   };
+
   useEffect(() => {
     scrollToBottom();
   }, [chats[receiverId.workerid]]);
+
+  useEffect(() => {
+    if (data) {
+      socket.emit(
+        "delivered",
+        data.message._id,
+        data.sender,
+        data.receiver,
+        data.role,
+        receiverId.workerid === data.sender ? true : false,
+        (response) => {
+          dispatch(chatActions.setChatList({ list: response.chatList }));
+        }
+      );
+    }
+  }, [data]);
+
   useEffect(async () => {
-    socket.on("messag", (message) => {
-      socket.emit("delivered", message._id, userId, receiverId.workerid, role);
+    socket.removeAllListeners();
+
+    socket.on("message", (data) => {
+      dispatch(socketActions.setData({ data }));
       dispatch(
-        chatActions.setChat({ message, receiverId: receiverId.workerid })
+        chatActions.setChat({
+          message: data.message,
+          receiverId: data.sender,
+        })
       );
     });
     socket.on("messageDelivered", (_id) => {
@@ -40,21 +135,23 @@ function Chats() {
         })
       );
     });
+    dispatch(snackbarActions.setPage({ page: false }));
   }, []);
   useEffect(async () => {
-    socket.emit("getchats", userId, role, receiverId.workerid, (response) => {
-      dispatch(
-        chatActions.setChats({
-          chats: response.chats,
-          role,
-          receiverId: receiverId.workerid,
-        })
-      );
-    });
-    console.log("first");
-    socket.emit("addToChatList", userId, role, receiverId.workerid);
-  }, [receiverId.workerid, userId]);
-  console.log("Chatssssssss");
+    if (userId && role) {
+      socket.emit("getchats", userId, role, receiverId.workerid, (response) => {
+        dispatch(
+          chatActions.setChats({
+            chats: response.chats,
+            role,
+            receiverId: receiverId.workerid,
+          })
+        );
+        dispatch(chatActions.setChatList({ list: response.chatList }));
+      });
+      socket.emit("addToChatList", userId, role, receiverId.workerid);
+    }
+  }, [receiverId.workerid, userId, role]);
 
   const changeMessageHandler = (event) => {
     setMessage(event.target.value);
@@ -93,50 +190,131 @@ function Chats() {
     messageList = chats[receiverId.workerid].map((message) => {
       const date = new Date(message.time);
       return (
-        <div
+        <Box
           key={message._id}
-          className={`${
-            message.owner === userId ? classes.sender : classes.receiver
-          } ${
-            message.owner !== userId && message.status === "sent"
-              ? classes.sent
-              : ""
-          }`}
+          className={classes.message}
+          sx={{
+            textAlign: message.owner === userId ? "right" : "left",
+            backgroundColor:
+              message.owner !== userId && message.status === "sent"
+                ? "rgb(218, 255, 227)"
+                : "white",
+          }}
         >
-          <p className={classes.p}>
+          <Typography
+            variant="h5"
+            sx={{
+              wordBreak: "break-word",
+              fontSize: { xs: "20px", md: "25px" },
+              fontFamily: "Roboto",
+            }}
+          >
             {message.message}
-            <span
-              className={classes.time}
-            >{`${date.getHours()}:${date.getMinutes()}`}</span>
-            {message.owner === userId && (
-              <span className={classes.time}>{message.status}</span>
-            )}
-          </p>
-        </div>
+            <Typography
+              sx={{
+                fontSize: { xs: "10px", md: "15px" },
+                fontStyle: "italic",
+                fontFamily: "Arvo",
+              }}
+            >{`${date.toLocaleString("en-US", {
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            })}${
+              message.owner === userId ? ` ${message.status}` : ""
+            }`}</Typography>
+          </Typography>
+        </Box>
       );
     });
   }
   return (
-    <div className={classes.chat}>
-      <div>
-        <h1>{chatsOwner && chatsOwner.name}</h1>
-        {messageList && <h1>{messageList}</h1>}
-        <div ref={messagesEndRef} />
-      </div>
-      <form onSubmit={sendMessageHandler} className={classes.form}>
-        <Input
-          input={{
-            placeholder: "name",
-            required: true,
-            id: "Name",
-            onChange: changeMessageHandler,
-            type: "text",
-            value: `${message}`,
-          }}
-        />
-        <input type="submit" value="send"></input>
-      </form>
-    </div>
+    <Box className={classes.chats}>
+      {/* <Container
+        sx={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      > */}
+      <Grid container>
+        <Grid item xs={12} className={classes.chatOwner}>
+          <Button
+            onClick={() => {
+              dispatch(snackbarActions.setPage({ page: true }));
+              navigate("/chats");
+            }}
+          >
+            <ArrowBackIosIcon sx={{ color: "white" }} />
+          </Button>
+          <Box
+            component={Link}
+            to={role === "user" ? `/workers/${receiverId.workerid}` : ""}
+            sx={{ display: "flex", textDecoration: "none" }}
+          >
+            <Avatar
+              src={`${process.env.REACT_APP_HOST}/${chatsOwner?.avatar}`}
+              sx={{ marginLeft: 0 }}
+            />
+            <Typography
+              sx={{
+                display: "inline",
+                marginLeft: 3,
+                fontSize: 25,
+                color: "white",
+              }}
+            >
+              {chatsOwner && chatsOwner.name}
+            </Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={12} sx={{ height: { xs: "77vh", md: "77vh" } }}>
+          <Box className={classes.chatList}>
+            {messageList && messageList}
+            <Box ref={messagesEndRef} />
+          </Box>
+        </Grid>
+      </Grid>
+      <Grid
+        container
+        xs={12}
+        component="form"
+        onSubmit={sendMessageHandler}
+        className={classes.sendMessage}
+      >
+        <Grid item xs={10} md={11}>
+          <FormControl fullWidth>
+            <TextField
+              autoComplete="message"
+              name="Message"
+              required
+              variant="filled"
+              fullWidth
+              id="Message"
+              label="Message"
+              autoFocus
+              value={message}
+              onChange={changeMessageHandler}
+              sx={{
+                // color: "black",
+                backgroundColor: "white",
+                borderRadius: "5px",
+                color: "black",
+                "& label.Mui-focused": {
+                  color: theme.palette.secondary.main,
+                },
+              }}
+            />
+          </FormControl>
+        </Grid>
+        <Grid item xs={1}>
+          <Button type="submit">
+            <SendIcon fontSize="large" sx={{ color: "white" }} />
+          </Button>
+        </Grid>
+      </Grid>
+      {/* </Container> */}
+    </Box>
   );
 }
 

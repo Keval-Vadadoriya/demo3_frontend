@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import Header from "../layout/Header";
 
 function Unauthorized() {
   return (
@@ -8,7 +7,7 @@ function Unauthorized() {
       <Box
         sx={{
           display: "flex",
-          height: "90vh",
+          height: "91.5vh",
           width: "100vw",
           justifyContent: "center",
           alignItems: "center",

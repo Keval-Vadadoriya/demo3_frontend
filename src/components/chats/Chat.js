@@ -1,8 +1,6 @@
 import { Fragment, useEffect } from "react";
-import { Outlet, Link } from "react-router-dom";
-import classes from "./Chat.module.css";
+import { Outlet, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import ChatListCard from "./ChatListCard";
 import { Box, Grid, Typography } from "@mui/material";
 import { chatActions } from "../../store/actions/chat-actions";
 import {
@@ -12,15 +10,62 @@ import {
   Avatar,
   ListItemText,
 } from "@mui/material";
+import { makeStyles, useTheme } from "@mui/styles";
+const useStyles = makeStyles((theme) => ({
+  chat: {
+    position: "sticky",
+    top: 60,
+    height: "92.5vh",
+
+    backgroundColor: theme.palette.primary.extra,
+  },
+  chatList: {
+    boxSizing: "border-box",
+    width: "100%",
+    height: "80vh",
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+    // maxWidth: 360,
+    overflow: "scroll",
+    padding: 10,
+  },
+  chatListItem: {
+    margin: 5,
+    padding: 10,
+    borderRadius: 20,
+    backgroundColor: theme.palette.third.light,
+    "&:hover": {
+      backgroundColor: theme.palette.third.extra,
+      textColor: "white",
+    },
+  },
+  userName: {
+    // borderRadius: 10,
+    // margin: "5px",
+    padding: 5,
+    fontSize: 30,
+    // marginLeft: 1,
+    position: "sticky",
+    top: "65px",
+    zIndex: "1",
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.third.light,
+  },
+}));
 const Chat = () => {
+  const theme = useTheme();
+  const classes = useStyles(theme);
   const userId = useSelector((state) => state.user.user._id);
   const user = useSelector((state) => state.user.user);
   const role = useSelector((state) => state.login.role);
   const { chatList } = useSelector((state) => state.chat);
   const socket = useSelector((state) => state.socket.socket);
   const dispatch = useDispatch();
+  const page = useSelector((state) => state.snackbar.page);
 
   useEffect(() => {
+    socket.removeAllListeners("chatlist");
     socket.on("chatlist", (list, chats) => {
       dispatch(chatActions.setChatList({ list }));
       if (chats) {
@@ -33,25 +78,46 @@ const Chat = () => {
         );
       }
     });
-    console.log(userId, role);
-    socket.emit("getchatlist", userId, role);
-  }, [userId]);
+  }, []);
+  useEffect(() => {
+    if (userId && role) {
+      socket.emit("getchatlist", userId, role);
+    }
+  }, [userId, role]);
 
   let chatListUi;
-  if (chatList) {
+  if (chatList.length !== 0) {
     chatListUi = chatList.map((worker) => {
-      console.log(worker);
       return (
         <ListItem
-          className={classes.hover}
           key={worker._id}
-          component={Link}
-          to={`/home/chats/${worker._id}`}
+          component={NavLink}
+          to={`/chats/${worker.user._id}`}
+          className={classes.chatListItem}
+          style={({ isActive }) =>
+            isActive ? { backgroundColor: theme.palette.fifth.light } : {}
+          }
         >
           <ListItemAvatar>
-            <Avatar src={`http://127.0.0.1:3001/${worker.avatar}`} />
+            <Avatar
+              src={`${process.env.REACT_APP_HOST}/${worker.user.avatar}`}
+            />
           </ListItemAvatar>
-          <ListItemText id={worker._id} primary={`${worker.name}`} />
+          <ListItemText
+            id={worker.user._id}
+            primary={`${worker.user.name}`}
+            sx={{ color: "black", fontFamily: "Arvo" }}
+          />
+          {worker.count !== 0 && (
+            <ListItemText id={worker.user._id}>
+              <Typography
+                variant="body2"
+                sx={{ color: "green", fontSize: "20px" }}
+              >
+                {worker.count}
+              </Typography>
+            </ListItemText>
+          )}
         </ListItem>
       );
     });
@@ -59,33 +125,36 @@ const Chat = () => {
 
   return (
     <Fragment>
-      <Grid container>
-        <Grid item xs={3}>
-          <Box position="sticky" top={70}>
-            <Typography variant="h4" marginLeft={1}>
-              {user.name}
-            </Typography>
-            <List
-              dense
-              sx={{
-                width: "100%",
-                // maxWidth: 360,
-                bgcolor: "background.paper",
-                padding: 0,
-              }}
-            >
-              {chatList && chatListUi}
-            </List>
-          </Box>
+      <Box sx={{ height: { xs: "91vh", md: "92.5vh" } }}>
+        <Grid container>
+          <Grid
+            item
+            xs={12}
+            md={3}
+            sx={{
+              display: { xs: page ? "auto" : "none", md: "block" },
+            }}
+          >
+            <Box className={classes.chat}>
+              <Box className={classes.userName}>{user.name}</Box>
+              <List dense className={classes.chatList}>
+                {chatListUi && chatListUi}
+              </List>
+            </Box>
+          </Grid>
+
+          <Grid
+            item
+            xs={12}
+            md={9}
+            sx={{
+              backgroundColor: "gray",
+            }}
+          >
+            <Outlet />
+          </Grid>
         </Grid>
-        <Grid item xs={9}>
-          <div>
-            <div>
-              <Outlet />
-            </div>
-          </div>
-        </Grid>
-      </Grid>
+      </Box>
     </Fragment>
   );
 };

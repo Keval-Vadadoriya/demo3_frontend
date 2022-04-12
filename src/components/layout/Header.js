@@ -1,15 +1,15 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, NavLink } from "react-router-dom";
 import { loginActions } from "../../store/login-slice";
 import { useDispatch, useSelector } from "react-redux";
+import { makeStyles } from "@mui/styles";
 import { useState } from "react";
-
-import * as React from "react";
-
 import MenuIcon from "@mui/icons-material/Menu";
-
+import { useTheme } from "@mui/styles";
+import logo from "../../logo.jpg";
+import ChatSharpIcon from "@mui/icons-material/ChatSharp";
+import EngineeringIcon from "@mui/icons-material/Engineering";
+import AssignmentRoundedIcon from "@mui/icons-material/AssignmentRounded";
 import {
-  Tab,
-  Tabs,
   AppBar,
   Box,
   Toolbar,
@@ -21,39 +21,91 @@ import {
   Button,
   Tooltip,
   MenuItem,
-  withTheme,
 } from "@mui/material";
+import { chatActions } from "../../store/actions/chat-actions";
+import { myprojectActions } from "../../store/actions/myproject-actions";
+import { projectActions } from "../../store/actions/project-actions";
+import { reviewActions } from "../../store/actions/review-actions";
+import { signupActions } from "../../store/actions/signup-actions";
+import { workersActions } from "../../store/actions/workers-action";
+import { snackbarActions } from "../../store/snackbar-slice";
+import { socketActions } from "../../store/socket-slice";
+import { userActions } from "../../store/user-slice";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    background: theme.palette.third.extra,
+    border: "3px dashed black",
+    fontSize: "30px",
+
+    textAlign: "center",
+    borderTopLeftRadius: "25px",
+    borderBottomRightRadius: "25px",
+    color: "black",
+    height: 48,
+    padding: "0 30px",
+  },
+  link: {
+    margin: "5px",
+    backgroundColor: theme.palette.third.light,
+    color: "black",
+    margin: 10,
+    padding: 10,
+    borderRadius: 5,
+    "&:hover": {
+      backgroundColor: theme.palette.primary.main,
+    },
+  },
+  appbar: (theme) => ({
+    backgroundColor: theme.palette.secondary.main,
+    display: "flex",
+  }),
+  icon: {
+    backgroundColor: theme.palette.third.light,
+
+    margin: "5px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "50px",
+    width: "50px",
+    borderRadius: "25px",
+    transition: "all 0.5s ease",
+    "&:hover": { transform: "scale(1.1)" },
+  },
+}));
 const Header = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [value, setValue] = useState(0);
   const token = useSelector((state) => state.login.token);
   const role = useSelector((state) => state.login.role);
   const user = useSelector((state) => state.user.user);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
+  const classes = useStyles(theme);
   const loginHandler = () => {
     navigate("/login", { replace: true });
   };
   const logoutHandler = () => {
     setAnchorElUser(null);
 
-    if (window.confirm("Are You Sure?")) {
+    if (window.confirm("Are You Sure,You Want to Logout?")) {
       localStorage.clear();
-      dispatch(
-        loginActions.setToken({
-          token: "",
-        })
-      );
+      dispatch(chatActions.reset());
+      dispatch(myprojectActions.reset());
+      dispatch(projectActions.reset());
+      dispatch(reviewActions.reset());
+      dispatch(signupActions.reset());
+      dispatch(workersActions.reset());
+      dispatch(loginActions.reset());
+      dispatch(snackbarActions.reset());
+      dispatch(socketActions.reset());
+      dispatch(userActions.reset());
       navigate("/");
     }
   };
-
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -63,26 +115,41 @@ const Header = () => {
   };
 
   const handleCloseNavMenu = (event) => {
-    console.log(event.target.value);
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = (event, value) => {
-    console.log(event.target.value);
+  const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
   return (
     <>
-      <AppBar position="sticky">
+      <AppBar position="sticky" className={classes.appbar}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
+            <Avatar
+              src={logo}
+              sx={{
+                mr: 2,
+                display: {
+                  xs: "none",
+                  md: "flex",
+                  height: "56px",
+                  width: "56px",
+                },
+              }}
+            />
             <Typography
+              className={classes.root}
               variant="h6"
               noWrap
               component="div"
-              sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
+              fontFamily="Arvo,sans"
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+              }}
             >
-              DEMO
+              EasyWork
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -119,7 +186,7 @@ const Header = () => {
                     <MenuItem
                       key={"chats"}
                       component={Link}
-                      to={`/home/chats`}
+                      to={`/chats`}
                       onClick={handleCloseNavMenu}
                     >
                       Chats
@@ -128,7 +195,7 @@ const Header = () => {
                       <MenuItem
                         key={"workers"}
                         component={Link}
-                        to={`/home/workers`}
+                        to={`/workers`}
                         onClick={handleCloseNavMenu}
                       >
                         Workers
@@ -138,7 +205,7 @@ const Header = () => {
                       <MenuItem
                         key={"projects"}
                         component={Link}
-                        to={`/home/projects`}
+                        to={`/projects`}
                         onClick={handleCloseNavMenu}
                       >
                         Projects
@@ -148,7 +215,7 @@ const Header = () => {
                       <MenuItem
                         key={"myprojects"}
                         component={Link}
-                        to={`/home/myprojects`}
+                        to={`/myprojects`}
                         onClick={handleCloseNavMenu}
                       >
                         MyProjects
@@ -162,9 +229,13 @@ const Header = () => {
               variant="h6"
               noWrap
               component="div"
-              sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
+              fontFamily="Arvo"
+              sx={{
+                flexGrow: 1,
+                display: { xs: "flex", md: "none" },
+              }}
             >
-              DEMO
+              EasyWork
             </Typography>
             {token && (
               <Box
@@ -176,60 +247,123 @@ const Header = () => {
                     borderBottom: 1,
                     borderColor: "divider",
                   },
+                  justifyContent: "flex-end",
+                  paddingRight: "100px",
+                  textDecoration: "none",
                 }}
               >
-                <Tabs
-                  value={value}
-                  onChange={handleChange}
-                  textColor="secondary"
-                  indicatorColor="secondary"
-                  sx={{ textColor: "red" }}
-                  aria-label="wrapped label tabs example"
-                >
-                  <Tab
-                    key={"chats"}
-                    label={"chats"}
-                    component={Link}
-                    to={"/home/chats"}
-                    sx={{ color: "white", "&:hover": { color: "green" } }}
-                  />
-                  {role === "user" && (
-                    <Tab
-                      key={"workers"}
-                      label={"workers"}
-                      component={Link}
-                      to={"/home/workers"}
+                <Tooltip title="Chats">
+                  <Box
+                    component={NavLink}
+                    to={"/chats"}
+                    className={classes.icon}
+                    style={({ isActive }) =>
+                      isActive
+                        ? {
+                            backgroundColor: theme.palette.secondary.dark,
+                            color: theme.palette.third.light,
+                            boxShadow: "2px 2px 2px  black",
+                          }
+                        : {}
+                    }
+                    sx={{ textDecoration: "none" }}
+                  >
+                    <ChatSharpIcon
+                      sx={{ color: theme.palette.secondary.main }}
                     />
-                  )}
-                  {role === "user" && (
-                    <Tab
-                      key={"myprojects"}
-                      label={"myprojects"}
-                      component={Link}
-                      to={"/home/myprojects"}
-                    />
-                  )}
-                  {role === "worker" && (
-                    <Tab
-                      key={"projects"}
-                      label={"projects"}
-                      component={Link}
-                      to={"/home/projects"}
-                    />
-                  )}
-                </Tabs>
+                  </Box>
+                </Tooltip>
+                {role === "user" && (
+                  <Tooltip title="Workers">
+                    <Box
+                      component={NavLink}
+                      to={"/workers"}
+                      className={classes.icon}
+                      style={({ isActive }) =>
+                        isActive
+                          ? {
+                              backgroundColor: theme.palette.secondary.dark,
+                              color: theme.palette.third.light,
+                              boxShadow: "2px 2px 2px  black",
+                            }
+                          : {}
+                      }
+                      sx={{ textDecoration: "none" }}
+                    >
+                      <EngineeringIcon
+                        sx={{ color: theme.palette.secondary.main }}
+                      />
+                    </Box>
+                  </Tooltip>
+                )}
+                {role === "user" && (
+                  <Tooltip title="My Projects">
+                    <Box
+                      component={NavLink}
+                      to={"/myprojects"}
+                      className={classes.icon}
+                      style={({ isActive }) =>
+                        isActive
+                          ? {
+                              backgroundColor: theme.palette.secondary.dark,
+                              color: theme.palette.third.light,
+                              boxShadow: "2px 2px 2px  black",
+                            }
+                          : {}
+                      }
+                      sx={{ textDecoration: "none" }}
+                    >
+                      <AssignmentRoundedIcon
+                        sx={{ color: theme.palette.secondary.main }}
+                      />
+                    </Box>
+                  </Tooltip>
+                )}
+                {role === "worker" && (
+                  <Tooltip title="Projects">
+                    <Box
+                      component={NavLink}
+                      to={"/projects"}
+                      className={classes.icon}
+                      style={({ isActive }) =>
+                        isActive
+                          ? {
+                              backgroundColor: theme.palette.secondary.dark,
+                              color: theme.palette.third.light,
+                              boxShadow: "2px 2px 2px  black",
+                            }
+                          : {}
+                      }
+                      sx={{ textDecoration: "none" }}
+                    >
+                      <AssignmentRoundedIcon
+                        sx={{ color: theme.palette.secondary.main }}
+                      />
+                    </Box>
+                  </Tooltip>
+                )}
               </Box>
             )}
 
             {token && (
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <IconButton
+                    onClick={handleOpenUserMenu}
+                    sx={{
+                      p: 0,
+                      size: "small",
+                      padding: { xs: "2", md: "7px" },
+                      backgroundColor: theme.palette.third.light,
+                      "&:hover": { backgroundColor: theme.palette.third.main },
+                      boxShadow: "5",
+                    }}
+                  >
                     <Avatar
                       alt="Remy Sharp"
                       src={
                         user.avatar
-                          ? `http://127.0.0.1:3001/${user?.avatar}`
+                          ? `${process.env.REACT_APP_HOST}/${user?.avatar}`
                           : ""
                       }
                     />
@@ -253,7 +387,7 @@ const Header = () => {
                 >
                   <MenuItem
                     component={Link}
-                    to={"/home/profile"}
+                    to={"/profile"}
                     onClick={handleCloseUserMenu}
                   >
                     Profile
@@ -263,9 +397,24 @@ const Header = () => {
               </Box>
             )}
             {!token && (
-              <Box sx={{ flexGrow: 0 }}>
-                <Button onClick={loginHandler} sx={{ color: "black" }}>
-                  Login
+              <Box sx={{ position: "fixed", right: "20px" }}>
+                <Button
+                  variant="contained"
+                  onClick={loginHandler}
+                  sx={{
+                    color: "black",
+                    borderRadius: "10px",
+                    backgroundColor: theme.palette.third.light,
+                    width: "90px",
+                    padding: "10px",
+                    fontFamily: "Arvo",
+                    textTransform: "capitalize",
+                    "&:hover": {
+                      backgroundColor: theme.palette.third.extra,
+                    },
+                  }}
+                >
+                  Sign In
                 </Button>
               </Box>
             )}

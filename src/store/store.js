@@ -8,6 +8,7 @@ import reviews from "./actions/review-actions";
 import chat from "./actions/chat-actions";
 import project from "./actions/project-actions";
 import myproject from "./actions/myproject-actions";
+import snackbar from "./snackbar-slice";
 
 const customizedMiddleware = getDefaultMiddleware({
   serializableCheck: false,
@@ -23,10 +24,10 @@ const store = configureStore({
     chat,
     project,
     myproject,
+    snackbar,
   },
   middleware: customizedMiddleware,
 });
-console.log(store.getState());
 if (store.getState().login.token) {
   store.dispatch(getUser());
 }

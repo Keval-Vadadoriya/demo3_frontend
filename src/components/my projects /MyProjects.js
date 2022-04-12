@@ -1,18 +1,37 @@
 import React, { Fragment, useEffect, useState } from "react";
 import ProjectCard from "./MyProjectCard";
-import { Link } from "react-router-dom";
-import classes from "./MyProjects.module.css";
-import { Stack, Pagination, Button } from "@mui/material";
+import {
+  Stack,
+  Pagination,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  Grid,
+  TextField,
+  FormControl,
+  Select,
+  MenuItem,
+  DialogActions,
+  Box,
+  useMediaQuery,
+  Container,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { snackbarActions } from "../../store/snackbar-slice";
 
 import {
+  myprojectActions,
   postProject,
   removeProject,
 } from "../../store/actions/myproject-actions";
 import { getMyProjects } from "../../store/actions/project-actions";
-import Input from "../UI/Input";
+import { useTheme } from "@mui/styles";
 
 const MyProjects = () => {
+  const theme = useTheme();
+  const matches = useMediaQuery("(max-width:600px)");
   const [location, setLocation] = useState("none");
   const [profession, setProfession] = useState("none");
   const [amount, setAmount] = useState(0);
@@ -20,22 +39,53 @@ const MyProjects = () => {
   const [projectName, setProjectName] = useState(false);
   const [addProject, setAddProject] = useState(false);
   const [page, setPage] = useState(1);
-  const token = useSelector((state) => state.login.token);
 
   const dispatch = useDispatch();
-  const { status, projects, count, errorMessage } = useSelector(
-    (state) => state.project
-  );
+  const { projects, count } = useSelector((state) => state.project);
+  const { status, errorMessage } = useSelector((state) => state.myproject);
+
+  useEffect(() => {
+    if (status === "Project Posted Successfully") {
+      setAddProject(false);
+    }
+    if (
+      status === "Project Deleted Successfully" ||
+      status === "Project Posted Successfully"
+    ) {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "success",
+          message: status,
+        })
+      );
+      dispatch(myprojectActions.setStatus({ status: "idle" }));
+    }
+    if (errorMessage !== "") {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "error",
+          message: errorMessage,
+        })
+      );
+      dispatch(myprojectActions.setErrorMessage({ errorMessage: "" }));
+    }
+  }, [status, errorMessage]);
 
   const addProjectHandler = () => {
-    setAddProject(!addProject);
+    setAddProject(true);
+  };
+  const handleClose = () => {
+    setAddProject(false);
   };
   const handleChange = (event, value) => {
     setPage(value);
-    dispatch(getMyProjects({ skip: (value - 1) * 3 }));
+    dispatch(getMyProjects({ skip: (value - 1) * 10 }));
   };
   const SubmitHandler = (event) => {
     event.preventDefault();
+
     dispatch(
       postProject({
         project_name: projectName,
@@ -62,9 +112,10 @@ const MyProjects = () => {
     setDescription(event.target.value);
   };
   const removeProjectHandler = (projectId) => {
-    console.log(token);
-    dispatch(removeProject({ projectId }));
-    dispatch(getMyProjects({ skip: 0 }));
+    if (window.confirm("Are You Sure You Want to Remove Project?")) {
+      dispatch(removeProject({ projectId }));
+      dispatch(getMyProjects({ skip: 0 }));
+    }
   };
 
   useEffect(async () => {
@@ -83,99 +134,146 @@ const MyProjects = () => {
 
   return (
     <Fragment>
-      <div className={classes.x}>
-        <div>
-          <Button onClick={addProjectHandler}>Add a New Project</Button>
+      <Container>
+        <Box
+          sx={{
+            height: "100%",
+            backgroundColor: theme.palette.primary.main,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Button
+            onClick={addProjectHandler}
+            sx={{
+              color: "white",
+              backgroundColor: theme.palette.secondary.main,
+              width: "150px",
+              alignSelf: "center",
+              margin: "5px",
+              padding: "10px",
+              fontSize: "15px",
+            }}
+          >
+            Post Project
+          </Button>
           {projectList && projectList}
-          <Stack spacing={2}>
+          <Stack spacing={2} alignSelf="center">
             <Pagination
-              count={Math.ceil(count / 3)}
+              count={Math.ceil(count / 10)}
               page={page}
               onChange={handleChange}
+              variant="outlined"
+              color="secondary"
+              sx={{ backgroundColor: theme.palette.third.extra }}
             />
           </Stack>
-        </div>
-      </div>
-      {addProject && (
-        <div className={classes["form-container"]}>
-          {status === "loading" && <p>Loading</p>}
-          {status !== "loading" && (
-            <form onSubmit={SubmitHandler} className={classes.form}>
-              <h1>Project</h1>
-              <Input
-                label="Project Name"
-                input={{
-                  placeholder: "Enter a Project Name",
-                  required: true,
-                  id: "name",
-                  name: "name",
-                  onChange: changeProjectNameHandler,
-                  type: "text",
-                }}
-              />
-              <Input
-                label="Description"
-                input={{
-                  placeholder: "Enter a Description",
-                  id: "description",
-                  name: "description",
-                  onChange: changeDescriptionHandler,
-                  type: "text",
-                }}
-              />
-              <Input
-                label="Amount"
-                input={{
-                  placeholder: "Enter an amount",
-                  id: "amount",
-                  name: "amount",
-                  onChange: changeAmountHandler,
-                  type: "number",
-                  autoComplete: "on",
-                }}
-              />
-              <div className={classes.select}>
-                <label htmlFor="profession">Profession</label>
-                <select
-                  name="profession"
-                  id="profession"
-                  onChange={changeProfessionHandler}
-                  defaultValue="none"
-                  required
-                >
-                  <option value="none" disabled hidden>
-                    select your profession
-                  </option>
-                  <option value="carpenter">Carpenter</option>
-                  <option value="plumber">Plumber</option>
-                  <option value="electrician">Electrician</option>
-                </select>
-              </div>
-
-              <div className={classes.select}>
-                <label htmlFor="location">Location</label>
-                <select
-                  name="location"
-                  id="location"
-                  onChange={changeLocationHandler}
-                  defaultValue="none"
-                  required={true}
-                >
-                  <option value="none" disabled hidden>
-                    select your location
-                  </option>
-                  <option value="surat">Surat</option>
-                  <option value="ahmedabad">Ahmedabad</option>
-                  <option value="anand">Anand</option>
-                  <option value="vadodara">vadodara</option>
-                </select>
-              </div>
-              <input type="submit" value="Post"></input>
-              {status !== "loading" && errorMessage && <p>{errorMessage}</p>}
-            </form>
-          )}
-        </div>
-      )}
+          <Dialog
+            fullScreen={matches}
+            open={addProject}
+            component="form"
+            onSubmit={SubmitHandler}
+          >
+            <DialogTitle
+              sx={{
+                backgroundColor: theme.palette.secondary.main,
+                color: theme.palette.third.light,
+                fontFamily: "Arvo",
+              }}
+            >
+              Add Project
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please enter following details to add new project.
+              </DialogContentText>
+              <Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    autoFocus
+                    required
+                    margin="dense"
+                    id="Project Name"
+                    label="Project Name"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                    onChange={changeProjectNameHandler}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    multiline
+                    margin="dense"
+                    id="description"
+                    label="Description"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                    onChange={changeDescriptionHandler}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    margin="dense"
+                    id="Amount"
+                    label="amount"
+                    type="Number"
+                    fullWidth
+                    variant="standard"
+                    onChange={changeAmountHandler}
+                  />
+                </Grid>
+                <Grid item xs={12} marginTop={2} marginBottom={2}>
+                  <FormControl fullWidth required>
+                    <Select
+                      labelId="profession"
+                      id="profession"
+                      value={profession}
+                      label="Profession"
+                      variant="standard"
+                      onChange={changeProfessionHandler}
+                    >
+                      <MenuItem value={"none"} disabled hidden>
+                        {"Select Profession"}
+                      </MenuItem>
+                      <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
+                      <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
+                      <MenuItem value={"electrician"}>{"Electrician"}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} marginTop={2}>
+                  <FormControl fullWidth required>
+                    <Select
+                      labelId="location"
+                      id="location"
+                      value={location}
+                      label="Location"
+                      onChange={changeLocationHandler}
+                      variant="standard"
+                    >
+                      <MenuItem value={"none"} disabled>
+                        {"Select Location"}
+                      </MenuItem>
+                      <MenuItem value={"surat"}>{"Surat"}</MenuItem>
+                      <MenuItem value={"anand"}>{"Anand"}</MenuItem>
+                      <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
+                      <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button type="submit">Submit</Button>
+            </DialogActions>
+          </Dialog>
+        </Box>
+      </Container>
     </Fragment>
   );
 };

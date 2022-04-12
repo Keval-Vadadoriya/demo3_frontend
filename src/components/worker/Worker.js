@@ -1,49 +1,71 @@
 import React, { Fragment, useEffect, useState } from "react";
 import WorkerCard from "./WorkerCard";
-import { Link, NavLink } from "react-router-dom";
-import classes from "./Worker.module.css";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { snackbarActions } from "../../store/snackbar-slice";
+import WorkerFilter from "./WorkerFilter";
 import {
   Stack,
   Pagination,
-  Snackbar,
-  Alert,
-  CircularProgress,
-  Grid,
   Container,
-  TextField,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormControl,
-  Button,
   Box,
+  useMediaQuery,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Button,
+  DialogActions,
+  Slide,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 
 import {
+  workersActions,
   getAllWorkers,
   filterWorkers,
 } from "../../store/actions/workers-action";
+import { useTheme } from "@mui/styles";
+import { makeStyles } from "@mui/styles";
+import { SearchTwoTone } from "@mui/icons-material";
+const useStyles = makeStyles((theme) => ({
+  searchBar: {
+    marginTop: "10px",
+    padding: "10px",
+    borderRadius: "20px",
+    outline: "none",
+    backgroundColor: theme.palette.third.light,
+  },
+}));
 
 const Worker = () => {
+  const theme = useTheme();
+  const classes = useStyles();
+  const matches = useMediaQuery("(max-width:600px)");
   const [location, setLocation] = useState("none");
   const [profession, setProfession] = useState("none");
   const [review, setReview] = useState("none");
   const [availability, setAvailability] = useState("none");
   const [filtered, setFiltered] = useState(false);
-  const [isSnackbar, setIsSnackbar] = useState(false);
+  const [filter, setFilter] = useState(false);
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
   const dispatch = useDispatch();
   const { status, workers, count, errorMessage } = useSelector(
     (state) => state.workerslist
   );
-  const handleSnackbar = () => {
-    setIsSnackbar(false);
-  };
+
   useEffect(() => {
-    if (errorMessage) {
-      setIsSnackbar(true);
+    if (errorMessage === "No Workers Found") {
+      dispatch(
+        snackbarActions.setSnackbar({
+          open: true,
+          severity: "error",
+          message: errorMessage,
+        })
+      );
+      dispatch(workersActions.setErrorMessage({ errorMessage: "" }));
     }
   }, [errorMessage]);
 
@@ -56,11 +78,11 @@ const Worker = () => {
           profession,
           review,
           availability,
-          skip: (value - 1) * 3,
+          skip: (value - 1) * 10,
         })
       );
     } else {
-      dispatch(getAllWorkers({ skip: (value - 1) * 3 }));
+      dispatch(getAllWorkers({ search: "null", skip: (value - 1) * 10 }));
     }
   };
   const changeLocationHandler = (event) => {
@@ -82,166 +104,177 @@ const Worker = () => {
     setAvailability("none");
 
     setFiltered(false);
+    dispatch(getAllWorkers({ search: "null", skip: 0 }));
   };
   const filterWorkersBy = async (event) => {
     event.preventDefault();
     setFiltered(true);
-    dispatch(filterWorkers({ location, profession, review, availability }));
+    setFilter(false);
+    dispatch(
+      filterWorkers({ location, profession, review, availability, skip: 0 })
+    );
   };
 
-  useEffect(async () => {
-    dispatch(getAllWorkers({ skip: 0 }));
+  useEffect(() => {
+    dispatch(getAllWorkers({ search: "null", skip: 0 }));
   }, []);
+
+  //search
+  const searchHandler = (event) => {
+    if (event.target.value === "") {
+      dispatch(getAllWorkers({ search: "null", skip: 0 }));
+    } else {
+      dispatch(getAllWorkers({ search: event.target.value, skip: 0 }));
+    }
+  };
+
   let workerList;
   if (workers) {
     workerList = workers.map((worker) => (
-      <Link to={`${worker._id}`} className={classes.link} key={worker._id}>
+      <Box
+        key={worker._id}
+        component={Link}
+        to={`${worker._id}`}
+        sx={{
+          textDecoration: "none",
+        }}
+      >
         <WorkerCard
           name={worker.name}
           profession={worker.profession}
           avatar={worker.avatar}
-          description={worker.description}
           availability={worker.availability}
+          review={worker.review}
         />
-      </Link>
+      </Box>
     ));
   }
 
   return (
     <Fragment>
-      <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" } }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          backgroundColor: theme.palette.fifth.light,
+        }}
+      >
         <Box
-          component="form"
-          noValidate
-          onSubmit={filterWorkersBy}
-          sx={{ minWidth: 160, maxWidth: 200, margin: 2 }}
+          sx={{
+            height: { xs: "auto", md: "91.5vh" },
+            display: "flex",
+            position: { xs: "auto", md: "sticky" },
+            top: { xs: "60px", md: "70px" },
+            flexDirection: "column",
+            backgroundColor: {
+              xs: theme.palette.third.light,
+            },
+          }}
         >
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
-                  Profession
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={profession}
-                  label="Profession"
-                  onChange={changeProfessionHandler}
-                >
-                  <MenuItem value={"none"} disabled hidden>
-                    {"Select Profession"}
-                  </MenuItem>
-                  <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
-                  <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
-                  <MenuItem value={"electrician"}>{"Electrician"}</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Location</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={location}
-                  label="Location"
-                  onChange={changeLocationHandler}
-                >
-                  <MenuItem value={"none"} disabled hidden>
-                    {"Select Location"}
-                  </MenuItem>
-                  <MenuItem value={"surat"}>{"Surat"}</MenuItem>
-                  <MenuItem value={"anand"}>{"Anand"}</MenuItem>
-                  <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
-                  <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
-                  Availability
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={availability}
-                  label="availability"
-                  onChange={changeAvailabilityHandler}
-                >
-                  <MenuItem value={"none"} disabled hidden>
-                    {"Availability"}
-                  </MenuItem>
-                  <MenuItem value={true}>{"Available"}</MenuItem>
-                  <MenuItem value={false}>{"Not Available"}</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">review</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={review}
-                  label="review"
-                  onChange={changeReviewHandler}
-                >
-                  <MenuItem value={"none"} disabled>
-                    {"Select Review"}
-                  </MenuItem>
-                  <MenuItem value={0}>{">0"}</MenuItem>
-                  <MenuItem value={1}>{">1"}</MenuItem>
-                  <MenuItem value={2}>{">2"}</MenuItem>
-                  <MenuItem value={3}>{">3"}</MenuItem>
-                  <MenuItem value={4}>{">4"}</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={6}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Apply
-              </Button>
-            </Grid>
-            <Grid item xs={6}>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                onClick={clearFilter}
-              >
-                Clear
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-        <Container fixed>
-          {status === "loading" && <CircularProgress />}
-          <Box sx={{ display: "flex", flexWrap: "wrap" }}>{workerList}</Box>
-          <Snackbar open={isSnackbar} autoHideDuration={6000}>
-            <Alert
-              onClose={handleSnackbar}
-              severity={errorMessage ? "error" : "success"}
-              sx={{ width: "100%" }}
+          {!matches && (
+            <WorkerFilter
+              profession={profession}
+              location={location}
+              clearFilter={clearFilter}
+              filterWorkersBy={filterWorkersBy}
+              changeLocationHandler={changeLocationHandler}
+              changeProfessionHandler={changeProfessionHandler}
+              review={review}
+              changeReviewHandler={changeReviewHandler}
+              availability={availability}
+              changeAvailabilityHandler={changeAvailabilityHandler}
+            />
+          )}
+          {matches && (
+            <Button
+              variant="contained"
+              onClick={() => setFilter(true)}
+              sx={{
+                color: theme.palette.secondary.main,
+                backgroundColor: theme.palette.third.extra,
+              }}
             >
-              {errorMessage}
-            </Alert>
-          </Snackbar>
-          <Stack spacing={2}>
+              Filter
+            </Button>
+          )}
+        </Box>
+        <Container
+          fixed
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <TextField
+            placeholder="Search Worker"
+            className={classes.searchBar}
+            variant="standard"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchTwoTone />
+                </InputAdornment>
+              ),
+              disableUnderline: true,
+            }}
+            onChange={searchHandler}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              flexDirection: { xs: "column", md: "row" },
+            }}
+          >
+            {workerList}
+          </Box>
+
+          <Stack spacing={2} sx={{}} alignSelf="center">
             <Pagination
-              count={Math.ceil(count / 3)}
+              count={Math.ceil(count / 10)}
               page={page}
               onChange={handleChange}
+              variant="outlined"
+              color="secondary"
+              sx={{ backgroundColor: theme.palette.third.extra }}
             />
           </Stack>
         </Container>
       </Box>
+      <Dialog fullScreen={matches} open={filter} TransitionComponent={Slide}>
+        <DialogTitle
+          sx={{
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.third.light,
+            fontFamily: "Arvo",
+          }}
+        >
+          Filter Workers
+        </DialogTitle>
+        <DialogContent>
+          <WorkerFilter
+            profession={profession}
+            location={location}
+            clearFilter={clearFilter}
+            filterWorkersBy={filterWorkersBy}
+            changeLocationHandler={changeLocationHandler}
+            changeProfessionHandler={changeProfessionHandler}
+            review={review}
+            changeReviewHandler={changeReviewHandler}
+            availability={availability}
+            changeAvailabilityHandler={changeAvailabilityHandler}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setFilter(false);
+            }}
+          >
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 };

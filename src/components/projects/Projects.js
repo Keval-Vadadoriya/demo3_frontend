@@ -1,204 +1,304 @@
 import React, { Fragment, useEffect, useState } from "react";
 import ProjectCard from "./ProjectCard";
-import { Link } from "react-router-dom";
-import classes from "./Projects.module.css";
-// import { Stack, Pagination } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import ProjectFilter from "./ProjectFilter";
 import {
   Stack,
   Pagination,
-  Snackbar,
-  Alert,
-  CircularProgress,
   Grid,
-  Container,
-  TextField,
   InputLabel,
   Select,
   MenuItem,
   FormControl,
   Button,
   Box,
+  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  useMediaQuery,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
+import { SearchTwoTone } from "@mui/icons-material";
 
 import {
   filterProjects,
   getAllProjects,
 } from "../../store/actions/project-actions";
-import Input from "../UI/Input";
+import { useTheme } from "@mui/styles";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles((theme) => ({
+  searchBar: {
+    width: "95%",
+    marginTop: "10px",
+    marginLeft: "10px",
+    padding: "10px",
+    borderRadius: "20px",
+    outline: "none",
+    backgroundColor: theme.palette.third.light,
+  },
+}));
 
 const Projects = () => {
+  const theme = useTheme();
+  const classes = useStyles();
+  const matches = useMediaQuery("(max-width:600px)");
   const [location, setLocation] = useState("none");
   const [profession, setProfession] = useState("none");
-  const [amount, setAmount] = useState(0);
   const [filtered, setFiltered] = useState(false);
   const [page, setPage] = useState(1);
-  const token = useSelector((state) => state.login.token);
+  const [sort, setSort] = useState("none");
+  const [filter, setFilter] = useState(false);
 
   const dispatch = useDispatch();
-  const { status, workers, errorMessage } = useSelector(
-    (state) => state.workerslist
-  );
   const { projects, count } = useSelector((state) => state.project);
-  const handleChange = (event, value) => {
+
+  const changeSortHandler = (event) => {
+    dispatch(
+      filterProjects({
+        location,
+        profession,
+        sort: event.target.value,
+        skip: 0,
+      })
+    );
+    setSort(event.target.value);
+  };
+
+  const handleChange = (_, value) => {
     setPage(value);
-    console.log("handle", (value - 1) * 3);
     if (filtered) {
       dispatch(
         filterProjects({
           location,
           profession,
-          amount,
-          skip: (value - 1) * 3,
+          sort,
+          skip: (value - 1) * 10,
         })
       );
     } else {
-      dispatch(getAllProjects({ skip: (value - 1) * 3 }));
+      dispatch(getAllProjects({ search: "null", skip: (value - 1) * 10 }));
     }
   };
   const changeLocationHandler = (event) => {
     setLocation(event.target.value);
   };
-  const changeAmountHandler = (event) => {
-    setAmount(event.target.value);
-    console.log(event.target.value);
-  };
+
   const changeProfessionHandler = (event) => {
     setProfession(event.target.value);
   };
 
   const clearFilter = () => {
     setLocation("none");
-    setAmount(0);
     setProfession("none");
 
+    dispatch(
+      filterProjects({
+        location: "none",
+        profession: "none",
+        sort,
+        money: 0,
+        skip: 0,
+      })
+    );
     setFiltered(false);
   };
-  const filterWorkersBy = async (event) => {
+  const filterProjectsBy = (event) => {
     event.preventDefault();
     setFiltered(true);
-    setAmount(null);
-    dispatch(filterProjects({ location, profession, money: amount, skip: 0 }));
+    setFilter(false);
+    dispatch(filterProjects({ location, profession, sort, skip: 0 }));
   };
 
-  useEffect(async () => {
-    dispatch(getAllProjects({ skip: 0 }));
+  useEffect(() => {
+    dispatch(getAllProjects({ search: "null", skip: 0 }));
   }, []);
   let projectList;
   if (projects) {
     projectList = projects.map((project) => (
-      <ProjectCard
-        project={project}
-        key={project._id}
-        // name={project.project_name}
-        // profession={project.profession}
-        // location={project.location}
-        // key={project._id}
-        // owner={project.owner}
-      />
+      <ProjectCard project={project} key={project._id} />
     ));
   }
 
+  //search
+  const searchHandler = (event) => {
+    if (event.target.value === "") {
+      dispatch(getAllProjects({ search: "null", skip: 0 }));
+    } else {
+      dispatch(getAllProjects({ search: event.target.value, skip: 0 }));
+    }
+  };
+
   return (
     <Fragment>
-      <div className={classes.x}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          backgroundColor: theme.palette.primary.main,
+          width: { xs: "100%", md: "99%" },
+        }}
+      >
         <Box
-          component="form"
-          noValidate
-          onSubmit={filterWorkersBy}
-          sx={{ minWidth: 160, maxWidth: 200, margin: 2 }}
+          sx={{
+            height: { xs: "80px", md: "90vh" },
+            display: "flex",
+            justifyContent: { xs: "center", md: "flex-start" },
+            alignItems: { xs: "center", md: "flex-start" },
+            flexDirection: { xs: "row", md: "column" },
+            position: { xs: "auto", md: "sticky" },
+            top: { xs: "0", md: "79px" },
+            minWidth: 300,
+            maxWidth: { xs: "100%", md: 200 },
+            boxSizing: "border-box",
+            backgroundColor: {
+              xs: theme.palette.third.extra,
+            },
+            padding: { xs: 0, md: 2 },
+          }}
         >
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
-                  Profession
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={profession}
-                  label="Profession"
-                  onChange={changeProfessionHandler}
-                >
-                  <MenuItem value={"none"} disabled hidden>
-                    {"Select Profession"}
-                  </MenuItem>
-                  <MenuItem value={"carpenter"}>{"Carpenter"}</MenuItem>
-                  <MenuItem value={"plumber"}>{"Plumber"}</MenuItem>
-                  <MenuItem value={"electrician"}>{"Electrician"}</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Location</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={location}
-                  label="Location"
-                  onChange={changeLocationHandler}
-                >
-                  <MenuItem value={"none"} disabled hidden>
-                    {"Select Location"}
-                  </MenuItem>
-                  <MenuItem value={"surat"}>{"Surat"}</MenuItem>
-                  <MenuItem value={"anand"}>{"Anand"}</MenuItem>
-                  <MenuItem value={"vadodara"}>{"Vadodara"}</MenuItem>
-                  <MenuItem value={"ahmedabad"}>{"Ahmedabad"}</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField
-                id="outlined-basic"
-                label="Amount"
-                variant="outlined"
-                onChange={changeAmountHandler}
-                type="number"
-                value={amount}
+          <Button
+            variant="contained"
+            onClick={() => {
+              setFilter(true);
+            }}
+            sx={{
+              width: "200px",
+              backgroundColor: "orange",
+              margin: "10px",
+              display: { xs: "auto", md: "none" },
+            }}
+          >
+            Filter
+          </Button>
+          <Dialog fullScreen={matches} open={filter}>
+            <DialogTitle
+              sx={{
+                backgroundColor: theme.palette.secondary.main,
+                color: theme.palette.third.light,
+                fontFamily: "Arvo",
+              }}
+            >
+              Filter By
+            </DialogTitle>
+            <DialogContent>
+              <ProjectFilter
+                profession={profession}
+                location={location}
+                clearFilter={clearFilter}
+                filterProjectsBy={filterProjectsBy}
+                changeLocationHandler={changeLocationHandler}
+                changeProfessionHandler={changeProfessionHandler}
               />
-            </Grid>
-            <Grid item xs={6}>
+            </DialogContent>
+            <DialogActions>
               <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                onClick={() => {
+                  setFilter(false);
+                }}
               >
-                Apply
+                Cancel
               </Button>
-            </Grid>
-            <Grid item xs={6}>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                onClick={clearFilter}
-              >
-                Clear
-              </Button>
+            </DialogActions>
+          </Dialog>
+          <Typography
+            variant="h4"
+            sx={{
+              display: { xs: "none", md: "block" },
+              marginBottom: "10px",
+              color: theme.palette.secondary.main,
+              fontFamily: "Arvo",
+            }}
+          >
+            Filter By
+          </Typography>
+
+          {!matches && (
+            <ProjectFilter
+              profession={profession}
+              location={location}
+              clearFilter={clearFilter}
+              filterProjectsBy={filterProjectsBy}
+              changeLocationHandler={changeLocationHandler}
+              changeProfessionHandler={changeProfessionHandler}
+            />
+          )}
+
+          <Typography
+            variant="h4"
+            sx={{
+              display: { xs: "none", md: "block" },
+              color: theme.palette.secondary.main,
+              marginBottom: "10px",
+              fontFamily: "Arvo",
+            }}
+          >
+            Sort By
+          </Typography>
+          <Grid container>
+            <Grid item xs={12} md={12} sx={{ margin: "10px" }}>
+              <FormControl fullWidth>
+                <InputLabel id="sortBy">Sort By</InputLabel>
+                <Select
+                  labelId="sortBy"
+                  id="sortBy"
+                  value={sort}
+                  label="SortBy"
+                  onChange={changeSortHandler}
+                >
+                  <MenuItem value={"none"} disabled hidden>
+                    {"Select Sort Option"}
+                  </MenuItem>
+                  <MenuItem value="latest">Latest</MenuItem>
+                  <MenuItem value="oldest">Oldest</MenuItem>
+                  <MenuItem value="highestPrice">Highest Price</MenuItem>
+                  <MenuItem value="lowestPrice">Lowest Price</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
         </Box>
-        <div className={classes.workerlist}>
-          {status === "loading" && <h1>Loading</h1>}
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            paddingTop: { xs: "10px", md: "0" },
+          }}
+        >
+          <TextField
+            placeholder="Search Project"
+            className={classes.searchBar}
+            variant="standard"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchTwoTone />
+                </InputAdornment>
+              ),
+              disableUnderline: true,
+            }}
+            onChange={searchHandler}
+          />
           {projectList}
-          {errorMessage && <p>{errorMessage}</p>}
 
-          <div>
-            <Stack spacing={2}>
-              <Pagination
-                count={Math.ceil(count / 3)}
-                page={page}
-                onChange={handleChange}
-              />
-            </Stack>
-          </div>
-        </div>
-      </div>
+          <Stack spacing={2} sx={{ alignSelf: "center" }}>
+            <Pagination
+              count={Math.ceil(count / 10)}
+              page={page}
+              onChange={handleChange}
+              variant="outlined"
+              color="secondary"
+              sx={{ backgroundColor: theme.palette.third.extra }}
+            />
+          </Stack>
+        </Box>
+      </Box>
     </Fragment>
   );
 };

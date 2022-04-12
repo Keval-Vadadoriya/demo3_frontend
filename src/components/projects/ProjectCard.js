@@ -1,39 +1,119 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import classes from "./ProjectCard.module.css";
 import {
   Card,
   CardContent,
-  CardMedia,
   Typography,
-  Button,
   CardActionArea,
   CardActions,
-  Grid,
 } from "@mui/material";
+import { useTheme } from "@mui/styles";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles((theme) => ({
+  projectCard: {
+    margin: "5px",
+    border: "1px dashed black",
+    borderRadius: "20px",
+
+    transition: "all 0.5s ease",
+    "&:hover": {
+      transform: "scale(1.03)",
+      borderRadius: "30px",
+      backgroundColor: theme.palette.third.light,
+    },
+  },
+}));
 
 function ProjectCard({ project }) {
+  const theme = useTheme();
+  const classes = useStyles();
   return (
-    // <div className={classes.card}>
-    //   <h1>{project.project_name}</h1>
-    //   <h3>{project.profession}</h3>
-    //   <h3>{project.location}</h3>
-    //   <Link to={`/home/chats/${project.owner}`}>Chat</Link>
-    // </div>
-    <Card sx={{}}>
-      <CardActionArea>
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
-            {project.project_name}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {project.profession}
-          </Typography>
-        </CardContent>
-      </CardActionArea>
+    <Card className={classes.projectCard}>
+      <CardContent sx={{ padding: "20px" }}>
+        <Typography
+          gutterBottom
+          variant="h5"
+          component="div"
+          sx={{
+            fontFamily: "Arvo",
+            margin: "5px",
+            color: theme.palette.secondary.main,
+          }}
+        >
+          {project.project_name}
+        </Typography>
+
+        <Typography variant="body2" display="inline" color="black">
+          Requirement
+        </Typography>
+        <Typography
+          display="inline"
+          variant="body2"
+          color="text.secondary"
+          sx={{ fontFamily: "Arvo", margin: "5px" }}
+        >
+          :-
+          {project.profession}
+        </Typography>
+        <br />
+        <Typography variant="body2" display="inline" color="black">
+          Location
+        </Typography>
+        <Typography
+          display="inline"
+          variant="body2"
+          color="text.secondary"
+          sx={{ fontFamily: "Arvo", margin: "5px" }}
+        >
+          :- {project.location}
+        </Typography>
+        <br />
+        <Typography variant="body2" display="inline" color="black">
+          Description
+        </Typography>
+        <Typography
+          display="inline"
+          variant="body2"
+          color="text.secondary"
+          sx={{ wordBreak: "break-all", fontFamily: "Arvo", margin: "5px" }}
+        >
+          :- {project.description}
+        </Typography>
+        <br />
+        <Typography variant="body2" display="inline" color="black">
+          Pay
+        </Typography>
+
+        <Typography
+          display="inline"
+          variant="body2"
+          color="text.secondary"
+          sx={{ fontFamily: "Arvo", margin: "5px" }}
+        >
+          :- {project.money}$
+        </Typography>
+      </CardContent>
       <CardActions>
-        <Typography component={Link} to={`/home/chats/${project.owner}`}>
-          Chats
+        <Typography
+          component={Link}
+          to={`/chats/${project.owner}`}
+          sx={{
+            marginLeft: "15px",
+            textDecoration: "none",
+            color: "white",
+            width: "100px",
+            textAlign: "center",
+            borderRadius: "10px",
+            padding: "10px",
+            backgroundColor: theme.palette.secondary.main,
+            "&:hover": {
+              backgroundColor: theme.palette.third.extra,
+              color: theme.palette.secondary.main,
+            },
+          }}
+        >
+          Chat
         </Typography>
       </CardActions>
     </Card>

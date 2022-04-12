@@ -1,92 +1,77 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import baseService from "../baseService";
+const initialState = {
+  status: "idle",
+  errorMessage: "",
+  projects: [],
+  count: 0,
+};
 export const getAllProjects = createAsyncThunk(
   "project/getAllProjects",
-  async ({ skip }, getState) => {
-    const states = getState.getState();
+  async ({ search, skip }, getState) => {
+    try {
+      const response = await baseService.get(
+        `/getallprojects/${search}?limit=10&&skip=${skip}`
+      );
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/getallprojects?limit=5&&skip=${skip}`,
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
   }
 );
 export const getMyProjects = createAsyncThunk(
   "project/getMyProjects",
   async ({ skip }, getState) => {
-    const states = getState.getState();
+    try {
+      const response = await baseService.get(
+        `/getmyprojects?limit=10&&skip=${skip}`
+      );
 
-    const response = await fetch(
-      `http://192.168.200.175:3001/getmyprojects?limit=5&&skip=${skip}`,
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
   }
 );
 
 export const filterProjects = createAsyncThunk(
   "project/filterProjects",
-  async ({ location, profession, money, skip }, getState) => {
-    const states = getState.getState();
-
-    const response = await fetch(
-      `http://192.168.200.175:3001/filterprojects?${
-        location !== "none" ? `location=${location}` : ""
-      }${profession !== "none" ? `&&profession=${profession}` : ""}${
-        money ? `&&money=${money}` : ""
-      }&&limit=5&&skip=${skip}`,
-
-      {
-        headers: {
-          Authorization: states.login.token,
-        },
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok === false) {
-      throw new Error(data.Error);
+  async ({ location, profession, sort, skip }, getState) => {
+    try {
+      const response = await baseService.get(
+        `/filterprojects?${location !== "none" ? `location=${location}` : ""}${
+          profession !== "none" ? `&&profession=${profession}` : ""
+        }${sort !== "none" ? `&&sort=${sort}` : ""}&&limit=10&&skip=${skip}`
+      );
+      return response.data;
+    } catch (e) {
+      throw new Error(e.response.data.Error);
     }
-    return data;
   }
 );
 
 export const projectSlice = createSlice({
   name: "project",
-  initialState: {
-    status: "idle",
-    errorMessage: "",
-    projects: [],
-    count: 0,
+  initialState,
+  reducers: {
+    setErrorMessage(state, action) {
+      state.errorMessage = action.payload.errorMessage;
+    },
+    reset() {
+      return initialState;
+    },
   },
-  reducers: {},
   extraReducers: {
     //getAllWorkers
     [getAllProjects.fulfilled]: (state, action) => {
       state.status = "succeeded";
       state.errorMessage = "";
-      // console.log(action.payload);
 
       state.projects = action.payload.projects;
-      state.count = action.payload.count;
+      if (action.payload.count !== 0 && !isNaN(action.payload.count)) {
+        state.count = action.payload.count;
+      }
     },
     [getAllProjects.pending]: (state, action) => {
       state.errorMessage = "";
@@ -100,9 +85,10 @@ export const projectSlice = createSlice({
     [filterProjects.fulfilled]: (state, action) => {
       state.status = "succeeded";
       state.errorMessage = "";
-      // console.log(action.payload);
       state.projects = action.payload.projects;
-      state.count = action.payload.count;
+      if (action.payload.count !== 0 && !isNaN(action.payload.count)) {
+        state.count = action.payload.count;
+      }
     },
     [filterProjects.pending]: (state, action) => {
       state.errorMessage = "";
@@ -111,7 +97,6 @@ export const projectSlice = createSlice({
     [filterProjects.rejected]: (state, action) => {
       state.status = "failed";
       state.errorMessage = action.error.message;
-      // console.log(action.error.message);
       state.workers = null;
     },
     //get Worker
@@ -119,7 +104,9 @@ export const projectSlice = createSlice({
       state.status = "succeeded";
       state.errorMessage = "";
       state.projects = action.payload.myProjects;
-      state.count = action.payload.count;
+      if (action.payload.count !== 0 && !isNaN(action.payload.count)) {
+        state.count = action.payload.count;
+      }
     },
     [getMyProjects.pending]: (state) => {
       state.errorMessage = "";
